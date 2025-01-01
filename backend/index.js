@@ -1,19 +1,18 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
+const AuthRouter = require("./routes/AuthRouter");
+
 require("dotenv").config();
 require("./modules/db");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-const corsOptions = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: false,
-  optionSuccessStatus: 204,
-};
+app.use(cors());
+app.use(bodyParser.json());
 
-app.use(cors(corsOptions));
+app.use("/auth", AuthRouter);
 
 app.get("/ping", (_, res) => {
   res.send("PONG");
