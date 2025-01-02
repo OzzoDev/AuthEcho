@@ -1,6 +1,7 @@
-import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import SignupPage from "./pages/SignupPage";
+import SignppPage from "./pages/SignupPage";
+import SigninPage from "./pages/SignInPage";
+import AccountPage from "./pages/AccountPage";
 import "./App.css";
 
 function App() {
@@ -8,7 +9,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Navigate replace to="/signup" />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/signup" element={<SignppPage />} />
+        <Route path="/signin" element={<SigninPage />} />
+        <Route path="/account" element={<AccountPage />} />
       </Routes>
     </Router>
   );

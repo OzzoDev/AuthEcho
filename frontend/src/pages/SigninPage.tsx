@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User } from "../types/userTypes";
+import { UserLogin } from "../types/userTypes";
 import "../styles/SignupPage.css";
 
-export default function SignUpPage() {
-  const [formData, setFormData] = useState<User>({
-    name: "",
+export default function SigninPage() {
+  const [formData, setFormData] = useState<UserLogin>({
     email: "",
     password: "",
   });
@@ -20,7 +19,7 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/auth/signup", {
+      const response = await fetch("http://localhost:3000/auth/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,11 +29,9 @@ export default function SignUpPage() {
       console.log(response.status);
 
       if (response.ok) {
-        console.log("Sign up successful");
+        navigate("/account");
       } else {
-        if (response.status === 409) {
-          navigate("/signin");
-        }
+        console.error("Sign in failed");
       }
     } catch (error) {
       console.error("Error: ", error);
@@ -43,12 +40,6 @@ export default function SignUpPage() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Username:
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-        </label>
-      </div>
       <div>
         <label>
           Email:
@@ -61,7 +52,7 @@ export default function SignUpPage() {
           <input type="password" name="password" value={formData.password} onChange={handleChange} required />
         </label>
       </div>
-      <button type="submit">Sign Up</button>
+      <button type="submit">Sign In</button>
     </form>
   );
 }
