@@ -16,6 +16,24 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      console.log(response.status);
+
+      if (response.ok) {
+        console.log("Sign up successful");
+      } else {
+        console.error("Sign up failed");
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+    }
     console.log("Form submitted");
   };
 
