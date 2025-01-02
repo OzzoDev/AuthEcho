@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const AuthRouter = require("./routes/AuthRouter");
 
 require("dotenv").config();
-require("./modules/db");
+require("./models/db");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
