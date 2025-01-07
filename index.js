@@ -4,9 +4,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PROXY_PORT || 8080;
 
-const targetServer = process.env.TARGET_SERVER;
+const targetServer = process.env.PROXY_TARGET_SERVER;
 
 app.use(express.json());
 app.use(cors());
@@ -18,9 +18,7 @@ app.use("/updateusername", createProxyMiddleware({ target: targetServer, changeO
 app.use("/sendverificationcode", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
 app.use("/resetpassword", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
 
-app.get("/ping", (_, res) => {
-  res.send("PONG");
-});
+app.use("/ping", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
 
 app.listen(PORT, () => {
   console.log(`Proxy server is running on http://localhost:${PORT}`);
