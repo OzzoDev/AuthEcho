@@ -72,7 +72,6 @@ const updateEmail = async (req, res) => {
 
     res.status(200).json({ message: "Email updated successfully", success: true });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
@@ -85,7 +84,7 @@ const updateUsername = async (req, res) => {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
     if (!user) {
-      return res.status.json({ message: "User not found", success: false });
+      return res.status(404).json({ message: "User not found", success: false });
     }
 
     if (newName && newName === currentName) {
@@ -97,7 +96,7 @@ const updateUsername = async (req, res) => {
       await user.save();
     }
 
-    res.status(200).json({ message: "Email updated successfully", success: true });
+    res.status(200).json({ message: "Username updated successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
   }
@@ -106,4 +105,6 @@ const updateUsername = async (req, res) => {
 module.exports = {
   signup,
   signin,
+  updateEmail,
+  updateUsername,
 };
