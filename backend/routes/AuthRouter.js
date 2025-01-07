@@ -6,7 +6,7 @@ const router = require("express").Router();
 
 router.post("/signin", signinValidation, signin);
 router.post("/signup", signupValidation, signup);
-router.post("/updateemail", ensureAuthenticated, updateEmail);
-router.post("/updateusername", ensureAuthenticated, updateUsername);
+router.put("/updateemail", ensureAuthenticated, updateEmail);
+router.put("/updateusername", ensureAuthenticated, updateUsername);
 
 module.exports = router;

@@ -16,6 +16,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  verificationCode: {
+    type: String,
+    required: true,
+  },
 });
 
 const UserModel = mongoose.model("users", UserSchema);

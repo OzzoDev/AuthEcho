@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Joi = require("joi");
 const UserModel = require("../models/User");
+const { sendEmail } = require("../middlewares/Auth");
 
 const signup = async (req, res) => {
   try {
@@ -12,13 +14,22 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "User already exists", success: false });
     }
 
-    const userModel = new UserModel({ name, email, password });
+    const verificationCodeSent = await sendEmail(userEmail, "Authecho", `Welcome ${name} to Authecho, your account has been successflly created`);
+
+    if (!verificationCodeSent) {
+      res.status(500).json({ message: `Verification code error ${userName}`, success: false });
+    }
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const userModel = new UserModel({ name, email, password, verificationCode });
     userModel.password = await bcrypt.hash(password, 10);
     await userModel.save();
 
     res.status(201).json({ message: "Signup successfully", success: true });
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
 };
 
@@ -45,8 +56,9 @@ const signin = async (req, res) => {
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
     res.status(200).json({ message: "Signin successfully", success: true, jwtToken, email, name: user.name });
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
 };
 
@@ -73,6 +85,7 @@ const updateEmail = async (req, res) => {
     res.status(200).json({ message: "Email updated successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
 };
 
@@ -99,6 +112,75 @@ const updateUsername = async (req, res) => {
     res.status(200).json({ message: "Username updated successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const sendVerificationcode = async (req, res) => {
+  const { userData } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const userEmail = user.email;
+    const userName = user.name;
+    const userVerificationCode = user.verificationCode;
+
+    const verificationCodeSent = await sendEmail(userEmail, "Authecho - reset password verification code", `Your verification code is: ${userVerificationCode}`);
+
+    if (!verificationCodeSent) {
+      return res.status(500).json({ message: `Verification code error ${userName}`, success: false });
+    }
+
+    res.status(200).json({ message: `Verification code sent for ${userName}`, success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Error sending verification code", success: false });
+    console.error(`Error sending verification code for user: ${userData}`, error);
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { userData, verificationCode, newPassword, confirmNewPassword } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const userName = user.name;
+    const userVerificationCode = user.verificationCode;
+
+    if (userVerificationCode !== verificationCode) {
+      return res.status(400).json({ message: "Verification code is wrong", success: false });
+    }
+
+    const passwordSchema = Joi.object({
+      newPassword: Joi.string().min(8).max(100).required(),
+      confirmNewPassword: Joi.ref("newPassword"),
+    });
+
+    const { error: passwordError } = passwordSchema.validate({ newPassword, confirmNewPassword });
+
+    if (passwordError) {
+      return res.status(400).json({ message: passwordError.details[0].message, success: false });
+    }
+
+    const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.verificationCode = newVerificationCode;
+    await user.save();
+
+    res.status(200).json({ message: `Password successfully updated for ${userName}` });
+  } catch (error) {
+    res.status(500).json({ message: "Error resetting password", success: false });
+    console.error(`Error resetting password for user: ${userData}`, error);
   }
 };
 
@@ -107,4 +189,6 @@ module.exports = {
   signin,
   updateEmail,
   updateUsername,
+  sendVerificationcode,
+  resetPassword,
 };
