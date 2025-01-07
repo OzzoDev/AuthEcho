@@ -5,9 +5,10 @@ const UserModel = require("../models/User");
 const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const user = await UserModel.findOne({ email });
+    const userEmail = await UserModel.findOne({ email });
+    const userName = await UserModel.findOne({ name });
 
-    if (user) {
+    if (userEmail || userName) {
       return res.status(409).json({ message: "User already exists", success: false });
     }
 
@@ -24,13 +25,18 @@ const signup = async (req, res) => {
 const signin = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const user = await UserModel.findOne({ email });
+    const userEmail = await UserModel.findOne({ email });
+    const userName = await UserModel.findOne({ name });
 
-    if (!user) {
+    if (!userEmail) {
       return res.status(403).json({ message: "Auth failed, email is wrong", success: false });
     }
 
-    const isPasswordEqual = await bcrypt.compare(password, user.password);
+    if (!userName) {
+      return res.status(403).json({ message: "Auth failed, username is wrong", success: false });
+    }
+
+    const isPasswordEqual = await bcrypt.compare(password, userEmail.password);
 
     if (!isPasswordEqual) {
       return res.status(403).json({ message: "Auth failed, password is wrong", success: false });
@@ -40,6 +46,26 @@ const signin = async (req, res) => {
 
     res.status(200).json({ message: "Signin successfully", success: true, jwtToken, email, name: user.name });
   } catch (err) {
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const updateEmail = async (req, res) => {
+  try {
+    const { name, email: newEmail } = req.body;
+    const { email: currentEmail } = req.user;
+
+    const user = await UserModel.findOne({ $or: [{ email: currentEmail }, { name }] });
+
+    if (!user) {
+      return res.status.json({ message: "User not found", success: false });
+    }
+
+    user.email = newEmail;
+    await user.save();
+
+    res.status(200).json({ message: "Email updated successfully", success: true });
+  } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
