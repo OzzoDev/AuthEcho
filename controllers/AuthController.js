@@ -14,19 +14,47 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "User already exists", success: false });
     }
 
-    const verificationCodeSent = await sendEmail(userEmail, "Authecho", `Welcome ${name} to Authecho, your account has been successflly created`);
-
-    if (!verificationCodeSent) {
-      res.status(500).json({ message: `Verification code error ${userName}`, success: false });
-    }
-
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const userModel = new UserModel({ name, email, password, verificationCode });
+    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and your are all set!`);
+
+    if (!verificationCodeSent) {
+      return res.status(500).json({ message: `Email error ${userName}`, success: false });
+    }
+
+    const userModel = new UserModel({ name, email, password, verificationCode, verified: false });
     userModel.password = await bcrypt.hash(password, 10);
+    userModel.verificationCode = await bcrypt.hash(verificationCode, 10);
     await userModel.save();
 
     res.status(201).json({ message: "Signup successfully", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const verifyAccount = async (req, res) => {
+  try {
+    const { email, verificationCode } = req.body;
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const isVerificationEqual = await bcrypt.compare(verificationCode, user.verificationCode);
+
+    if (!isVerificationEqual) {
+      return res.status(400).json({ message: "Verification code is wrong", success: false });
+    }
+
+    const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.verificationCode = await bcrypt.hash(newVerificationCode, 10);
+    await user.save();
+
+    res.status(201).json({ message: "Verification successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -154,9 +182,10 @@ const resetPassword = async (req, res) => {
     }
 
     const userName = user.name;
-    const userVerificationCode = user.verificationCode;
 
-    if (userVerificationCode !== verificationCode) {
+    const isVerificationEqual = await bcrypt.compare(verificationCode, user.verificationCode);
+
+    if (!isVerificationEqual) {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
@@ -186,6 +215,7 @@ const resetPassword = async (req, res) => {
 
 module.exports = {
   signup,
+  verifyAccount,
   signin,
   updateEmail,
   updateUsername,
