@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     required: true,
   },
   verified: {
-    type: boolean,
+    type: Boolean,
     required: true,
   },
 });
