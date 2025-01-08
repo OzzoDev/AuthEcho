@@ -19,3 +19,8 @@ export type SignUp = {
     name: string,
     password:string,
 }
+
+export type VerifyAccount = {
+    email: string,
+    verificationCode:string,
+}
