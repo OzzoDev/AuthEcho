@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserLogin } from "../types/userTypes";
+import { FetchStatus, SignIn } from "../types/userTypes";
 // @ts-ignore
 import "../styles/signupPage.css";
+import { capitalize, removeAllQuotes } from "../utils/utils";
+import axios from "axios";
+import { signIn } from "../utils/ServerClient";
+import ReactLoading from "react-loading";
 
 export default function SigninPage() {
-  const [formData, setFormData] = useState<UserLogin>({ email: "", password: "" });
+  const [formData, setFormData] = useState<SignIn>({ userData: "", password: "" });
+  const [status, setStatus] = useState<FetchStatus>("idle");
+  const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -17,40 +23,42 @@ export default function SigninPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      console.log(response.status);
-
-      if (response.ok) {
-        navigate("/account");
-      } else {
-        console.error("Sign in failed");
+      setStatus("loading");
+      console.log("FormData: ", formData);
+      await signIn(formData);
+      navigate("/account");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message));
+        console.error("Sign in failed", error);
+        setStatus("error");
+        setError(errorMessage);
       }
-    } catch (error) {
-      console.error("Error: ", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Email:
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-        </label>
-      </div>
-      <div>
-        <label>
-          Password:
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-        </label>
-      </div>
-      <button type="submit">Sign In</button>
-    </form>
+    <>
+      {status === "loading" ? (
+        <ReactLoading type="spin" color="#00f" height={50} width={50} />
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>
+              Email or Username
+              <input type="text" name="userData" value={formData.userData} onChange={handleChange} required />
+            </label>
+          </div>
+          <div>
+            <label>
+              Password
+              <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+            </label>
+          </div>
+          <p className="errorMessage">{error}</p>
+          <button type="submit">Sign In</button>
+        </form>
+      )}
+    </>
   );
 }

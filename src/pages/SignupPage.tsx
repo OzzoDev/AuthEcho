@@ -46,7 +46,7 @@ export default function SignUpPage() {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message));
-        console.log("Creation or verification of account failed", error);
+        console.error("Creation or verification of account failed", error);
         setStatus("error");
         setError(errorMessage);
       }
