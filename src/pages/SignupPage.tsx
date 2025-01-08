@@ -36,6 +36,7 @@ export default function SignUpPage() {
         const verifyCredz: VerifyAccountCredz = { email: formData.email, verificationCode: verificationCode };
         await verifyAccount(verifyCredz);
         console.log("Account verified");
+        navigate("/account");
       } else {
         await signUp(formData);
         console.log("Sign up successfully");
@@ -44,16 +45,7 @@ export default function SignUpPage() {
       setStatus("success");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const statusCode: number | undefined = error.response?.status;
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message));
-
-        switch (statusCode) {
-          case 409:
-            // navigate("/signin");
-            break;
-          default:
-            break;
-        }
         console.log("Creation or verification of account failed", error);
         setStatus("error");
         setError(errorMessage);
@@ -71,19 +63,19 @@ export default function SignUpPage() {
             <>
               <div>
                 <label>
-                  Username:
+                  Username
                   <input type="text" name="name" value={formData.name} onChange={handleSignUpChange} required />
                 </label>
               </div>
               <div>
                 <label>
-                  Email:
+                  Email
                   <input type="email" name="email" value={formData.email} onChange={handleSignUpChange} required />
                 </label>
               </div>
               <div>
                 <label>
-                  Password:
+                  Password
                   <input type="password" name="password" value={formData.password} onChange={handleSignUpChange} required />
                 </label>
               </div>
@@ -97,8 +89,11 @@ export default function SignUpPage() {
               </label>
             </div>
           )}
-          <p>{error}</p>
+          <p className="errorMessage">{error}</p>
           <button type="submit">{isSignedUp ? "Verify Account" : "Sign Up"}</button>
+          <a className="signInLink" href="/signin">
+            Already have an account? Sign in here
+          </a>
         </form>
       )}
     </>
