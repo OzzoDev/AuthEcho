@@ -52,6 +52,7 @@ const verifyAccount = async (req, res) => {
     const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.verificationCode = await bcrypt.hash(newVerificationCode, 10);
+    user.verified = true;
     await user.save();
 
     res.status(201).json({ message: "Verification successfully", success: true });
