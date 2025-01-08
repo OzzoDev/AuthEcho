@@ -1,10 +1,5 @@
 /* src/styles/SignupPage.css */
 
-body {
-  background: linear-gradient(to right, #f8cdda, #1d2b64);
-  font-family: "Arial", sans-serif;
-}
-
 h2 {
   text-align: center;
   color: #fff;
@@ -12,12 +7,13 @@ h2 {
 }
 
 form {
+  display: block;
+  width: min(100%, 600px);
   background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  max-width: 400px;
-  margin: 50px auto;
+  position: relative;
 }
 
 label {
@@ -42,9 +38,20 @@ input:focus {
   box-shadow: 0 0 5px rgba(29, 43, 100, 0.5);
 }
 
+p {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+  position: absolute;
+  left: 50%;
+  bottom: 65px;
+  transform: translate(-50%);
+}
+
 button {
   width: 100%;
   padding: 10px;
+  margin-top: 30px;
   background-color: #1d2b64;
   color: white;
   border: none;

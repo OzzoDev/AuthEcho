@@ -20,7 +20,9 @@ export type SignUp = {
     password:string,
 }
 
-export type VerifyAccount = {
+export type VerifyAccountCredz = {
     email: string,
     verificationCode:string,
 }
+
+export type FetchStatus = "idle" | "loading" | "error" | "success";
