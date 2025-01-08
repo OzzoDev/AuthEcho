@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types/userTypes";
+//@ts-ignore
 import "../styles/SignupPage.css";
+import { signUp } from "../utils/ServerClient";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<User>({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState<User>({ name: "", email: "", password: "" });
 
   const navigate = useNavigate();
 
@@ -20,25 +18,32 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      console.log(response.status);
-
-      if (response.ok) {
-        console.log("Sign up successful");
-      } else {
-        if (response.status === 409) {
-          navigate("/signin");
-        }
-      }
+      await signUp(formData);
+      console.log("Sign up successfully");
     } catch (error) {
-      console.error("Error: ", error);
+      console.log("Sign up failed", error);
     }
+
+    // try {
+    //   const response = await fetch("http://localhost:3000/auth/signup", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(formData),
+    //   });
+    //   console.log(response.status);
+
+    //   if (response.ok) {
+    //     console.log("Sign up successful");
+    //   } else {
+    //     if (response.status === 409) {
+    //       navigate("/signin");
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.error("Error: ", error);
+    // }
   };
 
   return (

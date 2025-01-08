@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserLogin } from "../types/userTypes";
-import "../styles/SignupPage.css";
+// @ts-ignore
+import "../styles/signupPage.css";
 
 export default function SigninPage() {
-  const [formData, setFormData] = useState<UserLogin>({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState<UserLogin>({ email: "", password: "" });
 
   const navigate = useNavigate();
 
