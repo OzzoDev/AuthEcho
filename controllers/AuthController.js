@@ -10,13 +10,17 @@ const signup = async (req, res) => {
     const userEmail = await UserModel.findOne({ email });
     const userName = await UserModel.findOne({ name });
 
-    if (userEmail || userName) {
-      return res.status(409).json({ message: "User already exists", success: false });
+    if (userEmail) {
+      return res.status(409).json({ message: "Email already exists", success: false });
+    }
+
+    if (userName) {
+      return res.status(409).json({ message: "Username already exists", success: false });
     }
 
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and your are all set!`);
+    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
 
     if (!verificationCodeSent) {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
@@ -64,27 +68,22 @@ const verifyAccount = async (req, res) => {
 
 const signin = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const userEmail = await UserModel.findOne({ email });
-    const userName = await UserModel.findOne({ name });
+    const { userData, password } = req.body;
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
-    if (!userEmail) {
-      return res.status(403).json({ message: "Auth failed, email is wrong", success: false });
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (!userName) {
-      return res.status(403).json({ message: "Auth failed, username is wrong", success: false });
-    }
-
-    const isPasswordEqual = await bcrypt.compare(password, userEmail.password);
+    const isPasswordEqual = await bcrypt.compare(password, user.password);
 
     if (!isPasswordEqual) {
-      return res.status(403).json({ message: "Auth failed, password is wrong", success: false });
+      return res.status(403).json({ message: "Wrong password", success: false });
     }
 
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-    res.status(200).json({ message: "Signin successfully", success: true, jwtToken, email, name: user.name });
+    res.status(200).json({ message: "Signin successfully", success: true, jwtToken, email: user.email, name: user.name });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
