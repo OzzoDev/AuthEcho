@@ -10,12 +10,12 @@ const targetServer = process.env.PROXY_TARGET_SERVER;
 app.use(express.json());
 app.use(cors());
 
-app.use("/signin", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
-app.use("/signup", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
-app.use("/updateemail", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
-app.use("/updateusername", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
-app.use("/sendverificationcode", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
-app.use("/resetpassword", createProxyMiddleware({ target: targetServer, changeOrigin: true }));
+app.use("/signin", createProxyMiddleware({ target: `${targetServer}/signin`, changeOrigin: true }));
+app.use("/signup", createProxyMiddleware({ target: `${targetServer}/signup`, changeOrigin: true }));
+app.use("/updateemail", createProxyMiddleware({ target: `${targetServer}/updateemail`, changeOrigin: true }));
+app.use("/updateusername", createProxyMiddleware({ target: `${targetServer}/updateusername`, changeOrigin: true }));
+app.use("/sendverificationcode", createProxyMiddleware({ target: `${targetServer}/sendverificationcode`, changeOrigin: true }));
+app.use("/resetpassword", createProxyMiddleware({ target: `${targetServer}/resetpassword`, changeOrigin: true }));
 
 app.use("/ping", createProxyMiddleware({ target: `${targetServer}/ping`, changeOrigin: true }));
 
