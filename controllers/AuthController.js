@@ -236,6 +236,17 @@ const verifyAuthorization = async (req, res) => {
   res.status(200).json({ message: "Authorized", success: true });
 };
 
+const getUserName = async (req, res) => {
+  const { userData } = req.body;
+  const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found", success: false });
+  }
+
+  res.status(200).json({ message: "User found", success: true, name: user.name });
+};
+
 module.exports = {
   signup,
   verifyAccount,
@@ -246,4 +257,5 @@ module.exports = {
   validatePassword,
   resetPassword,
   verifyAuthorization,
+  getUserName,
 };
