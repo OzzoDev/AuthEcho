@@ -95,7 +95,7 @@ const signin = async (req, res) => {
 
 const updateEmail = async (req, res) => {
   try {
-    const { userData, email: newEmail } = req.body;
+    const { userData, email: newEmail, verificationCode } = req.body;
     const { email: currentEmail } = req.user;
 
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -104,16 +104,39 @@ const updateEmail = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (!newEmail) {
+      return res.status(400).json({ message: "Email is not provided", success: false });
+    }
+
     if (newEmail && newEmail === currentEmail) {
       return res.status(409).json({ message: "New email must be different from the current email", success: false });
     }
 
-    if (newEmail) {
-      user.email = newEmail;
-      await user.save();
+    const schema = Joi.object({
+      newEmail: Joi.string().email().required(),
+    });
+
+    const { error: emailError } = schema.validate({ newEmail });
+
+    if (emailError) {
+      return res.status(400).json({ message: emailError.details[0].message, success: false });
     }
 
-    res.status(200).json({ message: "Email updated successfully", success: true });
+    const isVerificationEqual = verificationCode === user.verificationCode;
+
+    if (!isVerificationEqual) {
+      return res.status(400).json({ message: "Verification code is wrong", success: false });
+    }
+
+    const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.email = newEmail;
+    user.verificationCode = newVerificationCode;
+    await user.save();
+
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(200).json({ message: "Email updated successfully", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -148,7 +171,7 @@ const updateUsername = async (req, res) => {
 };
 
 const sendVerificationcode = async (req, res) => {
-  const { userData } = req.body;
+  const { userData, emailBodyText, to } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -161,7 +184,7 @@ const sendVerificationcode = async (req, res) => {
     const userName = user.name;
     const userVerificationCode = user.verificationCode;
 
-    const verificationCodeSent = await sendEmail(userEmail, "Authecho", `Here is the verification code to reset your password: ${userVerificationCode}`);
+    const verificationCodeSent = await sendEmail(to || userEmail, "Authecho", `${emailBodyText} ${userVerificationCode}`);
 
     if (!verificationCodeSent) {
       return res.status(500).json({ message: `Verification code error ${userName}`, success: false });
@@ -230,7 +253,7 @@ const verifyAuthorization = async (req, res) => {
   const user = await UserModel.findOne({ email });
 
   if (!user) {
-    return res.status(404).json({ message: "User not found", success: false });
+    return res.status(404).json({ message: "Usery not found", success: false });
   }
 
   res.status(200).json({ message: "Authorized", success: true });
