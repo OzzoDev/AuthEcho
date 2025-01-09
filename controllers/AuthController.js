@@ -244,7 +244,7 @@ const getUserName = async (req, res) => {
     return res.status(404).json({ message: "User not found", success: false });
   }
 
-  res.status(200).json({ message: "User found", success: true, name: user.name });
+  res.status(200).json({ message: user.name, success: true });
 };
 
 module.exports = {
