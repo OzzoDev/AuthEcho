@@ -197,6 +197,28 @@ const sendVerificationcode = async (req, res) => {
   }
 };
 
+const validateEmail = async (req, res) => {
+  const { userData, newEmail } = req.body;
+  const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+  const email = await UserModel.findOne({ email: newEmail });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found", success: false });
+  }
+
+  const isEmailNew = newEmail !== user.email;
+
+  if (!isEmailNew) {
+    return res.status(400).json({ message: "New email cannot match current email", success: false });
+  }
+
+  if (email) {
+    return res.status(400).json({ message: "Email already exists", success: false });
+  }
+
+  res.status(200).json({ message: "Email is valid", success: true });
+};
+
 const validatePassword = async (req, res) => {
   const { newPassword, confirmNewPassword } = req.body;
 
@@ -274,6 +296,7 @@ module.exports = {
   signup,
   verifyAccount,
   signin,
+  validateEmail,
   updateEmail,
   updateUsername,
   sendVerificationcode,

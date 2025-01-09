@@ -1,6 +1,6 @@
-const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData } = require("../controllers/AuthController");
+const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
-const { signupValidation } = require("../middlewares/AuthValidation");
+const { signupValidation, emailValidation } = require("../middlewares/AuthValidation");
 
 const router = require("express").Router();
 
@@ -10,6 +10,7 @@ router.post("/signin", signin);
 router.put("/updateemail", ensureAuthenticated, updateEmail);
 router.put("/updateusername", ensureAuthenticated, updateUsername);
 router.post("/sendverificationcode", sendVerificationcode);
+router.post("/validateemail", emailValidation, validateEmail);
 router.post("/validatepassword", validatePassword);
 router.post("/resetpassword", resetPassword);
 router.get("/verify", ensureAuthenticated, verifyAuthorization);

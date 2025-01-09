@@ -28,7 +28,23 @@ const validateNewPassword = (newPassword, confirmNewPassword) => {
   return { isValid: true, message: "Password is valid" };
 };
 
+const emailValidation = (req, res, next) => {
+  const { newEmail } = req.body;
+  const schema = Joi.object({
+    newEmail: Joi.string().email().required(),
+  });
+
+  const { error } = schema.validate({ newEmail });
+
+  if (error) {
+    return res.status(400).json({ message: "New email is invalid", error });
+  }
+
+  next();
+};
+
 module.exports = {
   signupValidation,
   validateNewPassword,
+  emailValidation,
 };
