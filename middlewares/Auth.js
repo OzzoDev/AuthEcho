@@ -7,21 +7,21 @@ const ensureAuthenticated = (req, res, next) => {
   const auth = req.headers["authorization"];
 
   if (!auth) {
-    return res.status(403).json({ message: "Unauthorized, JWT token is required" });
+    return res.status(403).json({ message: "Access denied. Please log in to continue." });
   }
 
-  const token = auth.split(" ")[1];
+  const credentials = auth.split(" ")[1];
 
-  if (!token) {
-    return res.status(403).json({ message: "Unauthorized, JWT token is required" });
+  if (!credentials) {
+    return res.status(403).json({ message: "Access denied. Please provide your login credentials." });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(credentials, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ message: "Unauthorized, JWT token is wrong or has expired" });
+    return res.status(403).json({ message: "Access denied. Your session has expired or is invalid. Please log in again." });
   }
 };
 
