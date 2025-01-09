@@ -11,8 +11,6 @@ const signup = async (req, res) => {
     const userEmail = await UserModel.findOne({ email });
     const userName = await UserModel.findOne({ name });
 
-    console.log(name, email, password);
-
     if (userEmail) {
       return res.status(409).json({ message: "Email already exists", success: false });
     }
@@ -33,7 +31,10 @@ const signup = async (req, res) => {
     userModel.password = await bcrypt.hash(password, 10);
     await userModel.save();
 
-    res.status(201).json({ message: "Signup successfully", success: true });
+    const user = await UserModel.findOne({ email });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(201).json({ message: "Signup successfully", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -85,7 +86,7 @@ const signin = async (req, res) => {
 
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-    res.status(200).json({ message: "Signin successfully", success: true, jwtToken, email: user.email, name: user.name });
+    res.status(200).json({ message: "Signin successfully", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -215,7 +216,9 @@ const resetPassword = async (req, res) => {
     user.verificationCode = newVerificationCode;
     await user.save();
 
-    res.status(200).json({ message: `Password successfully updated for ${userName}` });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(200).json({ message: `Password successfully updated for ${userName}`, success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Error resetting password", success: false });
     console.error(`Error resetting password for user: ${userData}`, error);
