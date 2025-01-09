@@ -31,7 +31,7 @@ export default function SigninPage() {
         navigate("/account");
       } else {
         await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword });
-        await sendVerificationCode(formData.userData);
+        await sendVerificationCode({ userData: formData.userData, emailBodyText: "Here is the verification code to reset your password:" });
         setVerify(true);
       }
       setStatus("success");

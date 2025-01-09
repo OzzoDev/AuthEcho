@@ -4,6 +4,12 @@ export type User={
     password: string,
 }
 
+export type UpdateEmail = {
+    userData:string,
+    email:string,
+    verificationCode:string,
+}
+
 export type AxiosRequest<T = string> = {
     url:string, 
     data?:T
@@ -23,6 +29,11 @@ export type SignUp = {
 export type SignIn = {
     userData:string, 
     password:string,
+}
+
+export type EmailValidation = {
+    userData:string,
+    newEmail:string,
 }
 
 export type VerifyAccountCredz = {

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { TOKEN_KEY } from "../constants/contants";
 import { verify } from "./ServerClient";
 import axios from "axios";
+import { FetchStatus } from "../types/userTypes";
 
 export function capitalize(str: string): string {
     if (!str) return str; 
@@ -38,13 +39,19 @@ export function removeData(key:string):void{
     Cookies.remove(key); 
 }
 
-export async function verifyAccount (setError: (error: string) => void) {
+export async function verifyAccount (setError: (error: string) => void, setStatus?:(status:FetchStatus)=>void) {
     try {
       await verify();
+      if(setStatus){
+        setStatus("success"); 
+      }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
         setError(errorMessage);
+        if(setStatus){
+            setStatus("error"); 
+        }
       }
     }
   };

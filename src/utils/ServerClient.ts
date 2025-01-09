@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, PasswordValidation, ResetPassword, SignIn, User, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, User, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
-import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData } from "../types/apiTypes";
+import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest } from "../types/apiTypes";
 import { getToken, storeData, storeToken } from "./utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 
@@ -41,12 +41,43 @@ export async function signIn(userData: SignIn): Promise<AxiosResponse<JwtTokenRe
     }
 }
 
-export async function sendVerificationCode(userData:string):Promise<AxiosResponse<string>>{            
+export async function sendVerificationCode(params:VerificationCodeRequest):Promise<AxiosResponse<VerificationCodeRequest>>{            
     try{
-        return await axios.post<string>(AUTH_ENDPOINTS.SENDVERIFICATIONCODE, {userData});
+        return await axios.post<VerificationCodeRequest>(AUTH_ENDPOINTS.SENDVERIFICATIONCODE, params);
     }catch(error : unknown){
         console.error(error);
         throw error; 
+    }
+}
+
+export async function updateEmail(updateData:UpdateEmail):Promise<AxiosResponse<JwtTokenResponse>>{                
+    try{
+        const response = await axios.put<JwtTokenResponse>(AUTH_ENDPOINTS.UPDATEEMAIL,
+            updateData,
+            {
+                headers:{
+                    Authorization:`Bearer ${getToken()}`,
+                    'Content-Type': 'application/json'
+                }
+
+            }
+        );
+        const token:string = response.data.jwtToken; 
+        storeToken(token); 
+        storeData(USEREMAIL_KEY, updateData.email); 
+        return response; 
+    }catch(error : unknown){
+        console.error(error);
+        throw error; 
+    }
+}
+
+export async function validateEmail(data:EmailValidation):Promise<AxiosResponse<ApiResponse>>{
+    try{
+        return await axios.post<PasswordValidation, AxiosResponse<ApiResponse>>(AUTH_ENDPOINTS.VALIDATEEMAIL, data);
+    }catch(error:unknown){
+        console.error(error);
+        throw error;
     }
 }
 

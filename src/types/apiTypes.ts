@@ -24,6 +24,12 @@ export type UserDataResponse = {
     userData: UserData,
 }
 
+export type VerificationCodeRequest = {
+    userData:string,
+    emailBodyText:string,
+    to?:string,
+}
+
 export type UserData = {
     name:string,
     email:string,
