@@ -236,7 +236,7 @@ const verifyAuthorization = async (req, res) => {
   res.status(200).json({ message: "Authorized", success: true });
 };
 
-const getUserName = async (req, res) => {
+const getUserData = async (req, res) => {
   const { userData } = req.body;
   const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
@@ -244,7 +244,7 @@ const getUserName = async (req, res) => {
     return res.status(404).json({ message: "User not found", success: false });
   }
 
-  res.status(200).json({ message: user.name, success: true });
+  res.status(200).json({ message: "User found", success: true, userData: { name: user.name, email: user.email } });
 };
 
 module.exports = {
@@ -257,5 +257,5 @@ module.exports = {
   validatePassword,
   resetPassword,
   verifyAuthorization,
-  getUserName,
+  getUserData,
 };

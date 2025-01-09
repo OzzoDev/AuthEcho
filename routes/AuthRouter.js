@@ -13,6 +13,6 @@ router.post("/sendverificationcode", sendVerificationcode);
 router.post("/validatepassword", validatePassword);
 router.post("/resetpassword", resetPassword);
 router.get("/verify", ensureAuthenticated, verifyAuthorization);
-router.post("/username", getUserName);
+router.post("/userdata", getUserData);
 
 module.exports = router;
