@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchStatus, User, VerifyAccountCredz } from "../types/userTypes";
 //@ts-ignore
-import "../styles/SignupPage.css";
+import "../styles/signupPage.css";
 import { signUp, verifyAccount } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import axios from "axios";
-import { capitalize, getToken, removeAllQuotes } from "../utils/utils";
+import { capitalize, removeAllQuotes, storeData } from "../utils/utils";
+import { USERNAME_KEY } from "../constants/contants";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<User>({ name: "", email: "", password: "" });
@@ -35,16 +36,11 @@ export default function SignUpPage() {
       setError("");
       if (isSignedUp) {
         const verifyCredz: VerifyAccountCredz = { email: formData.email, verificationCode: verificationCode };
-        console.log("Very: ", verifyCredz);
-
         await verifyAccount(verifyCredz);
-        console.log("Account verified");
+        storeData(USERNAME_KEY, formData.name);
         navigate("/account");
       } else {
         await signUp(formData);
-        console.log(getToken());
-
-        console.log("Sign up successfully");
         setSignedUp(true);
       }
       setStatus("success");

@@ -1,4 +1,4 @@
-export interface ApiRes {
+export type ApiRes = {
     data: JwtTokenResponse; 
     status: number;
     statusText: string;
@@ -7,13 +7,24 @@ export interface ApiRes {
     request: Record<string, any>;
 }
 
-export interface JwtTokenResponse {
+export type JwtTokenResponse = {
     message: string;
     success: boolean;
     jwtToken: string; 
 }
 
-export interface VerifyResponse {
+export type DefaultResponse = {
     message: string;
     success: boolean;
+}
+
+export type UserDataResponse = {
+    message:string,
+    success:boolean,
+    userData: UserData,
+}
+
+export type UserData = {
+    name:string,
+    email:string,
 }
