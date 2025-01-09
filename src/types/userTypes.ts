@@ -10,6 +10,11 @@ export type UpdateEmail = {
     verificationCode:string,
 }
 
+export type UpdateUsername = {
+    userData:string,
+    name:string,
+}
+
 export type AxiosRequest<T = string> = {
     url:string, 
     data?:T

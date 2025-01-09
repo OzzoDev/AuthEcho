@@ -1,19 +1,19 @@
 //@ts-ignore
 import "../styles/accountPage.css";
 import { useEffect, useState } from "react";
-import { capitalize, getData, removeAllQuotes, removeData, removeToken, storeData, verifyAccount } from "../utils/utils";
+import { capitalize, getData, removeAllQuotes, removeData, removeToken, verifyAccount } from "../utils/utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
-import { FetchStatus, UpdateEmail } from "../types/userTypes";
+import { FetchStatus } from "../types/userTypes";
 import axios from "axios";
 import ReactLoading from "react-loading";
-import { sendVerificationCode, updateEmail, validateEmail } from "../utils/ServerClient";
+import { sendVerificationCode, updateEmail, updateUsername, validateEmail } from "../utils/ServerClient";
 
 export default function AccountPage() {
-  // const [userData, setUserData] = useState<UpdateEmail>({ userData: getData(USERNAME_KEY) || getData(USEREMAIL_KEY), newEmail: "", verificationCode: "" });
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
   const [email, setEmail] = useState<string>(getData(USEREMAIL_KEY));
   const [newEmail, setNewEmail] = useState<string>("");
+  const [newName, setNewName] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("123456");
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
   const [status, setStatus] = useState<FetchStatus>("idle");
@@ -35,6 +35,11 @@ export default function AccountPage() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     verifyEmail ? setVerificationCode(value) : setNewEmail(value);
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setNewName(value);
   };
 
   const changeEmail = async () => {
@@ -59,8 +64,22 @@ export default function AccountPage() {
         setUpdateError(errorMessage);
       }
     }
-    if (verifyEmail) {
-    } else {
+  };
+
+  const changeUsername = async () => {
+    try {
+      setStatus("loading");
+      setUpdateError("");
+      await updateUsername({ userData: email || name, name: newName });
+      setName(newName);
+      setStatus("success");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
+        console.error("Email verification failed", error);
+        setStatus("error");
+        setUpdateError(errorMessage);
+      }
     }
   };
 
@@ -86,16 +105,23 @@ export default function AccountPage() {
               {status === "loading" ? (
                 <ReactLoading type="spin" color="#00f" height={50} width={50} />
               ) : (
-                <>
+                <div className="updateWrapper">
+                  <p className="error">{updateError}</p>
                   <div className="updateContainer">
                     <label>Update Email</label>
                     <div className="updateControls">
-                      <input type="text" name="userData" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
+                      <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
                       <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
                     </div>
                   </div>
-                  <p className="error">{updateError}</p>
-                </>
+                  <div className="updateContainer">
+                    <label>Update Username</label>
+                    <div className="updateControls">
+                      <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
+                      <button onClick={changeUsername}>Update</button>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           )}

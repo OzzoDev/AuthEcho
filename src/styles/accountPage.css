@@ -6,14 +6,20 @@
   align-items: center;
   gap: 10px;
 
-  .updateContainer {
+  .updateWrapper {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    .updateControls {
+    align-items: center;
+    gap: 20px;
+    .updateContainer {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-direction: column;
+      gap: 5px;
+      .updateControls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
     }
   }
 

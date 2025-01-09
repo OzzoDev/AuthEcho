@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, User, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdateUsername, User, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
 import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest } from "../types/apiTypes";
 import { getToken, storeData, storeToken } from "./utils";
@@ -65,6 +65,28 @@ export async function updateEmail(updateData:UpdateEmail):Promise<AxiosResponse<
         const token:string = response.data.jwtToken; 
         storeToken(token); 
         storeData(USEREMAIL_KEY, updateData.email); 
+        return response; 
+    }catch(error : unknown){
+        console.error(error);
+        throw error; 
+    }
+}
+
+export async function updateUsername(updateData:UpdateUsername):Promise<AxiosResponse<JwtTokenResponse>>{                    
+    try{
+        const response = await axios.put<JwtTokenResponse>(AUTH_ENDPOINTS.UPDATEUSERNAME,
+            updateData,
+            {
+                headers:{
+                    Authorization:`Bearer ${getToken()}`,
+                    'Content-Type': 'application/json'
+                }
+
+            }
+        );
+        const token:string = response.data.jwtToken; 
+        storeToken(token); 
+        storeData(USERNAME_KEY, updateData.name); 
         return response; 
     }catch(error : unknown){
         console.error(error);
