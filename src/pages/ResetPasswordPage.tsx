@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchStatus, ResetPassword } from "../types/userTypes";
-// @ts-ignore
-import "../styles/signupPage.css";
 import { capitalize, removeAllQuotes } from "../utils/utils";
 import axios from "axios";
-import { resetpassword, sendVerificationCode, validatePassword } from "../utils/ServerClient";
+import { resetPassword, sendVerificationCode, validatePassword } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
+// @ts-ignore
+import "../styles/signupPage.css";
 
 export default function SigninPage() {
   const [formData, setFormData] = useState<ResetPassword>({ userData: "", verificationCode: "", newPassword: "", confirmNewPassword: "" });
@@ -27,8 +27,7 @@ export default function SigninPage() {
       setStatus("loading");
       setError("");
       if (verify) {
-        console.log("Formdata: ", formData);
-        await resetpassword(formData);
+        await resetPassword(formData);
         navigate("/account");
       } else {
         await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword });

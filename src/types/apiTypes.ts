@@ -1,5 +1,5 @@
 export interface ApiRes {
-    data: SignInResponse; // This is correct for your response structure
+    data: JwtTokenResponse; 
     status: number;
     statusText: string;
     headers: Record<string, string>;
@@ -7,13 +7,10 @@ export interface ApiRes {
     request: Record<string, any>;
 }
 
-// SignInResponse remains the same
-export interface SignInResponse {
+export interface JwtTokenResponse {
     message: string;
     success: boolean;
-    jwtToken: string; // This will be directly accessible
-    email: string;
-    name: string;
+    jwtToken: string; 
 }
 
 export interface VerifyResponse {

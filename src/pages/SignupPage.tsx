@@ -6,7 +6,7 @@ import "../styles/SignupPage.css";
 import { signUp, verifyAccount } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import axios from "axios";
-import { capitalize, removeAllQuotes } from "../utils/utils";
+import { capitalize, getToken, removeAllQuotes } from "../utils/utils";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<User>({ name: "", email: "", password: "" });
@@ -42,6 +42,8 @@ export default function SignUpPage() {
         navigate("/account");
       } else {
         await signUp(formData);
+        console.log(getToken());
+
         console.log("Sign up successfully");
         setSignedUp(true);
       }

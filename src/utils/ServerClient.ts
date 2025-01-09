@@ -1,12 +1,15 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, PasswordValidation, ResetPassword, SignIn, SignUp, User, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, PasswordValidation, ResetPassword, SignIn, User, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
-import { SignInResponse, VerifyResponse } from "../types/apiTypes";
-import { getToken } from "./utils";
+import { JwtTokenResponse, VerifyResponse } from "../types/apiTypes";
+import { getToken, storeToken } from "./utils";
 
-export async function signUp(userData:User):Promise<AxiosResponse<SignUp>>{    
+export async function signUp(userData:User):Promise<AxiosResponse<JwtTokenResponse>>{    
     try{
-        return await axios.post<SignUp>(AUTH_ENDPOINTS.SIGNUP, userData);
+        const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.SIGNUP, userData);
+        const token:string = response.data.jwtToken; 
+        storeToken(token); 
+        return response; 
     }catch(error : unknown){
         console.error(error);
         throw error; 
@@ -22,9 +25,12 @@ export async function verifyAccount(credentials:VerifyAccountCredz):Promise<Axio
     }
 }
 
-export async function signIn(userData: SignIn): Promise<AxiosResponse<SignInResponse>> {        
+export async function signIn(userData: SignIn): Promise<AxiosResponse<JwtTokenResponse>> {        
     try {
-        return await axios.post<SignInResponse>(AUTH_ENDPOINTS.SIGNIN, userData);
+        const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.SIGNIN, userData);
+        const token:string = response.data.jwtToken; 
+        storeToken(token); 
+        return response; 
     } catch (error: unknown) {
         console.error(error);
         throw error; 
@@ -49,9 +55,12 @@ export async function validatePassword(credentials:PasswordValidation):Promise<A
     }
 }
 
-export async function resetpassword(userData:ResetPassword):Promise<AxiosResponse<ResetPassword>>{                
+export async function resetPassword(userData:ResetPassword):Promise<AxiosResponse<JwtTokenResponse>>{                
     try{
-        return await axios.post<ResetPassword>(AUTH_ENDPOINTS.RESETPASSWORD, userData);
+        const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.RESETPASSWORD, userData);
+        const token:string = response.data.jwtToken; 
+        storeToken(token); 
+        return response; 
     }catch(error : unknown){
         console.error(error);
         throw error; 
