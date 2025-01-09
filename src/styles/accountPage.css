@@ -1,7 +1,11 @@
-div {
+.accountContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
+
+  button {
+    width: fit-content;
+  }
 }
