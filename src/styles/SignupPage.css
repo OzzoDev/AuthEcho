@@ -25,11 +25,12 @@ div {
 
 label {
   display: block;
-  font-weight: bold;
+  font-weight: 600;
   color: #333;
 }
 
 input {
+  margin-top: 5px;
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -49,8 +50,9 @@ input:focus {
   margin-bottom: 10px;
   position: absolute;
   left: 50%;
-  bottom: 65px;
+  bottom: 100px;
   transform: translate(-50%);
+  color: red;
 }
 
 button {
@@ -75,7 +77,13 @@ button:active {
   transform: translateY(0);
 }
 
-.signInLink {
+.links {
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+a {
+  width: fit-content;
   text-align: center;
 }

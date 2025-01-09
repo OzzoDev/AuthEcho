@@ -32,8 +32,11 @@ export default function SignUpPage() {
     e.preventDefault();
     try {
       setStatus("loading");
+      setError("");
       if (isSignedUp) {
         const verifyCredz: VerifyAccountCredz = { email: formData.email, verificationCode: verificationCode };
+        console.log("Very: ", verifyCredz);
+
         await verifyAccount(verifyCredz);
         console.log("Account verified");
         navigate("/account");
@@ -45,7 +48,7 @@ export default function SignUpPage() {
       setStatus("success");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message));
+        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
         console.error("Creation or verification of account failed", error);
         setStatus("error");
         setError(errorMessage);
@@ -91,9 +94,7 @@ export default function SignUpPage() {
           )}
           <p className="errorMessage">{error}</p>
           <button type="submit">{isSignedUp ? "Verify Account" : "Sign Up"}</button>
-          <a className="signInLink" href="/signin">
-            Already have an account? Sign in here
-          </a>
+          <a href="/signin">Already have an account? Sign in here</a>
         </form>
       )}
     </>

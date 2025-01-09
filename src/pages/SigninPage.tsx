@@ -24,12 +24,13 @@ export default function SigninPage() {
     e.preventDefault();
     try {
       setStatus("loading");
-      console.log("FormData: ", formData);
+      setError("");
+
       await signIn(formData);
       navigate("/account");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message));
+        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
         console.error("Sign in failed", error);
         setStatus("error");
         setError(errorMessage);
@@ -57,6 +58,14 @@ export default function SigninPage() {
           </div>
           <p className="errorMessage">{error}</p>
           <button type="submit">Sign In</button>
+          <div className="links">
+            <a className="signInLink" href="/signup">
+              No account? Sign up here
+            </a>
+            <a className="signInLink" href="/resetpassword">
+              Reset password
+            </a>
+          </div>
         </form>
       )}
     </>

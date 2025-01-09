@@ -9,6 +9,11 @@ export type AxiosRequest<T = string> = {
     data?:T
 }
 
+export type ApiResponse={
+    message:string,
+    success:boolean,
+}
+
 export type SignUp = {
     email:string, 
     name: string,
@@ -23,6 +28,18 @@ export type SignIn = {
 export type VerifyAccountCredz = {
     email: string,
     verificationCode:string,
+}
+
+export type ResetPassword = {
+    userData:string,
+    verificationCode:string,
+    newPassword:string,
+    confirmNewPassword:string,
+}
+
+export type PasswordValidation = {
+    newPassword:string,
+    confirmNewPassword:string,
 }
 
 export type FetchStatus = "idle" | "loading" | "error" | "success";

@@ -7,5 +7,6 @@ export const AUTH_ENDPOINTS = {
     UPDATEEMAIL: `${API_BASE_URL}/auth/updateemail`,
     UPDATEUSERNAME: `${API_BASE_URL}/auth/updateusername`,
     SENDVERIFICATIONCODE: `${API_BASE_URL}/auth/sendverificationcode`,
+    VALIDATEPASSWORD:`${API_BASE_URL}/auth/validatepassword`,
     RESETPASSWORD: `${API_BASE_URL}/auth/resetpassword`,
 }

@@ -4,5 +4,6 @@ export function capitalize(str: string): string {
 }
   
 export function removeAllQuotes(str: string): string {
+    if (!str) return str; 
     return str.replace(/"/g, "");
 }
