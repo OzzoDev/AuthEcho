@@ -3,12 +3,15 @@ const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
+const { validateNewPassword } = require("../middlewares/AuthValidation");
 
 const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const userEmail = await UserModel.findOne({ email });
     const userName = await UserModel.findOne({ name });
+
+    console.log(name, email, password);
 
     if (userEmail) {
       return res.status(409).json({ message: "Email already exists", success: false });
@@ -28,7 +31,6 @@ const signup = async (req, res) => {
 
     const userModel = new UserModel({ name, email, password, verificationCode, verified: false });
     userModel.password = await bcrypt.hash(password, 10);
-    userModel.verificationCode = await bcrypt.hash(verificationCode, 10);
     await userModel.save();
 
     res.status(201).json({ message: "Signup successfully", success: true });
@@ -47,7 +49,7 @@ const verifyAccount = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isVerificationEqual = await bcrypt.compare(verificationCode, user.verificationCode);
+    const isVerificationEqual = verificationCode === verificationCode;
 
     if (!isVerificationEqual) {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
@@ -55,7 +57,7 @@ const verifyAccount = async (req, res) => {
 
     const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    user.verificationCode = await bcrypt.hash(newVerificationCode, 10);
+    user.verificationCode = newVerificationCode;
     user.verified = true;
     await user.save();
 
@@ -158,7 +160,7 @@ const sendVerificationcode = async (req, res) => {
     const userName = user.name;
     const userVerificationCode = user.verificationCode;
 
-    const verificationCodeSent = await sendEmail(userEmail, "Authecho - reset password verification code", `Your verification code is: ${userVerificationCode}`);
+    const verificationCodeSent = await sendEmail(userEmail, "Authecho", `Here is the verification code to reset your password: ${userVerificationCode}`);
 
     if (!verificationCodeSent) {
       return res.status(500).json({ message: `Verification code error ${userName}`, success: false });
@@ -169,6 +171,18 @@ const sendVerificationcode = async (req, res) => {
     res.status(500).json({ message: "Error sending verification code", success: false });
     console.error(`Error sending verification code for user: ${userData}`, error);
   }
+};
+
+const validatePassword = async (req, res) => {
+  const { newPassword, confirmNewPassword } = req.body;
+
+  const isPasswordVaild = validateNewPassword(newPassword, confirmNewPassword);
+
+  if (!isPasswordVaild.isValid) {
+    return res.status(400).json({ message: isPasswordVaild.message, success: false });
+  }
+
+  res.status(200).json({ message: isPasswordVaild.message, success: true });
 };
 
 const resetPassword = async (req, res) => {
@@ -183,22 +197,30 @@ const resetPassword = async (req, res) => {
 
     const userName = user.name;
 
-    const isVerificationEqual = await bcrypt.compare(verificationCode, user.verificationCode);
+    const isVerificationEqual = verificationCode === user.verificationCode;
 
     if (!isVerificationEqual) {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const passwordSchema = Joi.object({
-      newPassword: Joi.string().min(8).max(100).required(),
-      confirmNewPassword: Joi.ref("newPassword"),
-    });
+    const isPasswordVaild = validateNewPassword(newPassword, confirmNewPassword);
 
-    const { error: passwordError } = passwordSchema.validate({ newPassword, confirmNewPassword });
-
-    if (passwordError) {
-      return res.status(400).json({ message: passwordError.details[0].message, success: false });
+    if (!isPasswordVaild.isValid) {
+      return res.status(400).json({ message: isPasswordVaild.message, success: false });
     }
+
+    // const passwordSchema = Joi.object({
+    //   newPassword: Joi.string().min(8).max(100).required(),
+    //   confirmNewPassword: Joi.ref("newPassword"),
+    // });
+
+    // const { error: passwordError } = passwordSchema.validate({ newPassword, confirmNewPassword });
+
+    // if (passwordError) {
+    //   const error = passwordError.details[0].message;
+    //   const errorMessage = error.includes("ref") ? "Passwords must match" : error;
+    //   return res.status(400).json({ message: errorMessage, success: false });
+    // }
 
     const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -220,5 +242,6 @@ module.exports = {
   updateEmail,
   updateUsername,
   sendVerificationcode,
+  validatePassword,
   resetPassword,
 };
