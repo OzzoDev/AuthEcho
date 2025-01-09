@@ -99,6 +99,7 @@ const updateEmail = async (req, res) => {
     const { email: currentEmail } = req.user;
 
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+    const emailDuplicate = await UserModel.findOne({ email: newEmail });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
@@ -108,8 +109,8 @@ const updateEmail = async (req, res) => {
       return res.status(400).json({ message: "Email is not provided", success: false });
     }
 
-    if (newEmail && newEmail === currentEmail) {
-      return res.status(409).json({ message: "New email must be different from the current email", success: false });
+    if (newEmail === currentEmail) {
+      return res.status(409).json({ message: "New email must be different from current email", success: false });
     }
 
     const schema = Joi.object({
@@ -120,6 +121,10 @@ const updateEmail = async (req, res) => {
 
     if (emailError) {
       return res.status(400).json({ message: emailError.details[0].message, success: false });
+    }
+
+    if (emailDuplicate) {
+      return res.status(409).json({ message: "Email already exists", success: false });
     }
 
     const isVerificationEqual = verificationCode === user.verificationCode;
@@ -149,21 +154,30 @@ const updateUsername = async (req, res) => {
     const { name: currentName } = req.user;
 
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+    const usernameDuplicate = await UserModel.findOne({ name: newName });
+
+    if (!newName) {
+      return res.status(400).json({ message: "Username is not provided", success: false });
+    }
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (newName && newName === currentName) {
-      return res.status(409).json({ message: "New username must be different from the current username", success: false });
+    if (newName === currentName) {
+      return res.status(409).json({ message: "New username must be different from current username", success: false });
     }
 
-    if (newName) {
-      user.name = newName;
-      await user.save();
+    if (usernameDuplicate) {
+      return res.status(409).json({ message: "New username must be different from current username", success: false });
     }
 
-    res.status(200).json({ message: "Username updated successfully", success: true });
+    user.name = newName;
+    await user.save();
+
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(200).json({ message: "Username updated successfully", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -200,7 +214,7 @@ const sendVerificationcode = async (req, res) => {
 const validateEmail = async (req, res) => {
   const { userData, newEmail } = req.body;
   const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-  const email = await UserModel.findOne({ email: newEmail });
+  const emailDuplicate = await UserModel.findOne({ email: newEmail });
 
   if (!user) {
     return res.status(404).json({ message: "User not found", success: false });
@@ -212,8 +226,8 @@ const validateEmail = async (req, res) => {
     return res.status(400).json({ message: "New email cannot match current email", success: false });
   }
 
-  if (email) {
-    return res.status(400).json({ message: "Email already exists", success: false });
+  if (emailDuplicate) {
+    return res.status(409).json({ message: "Email already exists", success: false });
   }
 
   res.status(200).json({ message: "Email is valid", success: true });

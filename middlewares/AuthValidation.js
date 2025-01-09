@@ -43,8 +43,25 @@ const emailValidation = (req, res, next) => {
   next();
 };
 
+const usernameValidation = (req, res, next) => {
+  const { name } = req.body;
+
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(20).required(),
+  });
+
+  const { error } = schema.validate({ name });
+
+  if (error) {
+    return res.status(400).json({ message: "Username must be minimum 3 characters and maximum 20 characters long", error });
+  }
+
+  next();
+};
+
 module.exports = {
   signupValidation,
   validateNewPassword,
   emailValidation,
+  usernameValidation,
 };
