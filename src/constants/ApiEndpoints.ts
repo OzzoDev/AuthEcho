@@ -9,4 +9,5 @@ export const AUTH_ENDPOINTS = {
     SENDVERIFICATIONCODE: `${API_BASE_URL}/auth/sendverificationcode`,
     VALIDATEPASSWORD:`${API_BASE_URL}/auth/validatepassword`,
     RESETPASSWORD: `${API_BASE_URL}/auth/resetpassword`,
+    VERIFY:`${API_BASE_URL}/auth/verify`
 }

@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { ApiResponse, PasswordValidation, ResetPassword, SignIn, SignUp, User, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
+import { SignInResponse, VerifyResponse } from "../types/apiTypes";
+import { getToken } from "./utils";
 
 export async function signUp(userData:User):Promise<AxiosResponse<SignUp>>{    
     try{
@@ -20,10 +22,10 @@ export async function verifyAccount(credentials:VerifyAccountCredz):Promise<Axio
     }
 }
 
-export async function signIn(userData:SignIn):Promise<AxiosResponse<SignIn>>{        
-    try{
-        return await axios.post<SignIn>(AUTH_ENDPOINTS.SIGNIN, userData);
-    }catch(error : unknown){
+export async function signIn(userData: SignIn): Promise<AxiosResponse<SignInResponse>> {        
+    try {
+        return await axios.post<SignInResponse>(AUTH_ENDPOINTS.SIGNIN, userData);
+    } catch (error: unknown) {
         console.error(error);
         throw error; 
     }
@@ -51,6 +53,20 @@ export async function resetpassword(userData:ResetPassword):Promise<AxiosRespons
     try{
         return await axios.post<ResetPassword>(AUTH_ENDPOINTS.RESETPASSWORD, userData);
     }catch(error : unknown){
+        console.error(error);
+        throw error; 
+    }
+}
+
+export async function verify():Promise<AxiosResponse<VerifyResponse>> {
+    try{
+        return await axios.get<VerifyResponse>(AUTH_ENDPOINTS.VERIFY,{
+            headers:{
+                Authorization:`Bearer ${getToken()}`
+            }
+        });
+
+    }catch(error:unknown){
         console.error(error);
         throw error; 
     }

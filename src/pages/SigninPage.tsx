@@ -5,7 +5,7 @@ import { FetchStatus, SignIn } from "../types/userTypes";
 import "../styles/signupPage.css";
 import { capitalize, removeAllQuotes } from "../utils/utils";
 import axios from "axios";
-import { signIn } from "../utils/ServerClient";
+import { signIn, verify } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 
 export default function SigninPage() {
@@ -25,8 +25,8 @@ export default function SigninPage() {
     try {
       setStatus("loading");
       setError("");
-
       await signIn(formData);
+      await verify();
       navigate("/account");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
