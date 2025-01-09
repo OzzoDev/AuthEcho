@@ -19,6 +19,7 @@ app.use("/sendverificationcode", createProxyMiddleware({ target: `${targetServer
 app.use("/validatepassword", createProxyMiddleware({ target: `${targetServer}/validatepassword`, changeOrigin: true }));
 app.use("/resetpassword", createProxyMiddleware({ target: `${targetServer}/resetpassword`, changeOrigin: true }));
 app.use("/verify", createProxyMiddleware({ target: `${targetServer}/verify`, changeOrigin: true }));
+app.use("/username", createProxyMiddleware({ target: `${targetServer}/username`, changeOrigin: true }));
 
 app.use("/ping", createProxyMiddleware({ target: `${targetServer}/ping`, changeOrigin: true }));
 
