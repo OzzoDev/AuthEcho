@@ -209,19 +209,6 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
     }
 
-    // const passwordSchema = Joi.object({
-    //   newPassword: Joi.string().min(8).max(100).required(),
-    //   confirmNewPassword: Joi.ref("newPassword"),
-    // });
-
-    // const { error: passwordError } = passwordSchema.validate({ newPassword, confirmNewPassword });
-
-    // if (passwordError) {
-    //   const error = passwordError.details[0].message;
-    //   const errorMessage = error.includes("ref") ? "Passwords must match" : error;
-    //   return res.status(400).json({ message: errorMessage, success: false });
-    // }
-
     const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.password = await bcrypt.hash(newPassword, 10);
@@ -235,6 +222,17 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const verifyAuthorization = async (req, res) => {
+  const { email } = req.user;
+  const user = await UserModel.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found", success: false });
+  }
+
+  res.status(200).json({ message: "Authorized", success: true });
+};
+
 module.exports = {
   signup,
   verifyAccount,
@@ -244,4 +242,5 @@ module.exports = {
   sendVerificationcode,
   validatePassword,
   resetPassword,
+  verifyAuthorization,
 };

@@ -1,4 +1,4 @@
-const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword } = require("../controllers/AuthController");
+const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
 const { signupValidation } = require("../middlewares/AuthValidation");
 
@@ -12,5 +12,6 @@ router.put("/updateusername", ensureAuthenticated, updateUsername);
 router.post("/sendverificationcode", sendVerificationcode);
 router.post("/validatepassword", validatePassword);
 router.post("/resetpassword", resetPassword);
+router.get("/verify", ensureAuthenticated, verifyAuthorization);
 
 module.exports = router;
