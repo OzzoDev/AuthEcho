@@ -9,8 +9,8 @@ const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    const userEmail = await UserModel.findOne({ email });
-    const userName = await UserModel.findOne({ name });
+    const userEmail = await UserModel.findOne({ email }).collation({ locale: "en", strength: 1 });
+    const userName = await UserModel.findOne({ name }).collation({ locale: "en", strength: 1 });
 
     if (userEmail) {
       return res.status(409).json({ message: "Email already exists", success: false });
@@ -101,18 +101,17 @@ const updateEmail = async (req, res) => {
   const { email: currentEmail } = req.user;
 
   try {
+    if (!newEmail) {
+      return res.status(400).json({ message: "Email is not provided", success: false });
+    }
+
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-    const emailDuplicate = await UserModel.findOne({ email: newEmail });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (!newEmail) {
-      return res.status(400).json({ message: "Email is not provided", success: false });
-    }
-
-    if (newEmail === currentEmail) {
+    if (newEmail.toLowerCase() === currentEmail.toLowerCase()) {
       return res.status(409).json({ message: "New email must be different from current email", success: false });
     }
 
@@ -125,6 +124,11 @@ const updateEmail = async (req, res) => {
     if (emailError) {
       return res.status(400).json({ message: emailError.details[0].message, success: false });
     }
+
+    const emailDuplicate = await UserModel.findOne({
+      email: newEmail,
+      _id: { $ne: user._id },
+    }).collation({ locale: "en", strength: 1 });
 
     if (emailDuplicate) {
       return res.status(409).json({ message: "Email already exists", success: false });
@@ -156,12 +160,11 @@ const updateUsername = async (req, res) => {
   const { name: currentName } = req.user;
 
   try {
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-    const usernameDuplicate = await UserModel.findOne({ name: newName });
-
     if (!newName) {
       return res.status(400).json({ message: "Username is not provided", success: false });
     }
+
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
@@ -171,8 +174,13 @@ const updateUsername = async (req, res) => {
       return res.status(409).json({ message: "New username must be different from current username", success: false });
     }
 
+    const usernameDuplicate = await UserModel.findOne({
+      name: newName,
+      _id: { $ne: user._id },
+    }).collation({ locale: "en", strength: 1 });
+
     if (usernameDuplicate) {
-      return res.status(409).json({ message: "New username must be different from current username", success: false });
+      return res.status(409).json({ message: "Username alredy exists", success: false });
     }
 
     user.name = newName;

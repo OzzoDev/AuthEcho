@@ -13,7 +13,7 @@ router.post("/sendverificationcode", sendVerificationcode);
 router.post("/validateemail", emailValidation, validateEmail);
 router.post("/validatepassword", validatePassword);
 router.post("/resetpassword", resetPassword);
-router.post("/updatepassword", ensureAuthenticated, updatePassword);
+router.put("/updatepassword", ensureAuthenticated, updatePassword);
 router.get("/verify", ensureAuthenticated, verifyAuthorization);
 router.post("/userdata", getUserData);
 
