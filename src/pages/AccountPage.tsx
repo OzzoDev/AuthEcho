@@ -1,25 +1,29 @@
 //@ts-ignore
 import "../styles/accountPage.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { capitalize, getData, removeAllQuotes, removeData, removeToken, verifyAccount } from "../utils/utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
-import { FetchStatus } from "../types/userTypes";
+import { FetchStatus, Password } from "../types/userTypes";
 import axios from "axios";
 import ReactLoading from "react-loading";
-import { sendVerificationCode, updateEmail, updateUsername, validateEmail } from "../utils/ServerClient";
+import { sendVerificationCode, updateEmail, updatePassword, updateUsername, validateEmail } from "../utils/ServerClient";
 
 export default function AccountPage() {
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
   const [email, setEmail] = useState<string>(getData(USEREMAIL_KEY));
   const [newEmail, setNewEmail] = useState<string>("");
   const [newName, setNewName] = useState<string>("");
+  const [passwordData, setPasswordData] = useState<Password>({ newPassword: "", confirmNewPassword: "" });
+  const [comparePasswords, setComparePasswords] = useState<boolean>(false);
   const [verificationCode, setVerificationCode] = useState<string>("123456");
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
   const [status, setStatus] = useState<FetchStatus>("idle");
 
   const [error, setError] = useState<string>("");
   const [updateError, setUpdateError] = useState<string>("");
+
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
 
@@ -42,6 +46,15 @@ export default function AccountPage() {
     setNewName(value);
   };
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (comparePasswords) {
+      setPasswordData((prevData) => ({ ...prevData, ["confirmNewPassword"]: value }));
+    } else {
+      setPasswordData((prevData) => ({ ...prevData, ["newPassword"]: value }));
+    }
+  };
+
   const changeEmail = async () => {
     try {
       setStatus("loading");
@@ -59,7 +72,7 @@ export default function AccountPage() {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error("Email verification failed", error);
+        console.error(error);
         setStatus("error");
         setUpdateError(errorMessage);
       }
@@ -76,7 +89,32 @@ export default function AccountPage() {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error("Email verification failed", error);
+        console.error(error);
+        setStatus("error");
+        setUpdateError(errorMessage);
+      }
+    }
+  };
+
+  const changePassword = async () => {
+    if (passwordInputRef.current) {
+      passwordInputRef.current.value = "";
+    }
+
+    try {
+      if (!comparePasswords) {
+        setComparePasswords(true);
+      } else {
+        setStatus("loading");
+        setUpdateError("");
+        await updatePassword({ userData: email || name, newPassword: passwordData.newPassword, confirmNewPassword: passwordData.confirmNewPassword });
+        setComparePasswords(false);
+        setStatus("success");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
+        console.error(error);
         setStatus("error");
         setUpdateError(errorMessage);
       }
@@ -119,6 +157,13 @@ export default function AccountPage() {
                     <div className="updateControls">
                       <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
                       <button onClick={changeUsername}>Update</button>
+                    </div>
+                  </div>
+                  <div className="updateContainer">
+                    <label>Update Password</label>
+                    <div className="updateControls">
+                      <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
+                      <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
                     </div>
                   </div>
                 </div>

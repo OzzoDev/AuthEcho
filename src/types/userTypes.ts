@@ -15,6 +15,17 @@ export type UpdateUsername = {
     name:string,
 }
 
+export type UpdatePassword = {
+    userData:string, 
+    newPassword:string, 
+    confirmNewPassword:string
+}
+
+export type Password = {
+    newPassword:string, 
+    confirmNewPassword:string
+}
+
 export type AxiosRequest<T = string> = {
     url:string, 
     data?:T

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdateUsername, User, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, User, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
 import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest } from "../types/apiTypes";
 import { getToken, storeData, storeToken } from "./utils";
@@ -116,6 +116,27 @@ export async function resetPassword(userData:ResetPassword):Promise<AxiosRespons
     try{
         const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.RESETPASSWORD, userData);
         await getUserData(userData.userData); 
+        const token:string = response.data.jwtToken; 
+        storeToken(token); 
+        return response; 
+    }catch(error : unknown){
+        console.error(error);
+        throw error; 
+    }
+}
+
+export async function updatePassword(updateData:UpdatePassword):Promise<AxiosResponse<JwtTokenResponse>>{                
+    try{
+        const response = await axios.put<JwtTokenResponse>(AUTH_ENDPOINTS.UPDATEPASSWORD,
+            updateData,
+            {
+                headers:{
+                    Authorization:`Bearer ${getToken()}`,
+                    'Content-Type': 'application/json'
+                }
+
+            }
+        );
         const token:string = response.data.jwtToken; 
         storeToken(token); 
         return response; 
