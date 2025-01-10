@@ -1,13 +1,15 @@
 //@ts-ignore
 import "../styles/accountPage.css";
-import { useEffect, useRef, useState } from "react";
-import { capitalize, getData, removeAllQuotes, removeData, removeToken, verifyAccount } from "../utils/utils";
+import { useRef, useState } from "react";
+import { capitalize, getData, removeAllQuotes, removeData, removeToken } from "../utils/utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
 import { FetchStatus, Password } from "../types/userTypes";
 import axios from "axios";
 import ReactLoading from "react-loading";
 import { sendVerificationCode, updateEmail, updatePassword, updateUsername, validateEmail } from "../utils/ServerClient";
+import { useDispatch } from "react-redux";
+import { signout } from "../store/authSlice";
 
 export default function AccountPage() {
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
@@ -21,20 +23,11 @@ export default function AccountPage() {
   const [status, setStatus] = useState<FetchStatus>("idle");
 
   const [error, setError] = useState<string>("");
-  const [updateError, setUpdateError] = useState<string>("");
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkVerification = async () => {
-      setStatus("loading");
-      await verifyAccount(setError, setStatus);
-    };
-
-    checkVerification();
-  }, []);
+  const dispatch = useDispatch();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -58,9 +51,9 @@ export default function AccountPage() {
   const changeEmail = async () => {
     try {
       setStatus("loading");
-      setUpdateError("");
+      setError("");
       if (verifyEmail) {
-        await updateEmail({ userData: email || name, email: newEmail, verificationCode });
+        await updateEmail({ userData: email || name, email: newEmail, verificationCode }, dispatch);
         setEmail(newEmail);
         setVerifyEmail(false);
       } else {
@@ -74,7 +67,7 @@ export default function AccountPage() {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
         console.error(error);
         setStatus("error");
-        setUpdateError(errorMessage);
+        setError(errorMessage);
       }
     }
   };
@@ -82,8 +75,8 @@ export default function AccountPage() {
   const changeUsername = async () => {
     try {
       setStatus("loading");
-      setUpdateError("");
-      await updateUsername({ userData: email || name, name: newName });
+      setError("");
+      await updateUsername({ userData: email || name, name: newName }, dispatch);
       setName(newName);
       setStatus("success");
     } catch (error: unknown) {
@@ -91,7 +84,7 @@ export default function AccountPage() {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
         console.error(error);
         setStatus("error");
-        setUpdateError(errorMessage);
+        setError(errorMessage);
       }
     }
   };
@@ -106,8 +99,8 @@ export default function AccountPage() {
         setComparePasswords(true);
       } else {
         setStatus("loading");
-        setUpdateError("");
-        await updatePassword({ userData: email || name, newPassword: passwordData.newPassword, confirmNewPassword: passwordData.confirmNewPassword });
+        setError("");
+        await updatePassword({ userData: email || name, newPassword: passwordData.newPassword, confirmNewPassword: passwordData.confirmNewPassword }, dispatch);
         setComparePasswords(false);
         setStatus("success");
       }
@@ -116,7 +109,7 @@ export default function AccountPage() {
         const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
         console.error(error);
         setStatus("error");
-        setUpdateError(errorMessage);
+        setError(errorMessage);
       }
     }
   };
@@ -125,52 +118,47 @@ export default function AccountPage() {
     removeData(USERNAME_KEY);
     removeData(USEREMAIL_KEY);
     removeToken();
+    dispatch(signout());
     navigate("/signin");
   };
 
   return (
     <>
-      {error ? (
-        <h1 className="error">{error}</h1>
-      ) : (
-        <>
-          {status !== "idle" && (
-            <div className="accountContainer">
-              <h1>Your are signed in!</h1>
-              <p>Username: {name}</p>
-              <p>Email: {email}</p>
-              <button onClick={logOut}>Log out</button>
-              {status === "loading" ? (
-                <ReactLoading type="spin" color="#00f" height={50} width={50} />
-              ) : (
-                <div className="updateWrapper">
-                  <p className="error">{updateError}</p>
-                  <div className="updateContainer">
-                    <label>Update Email</label>
-                    <div className="updateControls">
-                      <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
-                      <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
-                    </div>
-                  </div>
-                  <div className="updateContainer">
-                    <label>Update Username</label>
-                    <div className="updateControls">
-                      <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
-                      <button onClick={changeUsername}>Update</button>
-                    </div>
-                  </div>
-                  <div className="updateContainer">
-                    <label>Update Password</label>
-                    <div className="updateControls">
-                      <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
-                      <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
-                    </div>
-                  </div>
+      {status !== "idle" && (
+        <div className="accountContainer">
+          <h1>Your are signed in!</h1>
+          <p>Username: {name}</p>
+          <p>Email: {email}</p>
+          <button onClick={logOut}>Log out</button>
+          {status === "loading" ? (
+            <ReactLoading type="spin" color="#00f" height={50} width={50} />
+          ) : (
+            <div className="updateWrapper">
+              <p className="error">{error}</p>
+              <div className="updateContainer">
+                <label>Update Email</label>
+                <div className="updateControls">
+                  <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
+                  <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
                 </div>
-              )}
+              </div>
+              <div className="updateContainer">
+                <label>Update Username</label>
+                <div className="updateControls">
+                  <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
+                  <button onClick={changeUsername}>Update</button>
+                </div>
+              </div>
+              <div className="updateContainer">
+                <label>Update Password</label>
+                <div className="updateControls">
+                  <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
+                  <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
+                </div>
+              </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </>
   );

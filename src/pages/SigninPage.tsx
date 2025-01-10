@@ -7,6 +7,7 @@ import { capitalize, removeAllQuotes } from "../utils/utils";
 import axios from "axios";
 import { signIn } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
+import { useDispatch } from "react-redux";
 
 export default function SigninPage() {
   const [formData, setFormData] = useState<SignIn>({ userData: "", password: "" });
@@ -14,6 +15,7 @@ export default function SigninPage() {
   const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,7 +27,7 @@ export default function SigninPage() {
     try {
       setStatus("loading");
       setError("");
-      await signIn(formData);
+      await signIn(formData, dispatch);
       navigate("/account");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

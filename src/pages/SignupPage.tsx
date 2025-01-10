@@ -8,6 +8,7 @@ import ReactLoading from "react-loading";
 import axios from "axios";
 import { capitalize, removeAllQuotes, storeData } from "../utils/utils";
 import { USERNAME_KEY } from "../constants/contants";
+import { useDispatch } from "react-redux";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<User>({ name: "", email: "", password: "" });
@@ -18,6 +19,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSignUpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,7 +42,7 @@ export default function SignUpPage() {
         storeData(USERNAME_KEY, formData.name);
         navigate("/account");
       } else {
-        await signUp(formData);
+        await signUp(formData, dispatch);
         setSignedUp(true);
       }
       setStatus("success");

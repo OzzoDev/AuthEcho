@@ -4,14 +4,22 @@ import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
 import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest } from "../types/apiTypes";
 import { getToken, storeData, storeToken } from "./utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
+import { useDispatch } from "react-redux";
+import { setAuth, signin, signup } from "../store/authSlice";
+import { AppDispatch } from "../store/store";
 
-export async function signUp(userData:User):Promise<AxiosResponse<JwtTokenResponse>>{    
+
+export async function signUp(userData:User, dispatch:AppDispatch):Promise<AxiosResponse<JwtTokenResponse>>{    
     try{
         const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.SIGNUP, userData);
         const token:string = response.data.jwtToken; 
-        storeToken(token); 
-        storeData(USERNAME_KEY,userData.name); 
-        storeData(USEREMAIL_KEY, userData.email); 
+        if(token){
+            storeToken(token); 
+            storeData(USERNAME_KEY,userData.name); 
+            storeData(USEREMAIL_KEY, userData.email);
+            dispatch(signup()); 
+        } 
+
         return response; 
     }catch(error : unknown){
         console.error(error);
@@ -28,12 +36,16 @@ export async function verifyAccount(credentials:VerifyAccountCredz):Promise<Axio
     }
 }
 
-export async function signIn(userData: SignIn): Promise<AxiosResponse<JwtTokenResponse>> {        
+export async function signIn(userData: SignIn, dispatch:AppDispatch): Promise<AxiosResponse<JwtTokenResponse>> {        
     try {
         const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.SIGNIN, userData);
         await getUserData(userData.userData); 
         const token:string = response.data.jwtToken; 
-        storeToken(token);         
+        if(token){
+            storeToken(token); 
+            dispatch(signin()); 
+        }    
+
         return response; 
     } catch (error: unknown) {
         console.error(error);
@@ -50,7 +62,7 @@ export async function sendVerificationCode(params:VerificationCodeRequest):Promi
     }
 }
 
-export async function updateEmail(updateData:UpdateEmail):Promise<AxiosResponse<JwtTokenResponse>>{                
+export async function updateEmail(updateData:UpdateEmail, dispatch:AppDispatch):Promise<AxiosResponse<JwtTokenResponse>>{                
     try{
         const response = await axios.put<JwtTokenResponse>(AUTH_ENDPOINTS.UPDATEEMAIL,
             updateData,
@@ -63,8 +75,12 @@ export async function updateEmail(updateData:UpdateEmail):Promise<AxiosResponse<
             }
         );
         const token:string = response.data.jwtToken; 
-        storeToken(token); 
-        storeData(USEREMAIL_KEY, updateData.email); 
+        if(token){
+            storeToken(token); 
+            storeData(USEREMAIL_KEY, updateData.email); 
+            dispatch(setAuth(true)); 
+        } 
+
         return response; 
     }catch(error : unknown){
         console.error(error);
@@ -72,7 +88,7 @@ export async function updateEmail(updateData:UpdateEmail):Promise<AxiosResponse<
     }
 }
 
-export async function updateUsername(updateData:UpdateUsername):Promise<AxiosResponse<JwtTokenResponse>>{                    
+export async function updateUsername(updateData:UpdateUsername, dispatch:AppDispatch):Promise<AxiosResponse<JwtTokenResponse>>{                    
     try{
         const response = await axios.put<JwtTokenResponse>(AUTH_ENDPOINTS.UPDATEUSERNAME,
             updateData,
@@ -85,8 +101,12 @@ export async function updateUsername(updateData:UpdateUsername):Promise<AxiosRes
             }
         );
         const token:string = response.data.jwtToken; 
-        storeToken(token); 
-        storeData(USERNAME_KEY, updateData.name); 
+        if(token){
+            storeToken(token); 
+            storeData(USEREMAIL_KEY, updateData.name); 
+            dispatch(setAuth(true)); 
+        } 
+
         return response; 
     }catch(error : unknown){
         console.error(error);
@@ -112,12 +132,16 @@ export async function validatePassword(credentials:PasswordValidation):Promise<A
     }
 }
 
-export async function resetPassword(userData:ResetPassword):Promise<AxiosResponse<JwtTokenResponse>>{                
+export async function resetPassword(userData:ResetPassword, dispatch:AppDispatch):Promise<AxiosResponse<JwtTokenResponse>>{                
     try{
         const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.RESETPASSWORD, userData);
         await getUserData(userData.userData); 
         const token:string = response.data.jwtToken; 
-        storeToken(token); 
+        if(token){
+            storeToken(token); 
+            dispatch(setAuth(true)); 
+        }  
+
         return response; 
     }catch(error : unknown){
         console.error(error);
@@ -125,7 +149,7 @@ export async function resetPassword(userData:ResetPassword):Promise<AxiosRespons
     }
 }
 
-export async function updatePassword(updateData:UpdatePassword):Promise<AxiosResponse<JwtTokenResponse>>{                
+export async function updatePassword(updateData:UpdatePassword, dispatch:AppDispatch):Promise<AxiosResponse<JwtTokenResponse>>{                
     try{
         const response = await axios.put<JwtTokenResponse>(AUTH_ENDPOINTS.UPDATEPASSWORD,
             updateData,
@@ -138,7 +162,11 @@ export async function updatePassword(updateData:UpdatePassword):Promise<AxiosRes
             }
         );
         const token:string = response.data.jwtToken; 
-        storeToken(token); 
+        if(token){
+            storeToken(token); 
+            dispatch(setAuth(true)); 
+        } 
+
         return response; 
     }catch(error : unknown){
         console.error(error);
@@ -166,6 +194,7 @@ export async function getUserData(userData:string):Promise<UserData> {
         const userDataResponse = response.data.userData; 
         storeData(USERNAME_KEY, userDataResponse.name); 
         storeData(USEREMAIL_KEY, userDataResponse.email); 
+
         return userDataResponse; 
     }catch(error:unknown){
         console.error(error);
