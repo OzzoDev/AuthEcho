@@ -6,8 +6,9 @@ const { sendEmail } = require("../middlewares/Auth");
 const { validateNewPassword } = require("../middlewares/AuthValidation");
 
 const signup = async (req, res) => {
+  const { name, email, password } = req.body;
+
   try {
-    const { name, email, password } = req.body;
     const userEmail = await UserModel.findOne({ email });
     const userName = await UserModel.findOne({ name });
 
@@ -42,8 +43,9 @@ const signup = async (req, res) => {
 };
 
 const verifyAccount = async (req, res) => {
+  const { email, verificationCode } = req.body;
+
   try {
-    const { email, verificationCode } = req.body;
     const user = await UserModel.findOne({ email });
 
     if (!user) {
@@ -70,8 +72,9 @@ const verifyAccount = async (req, res) => {
 };
 
 const signin = async (req, res) => {
+  const { userData, password } = req.body;
+
   try {
-    const { userData, password } = req.body;
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
     if (!user) {
@@ -94,10 +97,10 @@ const signin = async (req, res) => {
 };
 
 const updateEmail = async (req, res) => {
-  try {
-    const { userData, email: newEmail, verificationCode } = req.body;
-    const { email: currentEmail } = req.user;
+  const { userData, email: newEmail, verificationCode } = req.body;
+  const { email: currentEmail } = req.user;
 
+  try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
     const emailDuplicate = await UserModel.findOne({ email: newEmail });
 
@@ -149,10 +152,10 @@ const updateEmail = async (req, res) => {
 };
 
 const updateUsername = async (req, res) => {
-  try {
-    const { userData, name: newName } = req.body;
-    const { name: currentName } = req.user;
+  const { userData, name: newName } = req.body;
+  const { name: currentName } = req.user;
 
+  try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
     const usernameDuplicate = await UserModel.findOne({ name: newName });
 
@@ -206,31 +209,37 @@ const sendVerificationcode = async (req, res) => {
 
     res.status(200).json({ message: `Verification code sent for ${userName}`, success: true });
   } catch (error) {
-    res.status(500).json({ message: "Error sending verification code", success: false });
-    console.error(`Error sending verification code for user: ${userData}`, error);
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
 };
 
 const validateEmail = async (req, res) => {
   const { userData, newEmail } = req.body;
-  const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-  const emailDuplicate = await UserModel.findOne({ email: newEmail });
 
-  if (!user) {
-    return res.status(404).json({ message: "User not found", success: false });
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+    const emailDuplicate = await UserModel.findOne({ email: newEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const isEmailNew = newEmail !== user.email;
+
+    if (!isEmailNew) {
+      return res.status(400).json({ message: "New email cannot match current email", success: false });
+    }
+
+    if (emailDuplicate) {
+      return res.status(409).json({ message: "Email already exists", success: false });
+    }
+
+    res.status(200).json({ message: "Email is valid", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
-
-  const isEmailNew = newEmail !== user.email;
-
-  if (!isEmailNew) {
-    return res.status(400).json({ message: "New email cannot match current email", success: false });
-  }
-
-  if (emailDuplicate) {
-    return res.status(409).json({ message: "Email already exists", success: false });
-  }
-
-  res.status(200).json({ message: "Email is valid", success: true });
 };
 
 const validatePassword = async (req, res) => {
@@ -279,31 +288,71 @@ const resetPassword = async (req, res) => {
 
     res.status(200).json({ message: `Password successfully updated for ${userName}`, success: true, jwtToken });
   } catch (error) {
-    res.status(500).json({ message: "Error resetting password", success: false });
-    console.error(`Error resetting password for user: ${userData}`, error);
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const { userData, newPassword, confirmNewPassword } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const isPasswordVaild = validateNewPassword(newPassword, confirmNewPassword);
+
+    if (!isPasswordVaild.isValid) {
+      return res.status(400).json({ message: isPasswordVaild.message, success: false });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(200).json({ message: "Password updated successfully", success: true, jwtToken });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
 };
 
 const verifyAuthorization = async (req, res) => {
   const { email } = req.user;
-  const user = await UserModel.findOne({ email });
 
-  if (!user) {
-    return res.status(404).json({ message: "Usery not found", success: false });
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    res.status(200).json({ message: "Authorized", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
-
-  res.status(200).json({ message: "Authorized", success: true });
 };
 
 const getUserData = async (req, res) => {
   const { userData } = req.body;
-  const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
-  if (!user) {
-    return res.status(404).json({ message: "User not found", success: false });
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    res.status(200).json({ message: "User found", success: true, userData: { name: user.name, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
-
-  res.status(200).json({ message: "User found", success: true, userData: { name: user.name, email: user.email } });
 };
 
 module.exports = {
@@ -316,6 +365,7 @@ module.exports = {
   sendVerificationcode,
   validatePassword,
   resetPassword,
+  updatePassword,
   verifyAuthorization,
   getUserData,
 };
