@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const AuthRouter = require("./routes/AuthRouter");
+const { hex64BitKey } = require("./utils/crypto");
 
 require("dotenv").config();
 require("./models/db");

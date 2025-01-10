@@ -4,6 +4,7 @@ const Joi = require("joi");
 const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { validateNewPassword } = require("../middlewares/AuthValidation");
+const { hex32BitKey } = require("../utils/crypto");
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -20,7 +21,7 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "Username already exists", success: false });
     }
 
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationCode = hex32BitKey();
 
     const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
 
@@ -58,7 +59,7 @@ const verifyAccount = async (req, res) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const newVerificationCode = hex32BitKey();
 
     user.verificationCode = newVerificationCode;
     user.verified = true;
@@ -140,7 +141,7 @@ const updateEmail = async (req, res) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const newVerificationCode = hex32BitKey();
 
     user.email = newEmail;
     user.verificationCode = newVerificationCode;
@@ -226,18 +227,24 @@ const validateEmail = async (req, res) => {
   const { userData, newEmail } = req.body;
 
   try {
+    if (!newEmail) {
+      return res.status(400).json({ message: "Email is not provided", success: false });
+    }
+
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-    const emailDuplicate = await UserModel.findOne({ email: newEmail });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isEmailNew = newEmail !== user.email;
-
-    if (!isEmailNew) {
-      return res.status(400).json({ message: "New email cannot match current email", success: false });
+    if (newEmail.toLowerCase() === user.email.toLowerCase()) {
+      return res.status(409).json({ message: "New email must be different from current email", success: false });
     }
+
+    const emailDuplicate = await UserModel.findOne({
+      email: newEmail,
+      _id: { $ne: user._id },
+    }).collation({ locale: "en", strength: 1 });
 
     if (emailDuplicate) {
       return res.status(409).json({ message: "Email already exists", success: false });
@@ -286,7 +293,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
     }
 
-    const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const newVerificationCode = hex32BitKey();
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.verificationCode = newVerificationCode;
