@@ -6,6 +6,7 @@ import { FetchStatus, User, VerifyAccountCredz } from "../types/userTypes";
 import { signUp, verifyAccount } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import { useDispatch } from "react-redux";
+import Navbar from "../components/Navbar";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<User>({ name: "", email: "", password: "" });
@@ -49,41 +50,44 @@ export default function SignUpPage() {
       {status === "loading" ? (
         <ReactLoading type="spin" color="#00f" height={50} width={50} />
       ) : (
-        <form onSubmit={handleSubmit}>
-          {!isSignedUp && (
-            <>
+        <>
+          <Navbar />
+          <form onSubmit={handleSubmit}>
+            {!isSignedUp && (
+              <>
+                <div>
+                  <label>
+                    Username
+                    <input type="text" name="name" value={formData.name} onChange={handleSignUpChange} required />
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    Email
+                    <input type="email" name="email" value={formData.email} onChange={handleSignUpChange} required />
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    Password
+                    <input type="password" name="password" value={formData.password} onChange={handleSignUpChange} required />
+                  </label>
+                </div>
+              </>
+            )}
+            {isSignedUp && (
               <div>
                 <label>
-                  Username
-                  <input type="text" name="name" value={formData.name} onChange={handleSignUpChange} required />
+                  Verification code:
+                  <input type="text" name="verificationCode" value={verificationCode} onChange={handleVerificationChange} />
                 </label>
               </div>
-              <div>
-                <label>
-                  Email
-                  <input type="email" name="email" value={formData.email} onChange={handleSignUpChange} required />
-                </label>
-              </div>
-              <div>
-                <label>
-                  Password
-                  <input type="password" name="password" value={formData.password} onChange={handleSignUpChange} required />
-                </label>
-              </div>
-            </>
-          )}
-          {isSignedUp && (
-            <div>
-              <label>
-                Verification code:
-                <input type="text" name="verificationCode" value={verificationCode} onChange={handleVerificationChange} />
-              </label>
-            </div>
-          )}
-          <p className="errorMessage">{error}</p>
-          <button type="submit">{isSignedUp ? "Verify Account" : "Sign Up"}</button>
-          <a href="/signin">Already have an account? Sign in here</a>
-        </form>
+            )}
+            <p className="errorMessage">{error}</p>
+            <button type="submit">{isSignedUp ? "Verify Account" : "Sign Up"}</button>
+            <a href="/signin">Already have an account? Sign in here</a>
+          </form>
+        </>
       )}
     </>
   );

@@ -1,0 +1,17 @@
+.btn-primary {
+  padding: 6px 16px;
+  font-size: 1.2rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--text-color);
+  background: linear-gradient(to right, var(--accent-color) 20%, var(--secondary-color) 70%);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover,
+.btn-primary:hover {
+  outline: none;
+  border: 0;
+  filter: brightness(80%);
+}

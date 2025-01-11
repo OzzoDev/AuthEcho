@@ -3,6 +3,7 @@ import { FetchStatus, FormState } from "../types/userTypes";
 import ReactLoading from "react-loading";
 import { isSuspended, sendVerificationCode, unlockAccount } from "../utils/ServerClient";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function UnlockAccountPage() {
   const [formState, setFormState] = useState<FormState>("default");
@@ -54,24 +55,27 @@ export default function UnlockAccountPage() {
       {status === "loading" ? (
         <ReactLoading type="spin" color="#00f" height={50} width={50} />
       ) : (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>
-              {formState === "default" ? "Email or Username" : "VerificationCode"}
-              <input type="text" ref={inputRef} onChange={handleChange} required />
-            </label>
-          </div>
-          <p className="errorMessage">{error}</p>
-          <button type="submit">{formState === "default" ? "Continue" : "Verify"}</button>
-          <div className="links">
-            <a className="signInLink" href="/signup">
-              No account? Sign up here
-            </a>
-            <a className="signInLink" href="/signin">
-              Sign in
-            </a>
-          </div>
-        </form>
+        <>
+          <Navbar />
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>
+                {formState === "default" ? "Email or Username" : "VerificationCode"}
+                <input type="text" ref={inputRef} onChange={handleChange} required />
+              </label>
+            </div>
+            <p className="errorMessage">{error}</p>
+            <button type="submit">{formState === "default" ? "Continue" : "Verify"}</button>
+            <div className="links">
+              <a className="signInLink" href="/signup">
+                No account? Sign up here
+              </a>
+              <a className="signInLink" href="/signin">
+                Sign in
+              </a>
+            </div>
+          </form>
+        </>
       )}
     </>
   );

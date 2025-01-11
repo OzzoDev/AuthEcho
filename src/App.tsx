@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import SignppPage from "./pages/SignupPage";
 import SigninPage from "./pages/SigninPage";
 import AccountPage from "./pages/AccountPage";
@@ -7,13 +7,14 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UnlockAccountPage from "./pages/UnlockAccountPage";
+import StartPage from "./pages/StartPage";
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate replace to="/signup" />} />
+          <Route path="/" element={<StartPage />} />
           <Route path="/signup" element={<SignppPage />} />
           <Route path="/signin" element={<SigninPage />} />
           <Route path="/resetPassword" element={<ResetPasswordPage />} />

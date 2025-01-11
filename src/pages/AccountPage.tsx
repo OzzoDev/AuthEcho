@@ -9,6 +9,7 @@ import ReactLoading from "react-loading";
 import { sendVerificationCode, updateEmail, updatePassword, updateUsername, validateEmail } from "../utils/ServerClient";
 import { useDispatch } from "react-redux";
 import { signout } from "../store/authSlice";
+import Navbar from "../components/Navbar";
 
 export default function AccountPage() {
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
@@ -104,30 +105,33 @@ export default function AccountPage() {
       {status === "loading" ? (
         <ReactLoading type="spin" color="#00f" height={50} width={50} />
       ) : (
-        <div className="updateWrapper">
-          <p className="error">{error}</p>
-          <div className="updateContainer">
-            <label>Update Email</label>
-            <div className="updateControls">
-              <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
-              <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
+        <>
+          <Navbar />
+          <div className="updateWrapper">
+            <p className="error">{error}</p>
+            <div className="updateContainer">
+              <label>Update Email</label>
+              <div className="updateControls">
+                <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
+                <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
+              </div>
+            </div>
+            <div className="updateContainer">
+              <label>Update Username</label>
+              <div className="updateControls">
+                <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
+                <button onClick={changeUsername}>Update</button>
+              </div>
+            </div>
+            <div className="updateContainer">
+              <label>Update Password</label>
+              <div className="updateControls">
+                <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
+                <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
+              </div>
             </div>
           </div>
-          <div className="updateContainer">
-            <label>Update Username</label>
-            <div className="updateControls">
-              <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
-              <button onClick={changeUsername}>Update</button>
-            </div>
-          </div>
-          <div className="updateContainer">
-            <label>Update Password</label>
-            <div className="updateControls">
-              <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
-              <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
-            </div>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
