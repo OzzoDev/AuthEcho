@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { FetchStatus, FormState } from "../types/userTypes";
 import ReactLoading from "react-loading";
-import { sendVerificationCode, unlockAccount } from "../utils/ServerClient";
+import { isSuspended, sendVerificationCode, unlockAccount } from "../utils/ServerClient";
 import { useNavigate } from "react-router-dom";
 
 export default function UnlockAccountPage() {
@@ -33,9 +33,12 @@ export default function UnlockAccountPage() {
     }
 
     if (formState === "default") {
-      const verificationCodeResponse = await sendVerificationCode({ userData, action: "unlockAccount" }, setStatus, setError);
-      if (verificationCodeResponse) {
-        setFormState("verify");
+      const isSuspendedResponse = await isSuspended(userData, setStatus, setError);
+      if (isSuspendedResponse) {
+        const verificationCodeResponse = await sendVerificationCode({ userData, action: "unlockAccount" }, setStatus, setError);
+        if (verificationCodeResponse) {
+          setFormState("verify");
+        }
       }
     } else {
       const unlockAccountResponse = await unlockAccount({ userData, verificationCode }, setStatus, setError);

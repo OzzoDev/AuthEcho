@@ -12,6 +12,7 @@ export const AUTH_ENDPOINTS = {
   RESETPASSWORD: `${API_BASE_URL}/auth/resetpassword`,
   UPDATEPASSWORD: `${API_BASE_URL}/auth/updatepassword`,
   UNLOCKACCOUNT: `${API_BASE_URL}/auth/unlockaccount`,
+  ISSUSPENDED: `${API_BASE_URL}/auth/issuspended`,
   VERIFY: `${API_BASE_URL}/auth/verify`,
   USERNAME: `${API_BASE_URL}/auth/userdata`,
 };
