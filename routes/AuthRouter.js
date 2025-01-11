@@ -1,4 +1,4 @@
-const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail, updatePassword } = require("../controllers/AuthController");
+const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail, updatePassword, unlockAccount } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
 const { signupValidation, emailValidation, usernameValidation } = require("../middlewares/AuthValidation");
 
@@ -14,6 +14,7 @@ router.post("/validateemail", emailValidation, validateEmail);
 router.post("/validatepassword", validatePassword);
 router.post("/resetpassword", resetPassword);
 router.put("/updatepassword", ensureAuthenticated, updatePassword);
+router.post("/unlockaccount", unlockAccount);
 router.get("/verify", ensureAuthenticated, verifyAuthorization);
 router.post("/userdata", getUserData);
 

@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const bcrypt = require("bcrypt");
 
 const signupValidation = (req, res, next) => {
   const schema = Joi.object({
@@ -16,13 +17,19 @@ const signupValidation = (req, res, next) => {
   next();
 };
 
-const validateNewPassword = (newPassword, confirmNewPassword) => {
+const validateNewPassword = async (newPassword, confirmNewPassword, currentPassword) => {
   if (newPassword.length < 8) {
     return { isValid: false, message: "Password length must be at least 8 characters long" };
   }
 
   if (newPassword !== confirmNewPassword) {
     return { isValid: false, message: "Passwords must match" };
+  }
+
+  const unupdatedPassword = await bcrypt.compare(newPassword, currentPassword);
+
+  if (unupdatedPassword) {
+    return { isValid: false, message: "New password must be different from current password" };
   }
 
   return { isValid: true, message: "Password is valid" };

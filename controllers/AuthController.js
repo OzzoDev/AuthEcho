@@ -5,6 +5,8 @@ const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { validateNewPassword } = require("../middlewares/AuthValidation");
 const { hex32BitKey } = require("../utils/crypto");
+const { getDate } = require("../utils/date");
+const { getEmailText } = require("../utils/email");
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -29,7 +31,7 @@ const signup = async (req, res) => {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
     }
 
-    const userModel = new UserModel({ name, email, password, verificationCode, verified: false });
+    const userModel = new UserModel({ name, email, password, verificationCode, verified: false, suspended: false });
     userModel.password = await bcrypt.hash(password, 10);
     await userModel.save();
 
@@ -82,11 +84,34 @@ const signin = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    const isSuspended = user.suspended;
+
+    if (isSuspended) {
+      return res.status(403).json({ message: "Account is suspended", success: false });
+    }
+
     const isPasswordEqual = await bcrypt.compare(password, user.password);
 
     if (!isPasswordEqual) {
+      const loginAttempts = user.failedLoginAttempts;
+      const totalLoginAttempts = loginAttempts + 1;
+
+      user.failedLoginAttempts = totalLoginAttempts;
+      await user.save();
+
+      if (totalLoginAttempts > 5) {
+        user.suspended = true;
+        await user.save();
+
+        return res.status(403).json({ message: "Too many failed login attempts. The account has been suspended. ", success: false });
+      }
+
       return res.status(403).json({ message: "Wrong password", success: false });
     }
+
+    user.lastLogin = getDate();
+    user.failedLoginAttempts = 0;
+    await user.save();
 
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
@@ -197,7 +222,7 @@ const updateUsername = async (req, res) => {
 };
 
 const sendVerificationcode = async (req, res) => {
-  const { userData, emailBodyText, to } = req.body;
+  const { userData, action, to } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -207,16 +232,16 @@ const sendVerificationcode = async (req, res) => {
     }
 
     const userEmail = user.email;
-    const userName = user.name;
+    const username = user.name;
     const userVerificationCode = user.verificationCode;
 
-    const verificationCodeSent = await sendEmail(to || userEmail, "Authecho", `${emailBodyText} ${userVerificationCode}`);
+    const verificationCodeSent = await sendEmail(to || userEmail, "Authecho", `${getEmailText(action, username)} ${userVerificationCode}`);
 
     if (!verificationCodeSent) {
-      return res.status(500).json({ message: `Verification code error ${userName}`, success: false });
+      return res.status(500).json({ message: `Verification code error ${username}`, success: false });
     }
 
-    res.status(200).json({ message: `Verification code sent for ${userName}`, success: true });
+    res.status(200).json({ message: `Verification code sent for ${username}`, success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -258,15 +283,26 @@ const validateEmail = async (req, res) => {
 };
 
 const validatePassword = async (req, res) => {
-  const { newPassword, confirmNewPassword } = req.body;
+  const { userData, newPassword, confirmNewPassword } = req.body;
 
-  const isPasswordVaild = validateNewPassword(newPassword, confirmNewPassword);
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
-  if (!isPasswordVaild.isValid) {
-    return res.status(400).json({ message: isPasswordVaild.message, success: false });
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
+
+    if (!isPasswordVaild.isValid) {
+      return res.status(400).json({ message: isPasswordVaild.message, success: false });
+    }
+
+    res.status(200).json({ message: isPasswordVaild.message, success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
   }
-
-  res.status(200).json({ message: isPasswordVaild.message, success: true });
 };
 
 const resetPassword = async (req, res) => {
@@ -287,7 +323,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const isPasswordVaild = validateNewPassword(newPassword, confirmNewPassword);
+    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
@@ -297,6 +333,8 @@ const resetPassword = async (req, res) => {
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.verificationCode = newVerificationCode;
+    user.suspended = false;
+    user.failedLoginAttempts = 0;
     await user.save();
 
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
@@ -318,7 +356,7 @@ const updatePassword = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isPasswordVaild = validateNewPassword(newPassword, confirmNewPassword);
+    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
@@ -347,6 +385,36 @@ const verifyAuthorization = async (req, res) => {
     }
 
     res.status(200).json({ message: "Authorized", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const unlockAccount = async (req, res) => {
+  const { userData, verificationCode } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (verificationCode !== user.verificationCode) {
+      return res.status(400).json({ message: "Verification code is wrong", success: false });
+    }
+
+    const newVerificationCode = hex32BitKey();
+
+    user.verificationCode = newVerificationCode;
+    user.suspended = false;
+    user.failedLoginAttempts = 0;
+    await user.save();
+
+    console.log("Account unlocked");
+
+    res.status(200).json({ message: "Account successfully unlocked", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -382,5 +450,6 @@ module.exports = {
   resetPassword,
   updatePassword,
   verifyAuthorization,
+  unlockAccount,
   getUserData,
 };

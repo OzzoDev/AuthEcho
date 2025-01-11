@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { getDate } = require("../utils/date");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -20,7 +21,23 @@ const UserSchema = new Schema({
   },
   verified: {
     type: Boolean,
-    required: true,
+    default: false,
+  },
+  suspended: {
+    type: Boolean,
+    default: false,
+  },
+  failedLoginAttempts: {
+    type: Number,
+    default: 0,
+  },
+  lastLogin: {
+    type: String,
+    default: getDate(),
+  },
+  createdAt: {
+    type: String,
+    default: getDate(),
   },
 });
 
