@@ -3,8 +3,6 @@ import "../styles/signupPage.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchStatus, SignIn } from "../types/userTypes";
-import { capitalize, removeAllQuotes } from "../utils/utils";
-import axios from "axios";
 import { signIn } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import { useDispatch } from "react-redux";
@@ -24,18 +22,11 @@ export default function SigninPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      setStatus("loading");
-      setError("");
-      await signIn(formData, dispatch);
+    const signInResponse = await signIn(formData, setStatus, setError, dispatch);
+    console.log("Res: ", signInResponse);
+
+    if (signInResponse) {
       navigate("/account");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error("Sign in failed", error);
-        setStatus("error");
-        setError(errorMessage);
-      }
     }
   };
 

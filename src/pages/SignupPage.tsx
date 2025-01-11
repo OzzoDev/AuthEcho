@@ -1,13 +1,10 @@
+//@ts-ignore
+import "../styles/signupPage.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchStatus, User, VerifyAccountCredz } from "../types/userTypes";
-//@ts-ignore
-import "../styles/signupPage.css";
 import { signUp, verifyAccount } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
-import axios from "axios";
-import { capitalize, removeAllQuotes, storeData } from "../utils/utils";
-import { USERNAME_KEY } from "../constants/contants";
 import { useDispatch } from "react-redux";
 
 export default function SignUpPage() {
@@ -33,25 +30,16 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      setStatus("loading");
-      setError("");
-      if (isSignedUp) {
-        const verifyCredz: VerifyAccountCredz = { email: formData.email, verificationCode: verificationCode };
-        await verifyAccount(verifyCredz);
-        storeData(USERNAME_KEY, formData.name);
+    if (isSignedUp) {
+      const verifyCredz: VerifyAccountCredz = { email: formData.email, verificationCode: verificationCode };
+      const verifyResponse = await verifyAccount(verifyCredz, setStatus, setError);
+      if (verifyResponse) {
         navigate("/account");
-      } else {
-        await signUp(formData, dispatch);
-        setSignedUp(true);
       }
-      setStatus("success");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error("Creation or verification of account failed", error);
-        setStatus("error");
-        setError(errorMessage);
+    } else {
+      const signUpResponse = await signUp(formData, setStatus, setError, dispatch);
+      if (signUpResponse) {
+        setSignedUp(true);
       }
     }
   };

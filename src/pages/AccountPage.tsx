@@ -1,11 +1,10 @@
 //@ts-ignore
 import "../styles/accountPage.css";
 import { useRef, useState } from "react";
-import { capitalize, getData, removeAllQuotes, removeData, removeToken } from "../utils/utils";
+import { getData, removeData, removeToken } from "../utils/utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
 import { FetchStatus, Password } from "../types/userTypes";
-import axios from "axios";
 import ReactLoading from "react-loading";
 import { sendVerificationCode, updateEmail, updatePassword, updateUsername, validateEmail } from "../utils/ServerClient";
 import { useDispatch } from "react-redux";
@@ -49,43 +48,27 @@ export default function AccountPage() {
   };
 
   const changeEmail = async () => {
-    try {
-      setStatus("loading");
-      setError("");
-      if (verifyEmail) {
-        await updateEmail({ userData: email || name, email: newEmail, verificationCode }, dispatch);
+    if (verifyEmail) {
+      const updateEmailResponse = await updateEmail({ userData: email || name, email: newEmail, verificationCode }, setStatus, setError, dispatch);
+      if (updateEmailResponse) {
         setEmail(newEmail);
         setVerifyEmail(false);
-      } else {
-        await validateEmail({ userData: email || name, newEmail: newEmail });
-        await sendVerificationCode({ userData: email || name, emailBodyText: `Hello ${name}! Here is the verification code to confirm your new email:`, to: newEmail });
-        setVerifyEmail(true);
       }
-      setStatus("success");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error(error);
-        setStatus("error");
-        setError(errorMessage);
+    } else {
+      const validateEmailResponse = await validateEmail({ userData: email || name, newEmail: newEmail }, setStatus, setError);
+      if (validateEmailResponse) {
+        const verficationCodeResponse = await sendVerificationCode({ userData: email || name, emailBodyText: `Hello ${name}! Here is the verification code to confirm your new email:`, to: newEmail }, setStatus, setError);
+        if (verficationCodeResponse) {
+          setVerifyEmail(true);
+        }
       }
     }
   };
 
   const changeUsername = async () => {
-    try {
-      setStatus("loading");
-      setError("");
-      await updateUsername({ userData: email || name, name: newName }, dispatch);
+    const updateUsernameResponse = await updateUsername({ userData: email || name, name: newName }, setStatus, setError, dispatch);
+    if (updateUsernameResponse) {
       setName(newName);
-      setStatus("success");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error(error);
-        setStatus("error");
-        setError(errorMessage);
-      }
     }
   };
 
@@ -94,22 +77,12 @@ export default function AccountPage() {
       passwordInputRef.current.value = "";
     }
 
-    try {
-      if (!comparePasswords) {
-        setComparePasswords(true);
-      } else {
-        setStatus("loading");
-        setError("");
-        await updatePassword({ userData: email || name, newPassword: passwordData.newPassword, confirmNewPassword: passwordData.confirmNewPassword }, dispatch);
+    if (!comparePasswords) {
+      setComparePasswords(true);
+    } else {
+      const updatePasswordResponse = await updatePassword({ userData: email || name, newPassword: passwordData.newPassword, confirmNewPassword: passwordData.confirmNewPassword }, setStatus, setError, dispatch);
+      if (updatePasswordResponse) {
         setComparePasswords(false);
-        setStatus("success");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage: string = capitalize(removeAllQuotes(error.response?.data.message || error.message));
-        console.error(error);
-        setStatus("error");
-        setError(errorMessage);
       }
     }
   };
@@ -123,43 +96,39 @@ export default function AccountPage() {
   };
 
   return (
-    <>
-      {status !== "idle" && (
-        <div className="accountContainer">
-          <h1>Your are signed in!</h1>
-          <p>Username: {name}</p>
-          <p>Email: {email}</p>
-          <button onClick={logOut}>Log out</button>
-          {status === "loading" ? (
-            <ReactLoading type="spin" color="#00f" height={50} width={50} />
-          ) : (
-            <div className="updateWrapper">
-              <p className="error">{error}</p>
-              <div className="updateContainer">
-                <label>Update Email</label>
-                <div className="updateControls">
-                  <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
-                  <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
-                </div>
-              </div>
-              <div className="updateContainer">
-                <label>Update Username</label>
-                <div className="updateControls">
-                  <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
-                  <button onClick={changeUsername}>Update</button>
-                </div>
-              </div>
-              <div className="updateContainer">
-                <label>Update Password</label>
-                <div className="updateControls">
-                  <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
-                  <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
-                </div>
-              </div>
+    <div className="accountContainer">
+      <h1>Your are signed in!</h1>
+      <p>Username: {name}</p>
+      <p>Email: {email}</p>
+      <button onClick={logOut}>Log out</button>
+      {status === "loading" ? (
+        <ReactLoading type="spin" color="#00f" height={50} width={50} />
+      ) : (
+        <div className="updateWrapper">
+          <p className="error">{error}</p>
+          <div className="updateContainer">
+            <label>Update Email</label>
+            <div className="updateControls">
+              <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
+              <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
             </div>
-          )}
+          </div>
+          <div className="updateContainer">
+            <label>Update Username</label>
+            <div className="updateControls">
+              <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
+              <button onClick={changeUsername}>Update</button>
+            </div>
+          </div>
+          <div className="updateContainer">
+            <label>Update Password</label>
+            <div className="updateControls">
+              <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
+              <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
+            </div>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

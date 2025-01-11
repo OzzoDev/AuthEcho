@@ -15,6 +15,7 @@ export default function SigninPage() {
   const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
+  const dispatch = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,12 +28,18 @@ export default function SigninPage() {
       setStatus("loading");
       setError("");
       if (verify) {
-        await resetPassword(formData);
-        navigate("/account");
+        const passwordResposne = await resetPassword(formData, setStatus, setError, dispatch);
+        if (passwordResposne) {
+          navigate("/account");
+        }
       } else {
-        await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword });
-        await sendVerificationCode({ userData: formData.userData, emailBodyText: "Here is the verification code to reset your password:" });
-        setVerify(true);
+        const validatePasswordResponse = await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword }, setStatus, setError);
+        if (validatePasswordResponse) {
+          const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData, emailBodyText: "Here is the verification code to reset your password:" }, setStatus, setError);
+          if (verificationCodeResponse) {
+            setVerify(true);
+          }
+        }
       }
       setStatus("success");
     } catch (error: unknown) {
