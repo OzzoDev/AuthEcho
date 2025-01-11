@@ -57,7 +57,7 @@ export default function AccountPage() {
     } else {
       const validateEmailResponse = await validateEmail({ userData: email || name, newEmail: newEmail }, setStatus, setError);
       if (validateEmailResponse) {
-        const verficationCodeResponse = await sendVerificationCode({ userData: email || name, emailBodyText: `Hello ${name}! Here is the verification code to confirm your new email:`, to: newEmail }, setStatus, setError);
+        const verficationCodeResponse = await sendVerificationCode({ userData: email || name, action: "verifyEmail", to: newEmail }, setStatus, setError);
         if (verficationCodeResponse) {
           setVerifyEmail(true);
         }

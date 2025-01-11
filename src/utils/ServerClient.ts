@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { ApiResponse, EmailValidation, FetchStatus, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, User, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
-import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest } from "../types/apiTypes";
+import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, UnlockAccountRequest } from "../types/apiTypes";
 import { getToken, handleError, storeData, storeToken } from "./utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { setAuth, signin, signup } from "../store/authSlice";
@@ -217,6 +217,21 @@ export async function updatePassword(updateData: UpdatePassword, setStatus: (sta
 
     setStatus("success");
 
+    return response;
+  } catch (error: unknown) {
+    handleError(error, setStatus, setError);
+    return null;
+  }
+}
+
+export async function unlockAccount(unlockData: UnlockAccountRequest, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<ApiResponse> | null> {
+  try {
+    setStatus("loading");
+    setError("");
+
+    const response = await axios.post<ApiResponse>(AUTH_ENDPOINTS.UNLOCKACCOUNT, unlockData);
+
+    setStatus("success");
     return response;
   } catch (error: unknown) {
     handleError(error, setStatus, setError);

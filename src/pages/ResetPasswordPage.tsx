@@ -33,9 +33,9 @@ export default function SigninPage() {
           navigate("/account");
         }
       } else {
-        const validatePasswordResponse = await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword }, setStatus, setError);
+        const validatePasswordResponse = await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword, userData: formData.userData }, setStatus, setError);
         if (validatePasswordResponse) {
-          const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData, emailBodyText: "Here is the verification code to reset your password:" }, setStatus, setError);
+          const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData, action: "verifyEmail" }, setStatus, setError);
           if (verificationCodeResponse) {
             setVerify(true);
           }

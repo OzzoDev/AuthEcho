@@ -6,6 +6,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedRoute from "./components/ProtectedRoute";
+import UnlockAccountPage from "./pages/UnlockAccountPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/signup" element={<SignppPage />} />
           <Route path="/signin" element={<SigninPage />} />
           <Route path="/resetPassword" element={<ResetPasswordPage />} />
+          <Route path="/unlockaccount" element={<UnlockAccountPage />} />
           <Route
             path="/account"
             element={

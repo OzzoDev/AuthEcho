@@ -51,12 +51,9 @@ export default function SigninPage() {
           <p className="errorMessage">{error}</p>
           <button type="submit">Sign In</button>
           <div className="links">
-            <a className="signInLink" href="/signup">
-              No account? Sign up here
-            </a>
-            <a className="signInLink" href="/resetpassword">
-              Reset password
-            </a>
+            <a href="/signup">No account? Sign up here</a>
+            <a href="/unlockaccount">Unlock account</a>
+            <a href="/resetpassword">Reset password</a>
           </div>
         </form>
       )}
