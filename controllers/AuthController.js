@@ -412,9 +412,28 @@ const unlockAccount = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    console.log("Account unlocked");
-
     res.status(200).json({ message: "Account successfully unlocked", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const isSuspended = async (req, res) => {
+  const { userData } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (!user.suspended) {
+      return res.status(400).json({ message: "Account is active", success: false });
+    }
+
+    res.status(200).json({ message: "Account is suspended", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -451,5 +470,6 @@ module.exports = {
   updatePassword,
   verifyAuthorization,
   unlockAccount,
+  isSuspended,
   getUserData,
 };
