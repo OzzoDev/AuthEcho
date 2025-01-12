@@ -26,9 +26,17 @@ form::before {
 
 .form-headline {
   font-size: 2rem;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   align-self: flex-start;
   color: var(--neutral-color);
+}
+
+.form-info {
+  /* margin-top: -20px; */
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--text-color);
 }
 
 .input-container {
@@ -83,6 +91,24 @@ form::before {
 .password-toggle:hover,
 .password-toggle:focus {
   transform: translate(0);
+}
+
+.verify-conatiner {
+  display: flex;
+  gap: 5px;
+}
+
+.verify-input {
+  width: clamp(36px, 3vw, 80px);
+  aspect-ratio: 1;
+  font-size: clamp(2rem, 2.2vw, 3rem);
+  border-radius: 10px;
+  text-align: center;
+  border: 0;
+  outline: none;
+  box-shadow: inset 0 0 10px var(--neutral-color);
+  color: var(--text-color);
+  background-color: transparent;
 }
 
 .submit-btn {
