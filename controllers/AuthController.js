@@ -4,7 +4,7 @@ const Joi = require("joi");
 const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { validateNewPassword } = require("../middlewares/AuthValidation");
-const { hex32BitKey } = require("../utils/crypto");
+const { hex8BitKey } = require("../utils/crypto");
 const { getDate } = require("../utils/date");
 const { getEmailText } = require("../utils/email");
 
@@ -23,7 +23,7 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "Username already exists", success: false });
     }
 
-    const verificationCode = hex32BitKey();
+    const verificationCode = hex8BitKey();
 
     const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
 
@@ -61,7 +61,7 @@ const verifyAccount = async (req, res) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const newVerificationCode = hex32BitKey();
+    const newVerificationCode = hex8BitKey();
 
     user.verificationCode = newVerificationCode;
     user.verified = true;
@@ -166,7 +166,7 @@ const updateEmail = async (req, res) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const newVerificationCode = hex32BitKey();
+    const newVerificationCode = hex8BitKey();
 
     user.email = newEmail;
     user.verificationCode = newVerificationCode;
@@ -329,7 +329,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
     }
 
-    const newVerificationCode = hex32BitKey();
+    const newVerificationCode = hex8BitKey();
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.verificationCode = newVerificationCode;
@@ -405,7 +405,7 @@ const unlockAccount = async (req, res) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const newVerificationCode = hex32BitKey();
+    const newVerificationCode = hex8BitKey();
 
     user.verificationCode = newVerificationCode;
     user.suspended = false;
