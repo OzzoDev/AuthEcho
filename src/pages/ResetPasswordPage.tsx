@@ -75,7 +75,7 @@ export default function SigninPage() {
         {!verify ? (
           <>
             <h2 className="form-headline">Reset your password!</h2>
-            <FormInput labelText="Username" name="userData" value={formData.userData} onChange={handleChange} required />
+            <FormInput labelText="Email or username" name="userData" value={formData.userData} onChange={handleChange} required />
             <FormPasswordInput labelText="Password" name="newPassword" value={formData.newPassword} onChange={handleChange} required />
             <FormPasswordInput labelText="Confirm password" name="confirmNewPassword" value={formData.confirmNewPassword} onChange={handleChange} required />
             <button type="submit" className="submit-btn btn btn-primary">
@@ -84,11 +84,9 @@ export default function SigninPage() {
           </>
         ) : (
           <>
-            <>
-              <h2 className="form-headline">Verify Account!</h2>
-              <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-              <FormVerify setVerificationCode={handleSetVerificationCode} />
-            </>
+            <h2 className="form-headline">Verify Account!</h2>
+            <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
+            <FormVerify setVerificationCode={handleSetVerificationCode} />
           </>
         )}
       </form>
