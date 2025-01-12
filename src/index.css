@@ -20,6 +20,13 @@
   width: 0;
 }
 
+#root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -29,6 +36,13 @@ body {
   overflow-x: hidden;
   background: linear-gradient(180deg, rgba(4, 139, 168, 1) 1%, rgba(8, 15, 15, 1) 60%);
   position: relative;
+}
+
+.page-headline {
+  max-width: 90%;
+  font-size: 2.5rem;
+  margin-bottom: 200px;
+  text-align: center;
 }
 
 .hero {
@@ -100,12 +114,10 @@ body {
 
 .service-overview {
   width: 95%;
-  /* margin: 20px; */
   padding: 40px;
   margin: auto;
   margin-top: 50px;
   margin-bottom: 100px;
-  /* margin-bottom: 100px; */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -124,7 +136,6 @@ body {
   bottom: -5px;
   right: -5px;
   border-radius: 50px;
-  background-color: red;
   z-index: -1;
   animation: gradientAnimation 7s ease infinite;
   background: linear-gradient(270deg, #048ba8, #f24c00, #f24c00, #048ba8);
@@ -188,8 +199,19 @@ body {
   color: var(--text-color);
 }
 
+h1,
+h2,
+h3 p {
+  color: var(--text-color);
+}
+
 .error {
   color: var(--error-color);
+}
+
+.errorMessage {
+  text-align: center;
+  font-size: 2rem;
 }
 
 .color-neutral {

@@ -10,7 +10,7 @@ export default function ServiceOverview() {
       <p className="service-overview-text">Authecho addresses the common frustration of forgotten passwords by streamlining the login process across all supported applications. By allowing users to maintain a single account with a unified password, Authecho simplifies the digital experience. This approach not only enhances productivity but also eliminates the need to remember multiple credentials, enabling users to navigate various applications with ease and efficiency.</p>
 
       <h3 className="service-overview-sub-header">Robust Security Measures</h3>
-      <p className="service-overview-text">Authecho prioritizes the security of user accounts, employing state-of-the-art protocols to protect against unauthorized access. All user data is encrypted to ensure confidentiality and integrity. To further safeguard accounts, Authecho implements a suspension mechanism after five consecutive failed login attempts. Users can easily regain access by retrieving a verification code via email, ensuring that account recovery is both secure and user-friendly.</p>
+      <p className="service-overview-text">Authecho prioritizes the security of user accounts, employing state-of-the-art protocols to prevent unauthorized access. All user data is encrypted to ensure confidentiality and integrity. To further safeguard accounts, Authecho implements a suspension mechanism after five consecutive failed login attempts. Users can easily regain access by retrieving a verification code via email, ensuring that account recovery is both secure and user-friendly.</p>
     </div>
   );
 }

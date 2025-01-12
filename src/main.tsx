@@ -7,6 +7,8 @@ import "./index.css";
 import "./styles/navbar.css";
 //@ts-ignore
 import "./styles/btn.css";
+//@ts-ignore
+import "./styles/form.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

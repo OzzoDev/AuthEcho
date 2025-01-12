@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 //@ts-ignore
 import authVideo from "../assets/videos/authVideo.mp4";
 import TimerCounter from "./TimerCounter";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isReversing, setIsReversing] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -50,7 +52,9 @@ export default function Hero() {
         <h2 className="hero-subline">
           Simplifying account management powering over {<TimerCounter min={0} max={200} delay={1000} />} applications for {<TimerCounter min={100} max={2000} delay={200} />} users and counting. Experience the effectiveness of Authecho and join the echo today!
         </h2>
-        <button className="hero-btn btn btn-primary">Get Started</button>
+        <button className="hero-btn btn btn-primary" onClick={() => navigate("/signup")}>
+          Get Started
+        </button>
       </div>
       <video ref={videoRef} className="hero-video" autoPlay loop muted playsInline>
         <source src={authVideo} type="video/mp4" />

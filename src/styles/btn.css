@@ -1,3 +1,10 @@
+button {
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
 .btn {
   width: fit-content;
   padding: 6px 16px;
