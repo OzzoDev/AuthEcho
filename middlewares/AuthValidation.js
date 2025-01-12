@@ -2,16 +2,28 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 
 const signupValidation = (req, res, next) => {
+  const { name, email, password, confirmPassword } = req.body;
+
+  if (name.length < 3 || name.length > 20) {
+    return res.status(400).json({ message: "Username must be minimum 3 and maximum 20 characters long", success: false });
+  }
+
   const schema = Joi.object({
-    name: Joi.string().min(3).max(100).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(8).max(100).required(),
   });
 
-  const { error } = schema.validate(req.body);
+  const { error } = schema.validate({ email });
 
   if (error) {
-    return res.status(400).json({ message: error.details[0].message, error });
+    return res.status(400).json({ message: "Email is invalid", success: false });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({ message: "Password must be atleast 8 characters long", success: false });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords must match", success: false });
   }
 
   next();
