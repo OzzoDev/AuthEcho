@@ -84,9 +84,11 @@ const signin = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isSuspended = user.suspended;
+    if (!user.verified) {
+      return res.status(403).json({ message: "Account not verified", success: false });
+    }
 
-    if (isSuspended) {
+    if (user.suspended) {
       return res.status(403).json({ message: "Account is suspended", success: false });
     }
 
