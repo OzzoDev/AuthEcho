@@ -16,40 +16,105 @@
 }
 
 #root {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent; */
+  /* height: 120vh; */
+}
+
+::-webkit-scrollbar {
+  width: 0;
 }
 
 body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100dvh;
+  min-height: 100dvh;
   font-family: "Arial", sans-serif;
   background-color: var(--primary-color);
+  position: relative;
+}
+
+.hero {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
 }
 
 h1 {
   font-size: clamp(4rem, 5vw, 6rem);
+  text-align: center;
   color: var(--text-color);
 }
 
 .ccoil {
   width: 100%;
-  height: 100%;
   opacity: 0.6;
   position: absolute;
+  top: 0;
+  bottom: 0;
   z-index: -1;
   background: url("./assets/images/ccoil.svg") no-repeat;
+  background-attachment: fixed;
   background-position: center;
   background-size: cover;
 }
 
+.information-cards {
+  margin: auto;
+  width: 100%;
+  padding: 40px;
+  row-gap: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.information-cards .information-card:nth-child(2),
+.information-cards .information-card:nth-child(4) {
+  align-self: flex-end;
+}
+
+.information-card {
+  width: min(100%, 800px);
+  padding: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background: rgba(24, 27, 27, 0.42);
+  border-radius: 20px;
+  box-shadow: 0px 0px 5px var(--neutral-color);
+  backdrop-filter: blur(9px);
+}
+
+.information-card-headline {
+  font-size: 2rem;
+  display: flex;
+}
+
+.information-card-icon {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.information-card-text {
+  font-size: 1.4rem;
+  margin: 40px 0 0 0;
+  grid-column: 1/3;
+  color: var(--text-color);
+}
+
 .error {
-  color: rgb(184, 3, 3);
+  color: var(--error-color);
 }
