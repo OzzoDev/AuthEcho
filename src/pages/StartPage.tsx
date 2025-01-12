@@ -2,6 +2,7 @@ import { MdLock, MdOutlineAccountTree, MdOutlineArrowUpward, MdOutlineSync } fro
 import InformationCard from "../components/InformationCard";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
+import ServiceOverview from "../components/ServiceOverview";
 //@ts-ignore
 import authVideo from "../assets/videos/authVideo.mp4";
 
@@ -10,6 +11,7 @@ export default function StartPage() {
     <>
       <Navbar />
       <Hero />
+      <ServiceOverview />
       <div className="information-cards">
         <InformationCard headline="Why Authecho?" text="Authecho is an advanced authentication service designed to enhance account management efficiency. By enabling users to sign in with a single account across all supported applications, Authecho simplifies the user experience while maintaining robust security protocols." icon={<MdOutlineAccountTree size={50} color="white" />} />
 

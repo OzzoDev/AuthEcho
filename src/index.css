@@ -48,9 +48,14 @@ body {
 }
 
 .hero-headline {
+  margin-bottom: 20px;
   font-size: clamp(4rem, 5vw, 6rem);
   text-align: center;
-  color: var(--text-color);
+  background: linear-gradient(to right, var(--neutral-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  filter: brightness(200%);
 }
 
 .hero-subline {
@@ -89,6 +94,54 @@ body {
   background-color: black;
   opacity: 0.7;
   z-index: -1;
+}
+
+.service-overview {
+  width: 95%;
+  /* margin: 20px; */
+  padding: 40px;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  /* margin-bottom: 100px; */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 50px;
+  color: var(--text-color);
+  background-color: var(--primary-color);
+  position: relative;
+}
+
+.service-overview::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  bottom: -5px;
+  right: -5px;
+  border-radius: 50px;
+  background-color: red;
+  z-index: -1;
+  animation: gradientAnimation 7s ease infinite;
+  background: linear-gradient(270deg, #048ba8, #f24c00, #f24c00, #048ba8);
+  background-size: 400% 400%;
+}
+
+.service-overview-main-header {
+  font-size: 2.3rem;
+}
+
+.service-overview-sub-header {
+  font-size: 1.5rem;
+  margin: 50px 0 7px 0;
+  color: var(--neutral-color);
+}
+
+.service-overview-text {
+  width: min(90%, 1200px);
+  line-height: 1.25rem;
 }
 
 .information-cards {
@@ -135,4 +188,28 @@ body {
 
 .error {
   color: var(--error-color);
+}
+
+.color-neutral {
+  color: var(--neutral-color);
+}
+
+.color-accent {
+  color: var(--accent-color);
+}
+
+.color-orange {
+  color: var(--primary-btn-color);
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
