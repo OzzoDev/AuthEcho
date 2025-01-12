@@ -9,8 +9,6 @@ import FormInput from "../components/form/FormInput";
 import FormPasswordInput from "../components/form/FormPasswordInput";
 import { NewAccount } from "../types/auth";
 import FormVerify from "../components/form/FormVerify";
-//@ts-ignore
-import "../styles/signupPage.css";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<NewAccount>({ name: "", email: "", password: "", confirmPassword: "" });
@@ -50,13 +48,18 @@ export default function SignUpPage() {
   };
 
   if (status === "loading") {
-    return <ReactLoading type="spin" color="#00f" height={50} width={50} />;
+    return (
+      <>
+        <Navbar />
+        <ReactLoading type="spin" color="#00f" height={50} width={50} />;
+      </>
+    );
   }
 
   return (
     <>
       <Navbar />
-      <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security</h1>
+      <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security!</h1>
       <form onSubmit={handleSubmit}>
         {!verify ? (
           <>
