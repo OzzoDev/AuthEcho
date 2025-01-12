@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 
 const hex8BitKey = () => {
-  return crypto.randomBytes(8).toString("hex");
+  return crypto.randomBytes(4).toString("hex").slice(0, 8);
 };
 
 const hex32BitKey = () => {
