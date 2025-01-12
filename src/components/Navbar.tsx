@@ -45,7 +45,7 @@ export default function Navbar() {
           </ul>
           {/* </div> */}
           <div className="controls">
-            <NavLink to="/unlockaccount" className="control-btn btn-primary">
+            <NavLink to="/unlockaccount" className="control-btn btn btn-secondary">
               Connect App
               <GoPlus size={26} />
             </NavLink>
