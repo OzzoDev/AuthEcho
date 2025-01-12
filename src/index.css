@@ -210,8 +210,10 @@ h3 p {
 }
 
 .errorMessage {
+  margin-top: 100px;
   text-align: center;
   font-size: 2rem;
+  color: var(--error-color);
 }
 
 .color-neutral {
