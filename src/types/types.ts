@@ -5,12 +5,12 @@ export type UserFormData = {
   password?: string;
   confirmPassword?: string;
   verificationCode?: string;
-  securityQuestionId?: number;
+  securityQuestionId?: string;
   securityQuestionAnswer?: string;
 };
 
 export type SecurityQuestion = {
-  id: number;
+  id: string;
   question: string;
 };
 

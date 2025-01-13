@@ -302,7 +302,7 @@ export async function getSecurityQuestions(setStatus: (status: FetchStatus) => v
   }
 }
 
-export async function setSecurityQuestions(questionData: SetSecurityQuestion, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
+export async function setSecurityQuestion(questionData: SetSecurityQuestion, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
   try {
     setStatus("loading");
     setError("");

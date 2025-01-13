@@ -21,14 +21,12 @@ export default function Dropdown({ questions, onSelect }: Props) {
   const handleQuestionClick = (question: SecurityQuestion) => {
     onSelect(question);
     setDisplayText(question.question);
-    console.log(question.question);
-
     setIsOpen(false);
   };
 
   const renderRow = ({ index, style }: { index: number; style: React.CSSProperties }) => (
     <li style={style} onClick={() => handleQuestionClick(questions[index])} role="option" className="drop-down-list-item">
-      {questions[index].question} {questions[index].id}
+      {questions[index].question}
     </li>
   );
 
@@ -38,7 +36,7 @@ export default function Dropdown({ questions, onSelect }: Props) {
 
   return (
     <div className="dropdown" ref={dropdownRef}>
-      <button onClick={toggleDropdown} className="dropdown-toggle">
+      <button type="button" onClick={toggleDropdown} className="dropdown-toggle">
         {isOpen ? <FaChevronUp size={25} color="#fafffd" /> : <FaChevronDown size={25} color="#fafffd" />}
       </button>
       {isOpen ? (

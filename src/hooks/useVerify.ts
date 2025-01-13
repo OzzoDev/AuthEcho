@@ -21,8 +21,6 @@ const useVerify = ({ formData, code, verify, setStatus, setError }: Props) => {
     if (code.length === 8) {
       let response;
 
-      console.log("Verification Code: ", formData.verificationCode);
-
       switch (verify) {
         case "signup":
           response = await verifyAccount({ email: formData.email || "", verificationCode: code }, setStatus, setError);
