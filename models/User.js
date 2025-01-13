@@ -18,7 +18,7 @@ const UserSchema = new Schema({
   },
   verificationCode: {
     type: String,
-    required: true,
+    default: hex8BitKey(),
   },
   verified: {
     type: Boolean,
@@ -35,6 +35,14 @@ const UserSchema = new Schema({
   lastLogin: {
     type: String,
     default: getDate(),
+  },
+  securityQuestionId: {
+    type: String,
+    default: "-1",
+  },
+  securityQuestionAnswer: {
+    type: String,
+    default: "",
   },
   createdAt: {
     type: String,

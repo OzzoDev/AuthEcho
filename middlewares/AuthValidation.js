@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 
-const signupValidation = (req, res, next) => {
+const newAccountValidation = (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (name.length < 3 || name.length > 20) {
@@ -79,7 +79,7 @@ const usernameValidation = (req, res, next) => {
 };
 
 module.exports = {
-  signupValidation,
+  newAccountValidation,
   validateNewPassword,
   emailValidation,
   usernameValidation,

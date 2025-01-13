@@ -7,6 +7,7 @@ const { validateNewPassword } = require("../middlewares/AuthValidation");
 const { hex8BitKey } = require("../utils/crypto");
 const { getDate } = require("../utils/date");
 const { getEmailText } = require("../utils/email");
+const { securityQuestions } = require("../utils/security");
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -23,22 +24,21 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "Username already exists", success: false });
     }
 
-    const verificationCode = hex8BitKey();
+    // const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
 
-    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
+    // if (!verificationCodeSent) {
+    //   return res.status(500).json({ message: `Email error ${userName}`, success: false });
+    // }
 
-    if (!verificationCodeSent) {
-      return res.status(500).json({ message: `Email error ${userName}`, success: false });
-    }
-
-    const userModel = new UserModel({ name, email, password, verificationCode, verified: false, suspended: false });
+    const userModel = new UserModel({ name, email, password });
     userModel.password = await bcrypt.hash(password, 10);
     await userModel.save();
 
-    const user = await UserModel.findOne({ email });
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    // const user = await UserModel.findOne({ email });
+    // const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-    res.status(201).json({ message: "Signup successfully", success: true, jwtToken });
+    // res.status(201).json({ message: "Signup successfully", success: true, jwtToken });
+    res.status(201).json({ message: "Signup successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -67,7 +67,9 @@ const verifyAccount = async (req, res) => {
     user.verified = true;
     await user.save();
 
-    res.status(201).json({ message: "Verification successfully", success: true });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(201).json({ message: "Verification successfully", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -459,6 +461,49 @@ const getUserData = async (req, res) => {
   }
 };
 
+const getSecurityQuestions = async (_, res) => {
+  res.status(200).json({ message: "Success", success: true, questions: securityQuestions });
+};
+
+const setSecurityQuestion = async (req, res) => {
+  const { name, email, password, securityQuestionId, securityQuestionAnswer } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ name });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const isPasswordEqual = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordEqual) {
+      return res.status(403).json({ message: "Wrong password", success: false });
+    }
+
+    const question = securityQuestions.find((ques) => ques.id === parseInt(securityQuestionId));
+
+    if (!question) {
+      return res.status(400).json({ message: "Invalid security question", success: false });
+    }
+
+    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${user.verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
+
+    if (!verificationCodeSent) {
+      return res.status(500).json({ message: `Email error ${userName}`, success: false });
+    }
+
+    user.securityQuestionId = await bcrypt.hash(question.question, 10);
+    user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer, 10);
+    await user.save();
+
+    res.status(201).json({ message: "Signup successfully", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
 module.exports = {
   signup,
   verifyAccount,
@@ -474,4 +519,6 @@ module.exports = {
   unlockAccount,
   isSuspended,
   getUserData,
+  getSecurityQuestions,
+  setSecurityQuestion,
 };

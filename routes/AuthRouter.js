@@ -1,10 +1,11 @@
-const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail, updatePassword, unlockAccount, isSuspended } = require("../controllers/AuthController");
+const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail, updatePassword, unlockAccount, isSuspended, getSecurityQuestions, setSecurityQuestion } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
-const { signupValidation, emailValidation, usernameValidation } = require("../middlewares/AuthValidation");
+const { newAccountValidation, emailValidation, usernameValidation } = require("../middlewares/AuthValidation");
 
 const router = require("express").Router();
 
-router.post("/signup", signupValidation, signup);
+router.get("/verify", ensureAuthenticated, verifyAuthorization);
+router.post("/signup", newAccountValidation, signup);
 router.post("/verifyaccount", verifyAccount);
 router.post("/signin", signin);
 router.put("/updateemail", ensureAuthenticated, updateEmail);
@@ -16,7 +17,8 @@ router.post("/resetpassword", resetPassword);
 router.put("/updatepassword", ensureAuthenticated, updatePassword);
 router.post("/unlockaccount", unlockAccount);
 router.post("/issuspended", isSuspended);
-router.get("/verify", ensureAuthenticated, verifyAuthorization);
 router.post("/userdata", getUserData);
+router.get("/securityQuestions", getSecurityQuestions);
+router.post("/setsecurityQuestion", newAccountValidation, setSecurityQuestion);
 
 module.exports = router;
