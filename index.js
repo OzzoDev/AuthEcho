@@ -24,6 +24,7 @@ app.use("/unlockaccount", createProxyMiddleware({ target: `${targetServer}/unloc
 app.use("/issuspended", createProxyMiddleware({ target: `${targetServer}/issuspended`, changeOrigin: true }));
 app.use("/verify", createProxyMiddleware({ target: `${targetServer}/verify`, changeOrigin: true }));
 app.use("/securityQuestions", createProxyMiddleware({ target: `${targetServer}/securityQuestions`, changeOrigin: true }));
+app.use("/setsecurityQuestion", createProxyMiddleware({ target: `${targetServer}/setsecurityQuestion`, changeOrigin: true }));
 app.use("/userdata", createProxyMiddleware({ target: `${targetServer}/userdata`, changeOrigin: true }));
 
 app.use("/ping", createProxyMiddleware({ target: `${targetServer}/ping`, changeOrigin: true }));
