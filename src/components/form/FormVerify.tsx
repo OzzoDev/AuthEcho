@@ -5,6 +5,7 @@ import { Verify } from "../../types/auth";
 import { resetPassword, unlockAccount, verifyAccount } from "../../utils/ServerClient";
 import { UserFormData } from "../../types/types";
 import { useDispatch } from "react-redux";
+import useDocumentFocus from "../../hooks/useDocumentFocus";
 
 interface Props {
   formData: UserFormData;
@@ -22,16 +23,9 @@ export default function FormVerify({ formData, verify, setStatus, setError, setF
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const documentIsUnfocused = Array.from(inputRefs.current).every((ref) => ref === null || !ref?.contains(document.activeElement));
-      if (documentIsUnfocused) {
-        inputRefs.current[0]?.focus();
-      }
-    }, 100);
+  const isDocumentUnfocused = Array.from(inputRefs.current).every((ref) => ref === null || !ref?.contains(document.activeElement));
 
-    return () => clearInterval(intervalId);
-  }, [lastClipboard]);
+  useDocumentFocus<HTMLInputElement, string>({ focusElementRef: { current: inputRefs.current[0] }, dependency: lastClipboard, focusCondition: isDocumentUnfocused });
 
   useEffect(() => {
     const verifyCode = async () => {
