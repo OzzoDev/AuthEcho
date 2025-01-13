@@ -23,6 +23,7 @@ app.use("/updatepassword", createProxyMiddleware({ target: `${targetServer}/upda
 app.use("/unlockaccount", createProxyMiddleware({ target: `${targetServer}/unlockaccount`, changeOrigin: true }));
 app.use("/issuspended", createProxyMiddleware({ target: `${targetServer}/issuspended`, changeOrigin: true }));
 app.use("/verify", createProxyMiddleware({ target: `${targetServer}/verify`, changeOrigin: true }));
+app.use("/securityQuestions", createProxyMiddleware({ target: `${targetServer}/securityQuestions`, changeOrigin: true }));
 app.use("/userdata", createProxyMiddleware({ target: `${targetServer}/userdata`, changeOrigin: true }));
 
 app.use("/ping", createProxyMiddleware({ target: `${targetServer}/ping`, changeOrigin: true }));
