@@ -310,28 +310,10 @@ const validatePassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { userData, verificationCode, newPassword, confirmNewPassword } = req.body;
+  const { userData, newPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    const userName = user.name;
-
-    const isVerificationEqual = verificationCode === user.verificationCode;
-
-    if (!isVerificationEqual) {
-      return res.status(400).json({ message: "Verification code is wrong", success: false });
-    }
-
-    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
-
-    if (!isPasswordVaild.isValid) {
-      return res.status(400).json({ message: isPasswordVaild.message, success: false });
-    }
 
     const newVerificationCode = hex8BitKey();
 
@@ -343,7 +325,7 @@ const resetPassword = async (req, res) => {
 
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-    res.status(200).json({ message: `Password successfully updated for ${userName}`, success: true, jwtToken });
+    res.status(200).json({ message: `Password successfully updated`, success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -466,7 +448,7 @@ const getSecurityQuestions = async (_, res) => {
 };
 
 const setSecurityQuestion = async (req, res) => {
-  const { name, email, password, securityQuestionId, securityQuestionAnswer } = req.body;
+  const { name, email, password, securityQuestion, securityQuestionAnswer } = req.body;
 
   try {
     const user = await UserModel.findOne({ name });
@@ -481,23 +463,55 @@ const setSecurityQuestion = async (req, res) => {
       return res.status(403).json({ message: "Wrong password", success: false });
     }
 
-    const question = securityQuestions.find((ques) => ques.id === parseInt(securityQuestionId));
-
-    if (!question) {
-      return res.status(400).json({ message: "Invalid security question", success: false });
-    }
-
     const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${user.verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
 
     if (!verificationCodeSent) {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
     }
 
-    user.securityQuestionId = await bcrypt.hash(question.question, 10);
+    user.securityQuestion = securityQuestion;
     user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer, 10);
     await user.save();
 
-    res.status(201).json({ message: "Signup successfully", success: true });
+    res.status(201).json({ message: "Set security question successfully", success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const getUserSecurityQuestion = async (req, res) => {
+  const { userData } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const question = user.securityQuestion;
+
+    res.status(200).json({ message: "Security question successfully fetched", success: true, question });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const validateSecurityQuestion = async (req, res) => {
+  const { userData, securityQuestionAnswer } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    const rightAnswer = await bcrypt.compare(securityQuestionAnswer, user.securityQuestionAnswer);
+
+    if (!rightAnswer) {
+      return res.status(403).json({ message: "Wrong answer", success: false });
+    }
+
+    res.status(200).json({ message: `Right answer`, success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -521,4 +535,6 @@ module.exports = {
   getUserData,
   getSecurityQuestions,
   setSecurityQuestion,
+  getUserSecurityQuestion,
+  validateSecurityQuestion,
 };

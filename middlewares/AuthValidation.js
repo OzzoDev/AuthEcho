@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
+const UserModel = require("../models/User");
 
 const newAccountValidation = (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
@@ -78,9 +79,39 @@ const usernameValidation = (req, res, next) => {
   next();
 };
 
+const passwordResetValidation = async (req, res, next) => {
+  const { userData, verificationCode, newPassword, confirmNewPassword } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const isVerificationEqual = verificationCode === user.verificationCode;
+
+    if (!isVerificationEqual) {
+      return res.status(400).json({ message: "Verification code is wrong", success: false });
+    }
+
+    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
+
+    if (!isPasswordVaild.isValid) {
+      return res.status(400).json({ message: isPasswordVaild.message, success: false });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
 module.exports = {
   newAccountValidation,
   validateNewPassword,
   emailValidation,
   usernameValidation,
+  passwordResetValidation,
 };

@@ -1,6 +1,6 @@
-const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail, updatePassword, unlockAccount, isSuspended, getSecurityQuestions, setSecurityQuestion } = require("../controllers/AuthController");
+const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, verifyAuthorization, getUserData, validateEmail, updatePassword, unlockAccount, isSuspended, getSecurityQuestions, setSecurityQuestion, validateSecurityQuestion, getUserSecurityQuestion } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
-const { newAccountValidation, emailValidation, usernameValidation } = require("../middlewares/AuthValidation");
+const { newAccountValidation, emailValidation, usernameValidation, passwordResetValidation } = require("../middlewares/AuthValidation");
 
 const router = require("express").Router();
 
@@ -13,12 +13,14 @@ router.put("/updateusername", ensureAuthenticated, usernameValidation, updateUse
 router.post("/sendverificationcode", sendVerificationcode);
 router.post("/validateemail", emailValidation, validateEmail);
 router.post("/validatepassword", validatePassword);
-router.post("/resetpassword", resetPassword);
+router.post("/resetpassword", passwordResetValidation, resetPassword);
 router.put("/updatepassword", ensureAuthenticated, updatePassword);
 router.post("/unlockaccount", unlockAccount);
 router.post("/issuspended", isSuspended);
 router.post("/userdata", getUserData);
-router.get("/securityQuestions", getSecurityQuestions);
-router.post("/setsecurityQuestion", newAccountValidation, setSecurityQuestion);
+router.get("/securityquestions", getSecurityQuestions);
+router.post("/setsecurityquestion", newAccountValidation, setSecurityQuestion);
+router.post("/getusersecurityquestion", passwordResetValidation, getUserSecurityQuestion);
+router.post("/validatesecurityquestion", passwordResetValidation, validateSecurityQuestion);
 
 module.exports = router;

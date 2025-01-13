@@ -36,9 +36,9 @@ const UserSchema = new Schema({
     type: String,
     default: getDate(),
   },
-  securityQuestionId: {
+  securityQuestion: {
     type: String,
-    default: "-1",
+    default: "",
   },
   securityQuestionAnswer: {
     type: String,
