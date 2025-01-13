@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { FetchStatus } from "../../types/apiTypes";
 import { Verify } from "../../types/auth";
-import { resetPassword, unlockAccount, verifyAccount } from "../../utils/ServerClient";
 import { UserFormData } from "../../types/types";
-import { useDispatch } from "react-redux";
 import useDocumentFocus from "../../hooks/useDocumentFocus";
+import useVerify from "../../hooks/useVerify";
 
 interface Props {
   formData: UserFormData;
@@ -20,49 +18,10 @@ export default function FormVerify({ formData, verify, setStatus, setError, setF
   const [lastClipboard, setLastClipboard] = useState<string>("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(8).fill(null));
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const isDocumentUnfocused = Array.from(inputRefs.current).every((ref) => ref === null || !ref?.contains(document.activeElement));
 
   useDocumentFocus<HTMLInputElement, string>({ focusElementRef: { current: inputRefs.current[0] }, dependency: lastClipboard, focusCondition: isDocumentUnfocused });
-
-  useEffect(() => {
-    const verifyCode = async () => {
-      const verificationCode = [...code].join("");
-      if (verificationCode.length === 8) {
-        let response;
-
-        switch (verify) {
-          case "signup":
-            response = await verifyAccount({ email: formData.email || "", verificationCode: verificationCode || "" }, setStatus, setError);
-            break;
-          case "reset":
-            response = await resetPassword({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: formData.verificationCode || "" }, setStatus, setError, dispatch);
-            break;
-          case "unlock":
-            response = await unlockAccount({ userData: formData.userData || "", verificationCode: formData.verificationCode || "" }, setStatus, setError);
-            break;
-        }
-
-        if (response) {
-          switch (verify) {
-            case "signup":
-              navigate("/account");
-              break;
-            case "reset":
-              navigate("/account");
-              break;
-            case "unlock":
-              navigate("/signin");
-              break;
-          }
-        }
-      }
-    };
-
-    verifyCode();
-  }, [code]);
+  useVerify({ formData, code: code.join(""), verify, setStatus, setError });
 
   useEffect(() => {
     const fetchClipboard = async () => {
