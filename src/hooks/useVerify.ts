@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { UserFormData } from "../types/types";
 import { Verify } from "../types/auth";
 import { FetchStatus } from "../types/apiTypes";
@@ -18,42 +17,41 @@ const useVerify = ({ formData, code, verify, setStatus, setError }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const verifyCode = async () => {
-      const verificationCode = [...code].join("");
-      if (verificationCode.length === 8) {
-        let response;
+  const verifyCode = async () => {
+    if (code.length === 8) {
+      let response;
 
+      console.log("Verification Code: ", formData.verificationCode);
+
+      switch (verify) {
+        case "signup":
+          response = await verifyAccount({ email: formData.email || "", verificationCode: code }, setStatus, setError);
+          break;
+        case "reset":
+          response = await resetPassword({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: code }, setStatus, setError, dispatch);
+          break;
+        case "unlock":
+          response = await unlockAccount({ userData: formData.userData || "", verificationCode: code }, setStatus, setError);
+          break;
+      }
+
+      if (response) {
         switch (verify) {
           case "signup":
-            response = await verifyAccount({ email: formData.email || "", verificationCode: verificationCode || "" }, setStatus, setError);
+            navigate("/account");
             break;
           case "reset":
-            response = await resetPassword({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: formData.verificationCode || "" }, setStatus, setError, dispatch);
+            navigate("/account");
             break;
           case "unlock":
-            response = await unlockAccount({ userData: formData.userData || "", verificationCode: formData.verificationCode || "" }, setStatus, setError);
+            navigate("/signin");
             break;
         }
-
-        if (response) {
-          switch (verify) {
-            case "signup":
-              navigate("/account");
-              break;
-            case "reset":
-              navigate("/account");
-              break;
-            case "unlock":
-              navigate("/signin");
-              break;
-          }
-        }
       }
-    };
+    }
+  };
 
-    verifyCode();
-  }, [code]);
+  return verifyCode;
 };
 
 export default useVerify;

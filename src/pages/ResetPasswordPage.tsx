@@ -57,7 +57,7 @@ export default function SigninPage() {
           </>
         ) : (
           <>
-            <h2 className="form-headline">Verify Account!</h2>
+            <h2 className="form-headline">Verify to reset!</h2>
             <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
             <FormVerify formData={formData} verify="reset" setStatus={setStatus} setError={setError} setFormData={setFormData} />
           </>
