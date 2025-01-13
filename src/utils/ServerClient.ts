@@ -1,26 +1,26 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SetSecurityQuestion, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
-import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, FetchStatus } from "../types/apiTypes";
+import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, FetchStatus, SecurityQuestionsResponse } from "../types/apiTypes";
 import { getToken, handleError, removeToken, storeData, storeToken } from "./utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { setAuth, signin, signup } from "../store/authSlice";
 import { AppDispatch } from "../store/store";
 import { NewAccount, UnlockAccount } from "../types/auth";
 
-export async function signUp(userData: NewAccount, setStatus: (status: FetchStatus) => void, setError: (error: string) => void, dispatch: AppDispatch): Promise<AxiosResponse<JwtTokenResponse> | null> {
+export async function signUp(userData: NewAccount, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
   try {
     setStatus("loading");
     setError("");
 
-    const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.SIGNUP, userData);
-    const token: string = response.data.jwtToken;
-    if (token) {
-      storeToken(token);
-      storeData(USERNAME_KEY, userData.name);
-      storeData(USEREMAIL_KEY, userData.email);
-      dispatch(signup());
-    }
+    const response = await axios.post<DefaultResponse>(AUTH_ENDPOINTS.SIGNUP, userData);
+    storeData(USERNAME_KEY, userData.name);
+    storeData(USEREMAIL_KEY, userData.email);
+    // const token: string = response.data.jwtToken;
+    // if (token) {
+    //   storeToken(token);;
+    //   dispatch(signup());
+    // }
 
     setStatus("success");
 
@@ -286,5 +286,31 @@ export async function verify(): Promise<AxiosResponse<DefaultResponse>> {
     });
   } catch (error: unknown) {
     throw error;
+  }
+}
+
+export async function getSecurityQuestions(setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<SecurityQuestionsResponse> | null> {
+  try {
+    setStatus("loading");
+    setError("");
+    const response = await axios.get<SecurityQuestionsResponse>(AUTH_ENDPOINTS.SECURITYQUESTIONS);
+    setStatus("success");
+    return response;
+  } catch (error: unknown) {
+    handleError(error, setStatus, setError);
+    return null;
+  }
+}
+
+export async function setSecurityQuestions(questionData: SetSecurityQuestion, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
+  try {
+    setStatus("loading");
+    setError("");
+    const response = await axios.post<DefaultResponse>(AUTH_ENDPOINTS.SETSECURITYQUESTION, questionData);
+    setStatus("success");
+    return response;
+  } catch (error: unknown) {
+    handleError(error, setStatus, setError);
+    return null;
   }
 }

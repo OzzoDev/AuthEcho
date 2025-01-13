@@ -1,3 +1,5 @@
+import { SecurityQuestion } from "./types";
+
 export type ApiRes = {
   data: JwtTokenResponse;
   status: number;
@@ -22,6 +24,12 @@ export type UserDataResponse = {
   message: string;
   success: boolean;
   userData: UserData;
+};
+
+export type SecurityQuestionsResponse = {
+  message: string;
+  success: string;
+  questions: SecurityQuestion[];
 };
 
 export type VerificationCodeRequest = {

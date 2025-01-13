@@ -26,16 +26,13 @@ form::before {
 
 .form-headline {
   font-size: 2rem;
-  /* margin-bottom: 20px; */
   align-self: flex-start;
   color: var(--neutral-color);
 }
 
 .form-info {
-  /* margin-top: -20px; */
   font-size: 1.2rem;
   margin-bottom: 20px;
-  text-align: center;
   color: var(--text-color);
 }
 
@@ -116,4 +113,66 @@ form::before {
   padding: 10px;
   font-size: 1.5rem;
   border-radius: 50px;
+}
+
+.dropdown {
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  border-radius: 20px;
+  color: var(--text-color);
+  background-color: var(--shadow-color);
+  position: relative;
+}
+
+.dropdown-toggle {
+  position: absolute;
+  right: 20px;
+  top: 55%;
+  transform: translateY(-50%);
+  z-index: 1000;
+}
+
+.drop-down-display {
+  width: 80%;
+  font-size: 1.2rem;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dropdown-list-wrapper {
+  width: 100%;
+  min-height: 300px;
+  padding: 20px 30px;
+  position: absolute;
+  left: 0;
+  overflow-y: auto;
+  border-radius: 20px;
+  background-color: var(--shadow-color);
+}
+
+.drop-down-list {
+  width: 90%;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  list-style-type: none;
+}
+
+.drop-down-list-item {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.drop-down-list-item:hover,
+.drop-down-list-item:focus {
+  color: var(--neutral-color);
+}
+
+@media (max-width: 475px) {
+  .dropdown {
+    height: 80px;
+  }
 }

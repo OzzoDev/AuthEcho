@@ -69,3 +69,12 @@ export type PasswordValidation = {
   newPassword: string;
   confirmNewPassword: string;
 };
+
+export type SetSecurityQuestion = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  securityQuestionId: number;
+  securityQuestionAnswer: string;
+};
