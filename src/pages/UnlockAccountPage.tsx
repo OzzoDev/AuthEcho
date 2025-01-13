@@ -1,50 +1,30 @@
-import { useEffect, useState } from "react";
-import { FetchStatus, FormState } from "../types/userTypes";
+import { useState } from "react";
 import ReactLoading from "react-loading";
-import { isSuspended, sendVerificationCode, unlockAccount } from "../utils/ServerClient";
-import { useNavigate } from "react-router-dom";
+import { isSuspended, sendVerificationCode } from "../utils/ServerClient";
 import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
 import FormVerify from "../components/form/FormVerify";
+import { FormState, UserFormData } from "../types/types";
+import { FetchStatus } from "../types/apiTypes";
 
 export default function UnlockAccountPage() {
+  const [formData, setFormData] = useState<UserFormData>({ userData: "", verificationCode: "" });
+
   const [formState, setFormState] = useState<FormState>("default");
-  const [userData, setUserData] = useState<string>("");
-  const [verificationCode, setVerficationCode] = useState<string>("");
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const verifyAccountAsync = async () => {
-      if (verificationCode.length === 8) {
-        const unlockAccountResponse = await unlockAccount({ userData, verificationCode }, setStatus, setError);
-        if (unlockAccountResponse) {
-          navigate("/signin");
-        }
-      }
-    };
-
-    verifyAccountAsync();
-  }, [verificationCode]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-
-    if (formState === "default") {
-      setUserData(value);
-    } else {
-      setVerficationCode(value);
-    }
+    setFormData((prevData) => ({ ...prevData, ["userData"]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isSuspendedResponse = await isSuspended(userData, setStatus, setError);
+    const isSuspendedResponse = await isSuspended(formData.userData || "", setStatus, setError);
     if (isSuspendedResponse) {
-      const verificationCodeResponse = await sendVerificationCode({ userData, action: "unlockAccount" }, setStatus, setError);
+      const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData || "", action: "unlockAccount" }, setStatus, setError);
       if (verificationCodeResponse) {
         setFormState("verify");
       }
@@ -68,7 +48,7 @@ export default function UnlockAccountPage() {
         {formState === "default" ? (
           <>
             <h2 className="form-headline">Unlock your account!</h2>
-            <FormInput labelText="Email or username" name="userData" value={userData} onChange={handleChange} required />
+            <FormInput labelText="Email or username" name="userData" value={formData.userData || ""} onChange={handleChange} required />
             <button type="submit" className="submit-btn btn btn-primary">
               Unlock
             </button>
@@ -77,7 +57,7 @@ export default function UnlockAccountPage() {
           <>
             <h2 className="form-headline">Verify Account!</h2>
             <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-            <FormVerify setVerificationCode={setVerficationCode} />
+            <FormVerify formData={formData} verify="unlock" setStatus={setStatus} setError={setError} setFormData={setFormData} />
           </>
         )}
       </form>

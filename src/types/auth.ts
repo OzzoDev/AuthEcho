@@ -5,6 +5,13 @@ export type NewAccount = {
   confirmPassword: string;
 };
 
+export type UnlockAccount = {
+  userData: string;
+  verificationCode: string;
+};
+
+export type Verify = "signup" | "reset" | "unlock";
+
 export type AuthState = {
   isAuthenticated: boolean;
 };

@@ -30,12 +30,9 @@ export type VerificationCodeRequest = {
   to?: string;
 };
 
-export type UnlockAccountRequest = {
-  userData: string;
-  verificationCode: string;
-};
-
 export type UserData = {
   name: string;
   email: string;
 };
+
+export type FetchStatus = "idle" | "loading" | "error" | "success";

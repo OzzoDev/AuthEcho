@@ -69,7 +69,3 @@ export type PasswordValidation = {
   newPassword: string;
   confirmNewPassword: string;
 };
-
-export type FetchStatus = "idle" | "loading" | "error" | "success";
-
-export type FormState = "default" | "verify";

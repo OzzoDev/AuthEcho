@@ -1,38 +1,21 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FetchStatus } from "../types/userTypes";
-import { signUp, verifyAccount } from "../utils/ServerClient";
+import { signUp } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
 import FormPasswordInput from "../components/form/FormPasswordInput";
-import { NewAccount } from "../types/auth";
 import FormVerify from "../components/form/FormVerify";
+import { FetchStatus } from "../types/apiTypes";
+import { FormState, UserFormData } from "../types/types";
+import { useState } from "react";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<NewAccount>({ name: "", email: "", password: "", confirmPassword: "" });
-  const [verificationCode, setVerficationCode] = useState<string>("");
-  const [verify, setVerify] = useState<boolean>(false);
-
+  const [formData, setFormData] = useState<UserFormData>({ name: "", email: "", password: "", confirmPassword: "" });
+  const [formState, setFormState] = useState<FormState>("default");
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const verifyAccountAsync = async () => {
-      if (verificationCode.length === 8) {
-        const verifyResponse = await verifyAccount({ email: formData.email, verificationCode: verificationCode }, setStatus, setError);
-        if (verifyResponse) {
-          navigate("/account");
-        }
-      }
-    };
-
-    verifyAccountAsync();
-  }, [verificationCode]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,9 +24,9 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const signUpResponse = await signUp(formData, setStatus, setError, dispatch);
+    const signUpResponse = await signUp({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "" }, setStatus, setError, dispatch);
     if (signUpResponse) {
-      setVerify(true);
+      setFormState("verify");
     }
   };
 
@@ -61,13 +44,13 @@ export default function SignUpPage() {
       <Navbar />
       <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security!</h1>
       <form onSubmit={handleSubmit}>
-        {!verify ? (
+        {formState === "default" ? (
           <>
             <h2 className="form-headline">Create your account!</h2>
-            <FormInput labelText="Username" name="name" value={formData.name} onChange={handleFormChange} required />
-            <FormInput labelText="Email" name="email" value={formData.email} onChange={handleFormChange} required />
-            <FormPasswordInput labelText="Password" name="password" value={formData.password} onChange={handleFormChange} required />
-            <FormPasswordInput labelText="Confirm password" name="confirmPassword" value={formData.confirmPassword} onChange={handleFormChange} required />
+            <FormInput labelText="Username" name="name" value={formData.name || ""} onChange={handleFormChange} required />
+            <FormInput labelText="Email" name="email" value={formData.email || ""} onChange={handleFormChange} required />
+            <FormPasswordInput labelText="Password" name="password" value={formData.password || ""} onChange={handleFormChange} required />
+            <FormPasswordInput labelText="Confirm password" name="confirmPassword" value={formData.confirmPassword || ""} onChange={handleFormChange} required />
             <button type="submit" className="submit-btn btn btn-primary">
               Sign Up
             </button>
@@ -76,7 +59,7 @@ export default function SignUpPage() {
           <>
             <h2 className="form-headline">Verify Account!</h2>
             <p className="form-info">An email has been sent to {formData.email}. Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-            <FormVerify setVerificationCode={setVerficationCode} />
+            <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormData={setFormData} />
           </>
         )}
       </form>

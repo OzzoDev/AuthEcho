@@ -1,59 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FetchStatus, ResetPassword } from "../types/userTypes";
-import { resetPassword, sendVerificationCode, validatePassword } from "../utils/ServerClient";
+import { useState } from "react";
+import { sendVerificationCode, validatePassword } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import Navbar from "../components/Navbar";
 import FormPasswordInput from "../components/form/FormPasswordInput";
 import FormInput from "../components/form/FormInput";
 import FormVerify from "../components/form/FormVerify";
+import { FetchStatus } from "../types/apiTypes";
+import { FormState, UserFormData } from "../types/types";
 
 export default function SigninPage() {
-  const [formData, setFormData] = useState<ResetPassword>({ userData: "", newPassword: "", confirmNewPassword: "", verificationCode: "" });
-  const [verify, setVerify] = useState<boolean>(false);
+  const [formData, setFormData] = useState<UserFormData>({ userData: "", password: "", confirmPassword: "", verificationCode: "" });
+  const [formState, setFormState] = useState<FormState>("default");
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
-
-  const navigate = useNavigate();
-  const dispatch = useNavigate();
-
-  useEffect(() => {
-    const verifyAccountAsync = async () => {
-      if (formData.verificationCode.length === 8) {
-        const passwordResposne = await resetPassword(formData, setStatus, setError, dispatch);
-        if (passwordResposne) {
-          navigate("/account");
-        }
-      }
-    };
-
-    verifyAccountAsync();
-  }, [formData.verificationCode]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSetVerificationCode = (verificationCode: string) => {
-    setFormData((prevData) => ({ ...prevData, ["verificationCode"]: verificationCode }));
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (verify) {
-      const passwordResposne = await resetPassword(formData, setStatus, setError, dispatch);
-      if (passwordResposne) {
-        navigate("/account");
-      }
-    } else {
-      const validatePasswordResponse = await validatePassword({ newPassword: formData.newPassword, confirmNewPassword: formData.confirmNewPassword, userData: formData.userData }, setStatus, setError);
-      if (validatePasswordResponse) {
-        const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData, action: "verifyEmail" }, setStatus, setError);
-        if (verificationCodeResponse) {
-          setVerify(true);
-        }
+    const validatePasswordResponse = await validatePassword({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "" }, setStatus, setError);
+    if (validatePasswordResponse) {
+      const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData || "", action: "verifyEmail" }, setStatus, setError);
+      if (verificationCodeResponse) {
+        setFormState("verify");
       }
     }
   };
@@ -72,12 +45,12 @@ export default function SigninPage() {
       <Navbar />
       <h1 className="page-headline">Quickly Reset Your Password and Secure Your Account!</h1>
       <form onSubmit={handleSubmit}>
-        {!verify ? (
+        {formState === "default" ? (
           <>
             <h2 className="form-headline">Reset your password!</h2>
-            <FormInput labelText="Email or username" name="userData" value={formData.userData} onChange={handleChange} required />
-            <FormPasswordInput labelText="Password" name="newPassword" value={formData.newPassword} onChange={handleChange} required />
-            <FormPasswordInput labelText="Confirm password" name="confirmNewPassword" value={formData.confirmNewPassword} onChange={handleChange} required />
+            <FormInput labelText="Email or username" name="userData" value={formData.userData || ""} onChange={handleChange} required />
+            <FormPasswordInput labelText="Password" name="password" value={formData.password || ""} onChange={handleChange} required />
+            <FormPasswordInput labelText="Confirm password" name="confirmPassword" value={formData.confirmPassword || ""} onChange={handleChange} required />
             <button type="submit" className="submit-btn btn btn-primary">
               Reset
             </button>
@@ -86,7 +59,7 @@ export default function SigninPage() {
           <>
             <h2 className="form-headline">Verify Account!</h2>
             <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-            <FormVerify setVerificationCode={handleSetVerificationCode} />
+            <FormVerify formData={formData} verify="reset" setStatus={setStatus} setError={setError} setFormData={setFormData} />
           </>
         )}
       </form>

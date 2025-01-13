@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FetchStatus, SignIn } from "../types/userTypes";
 import { signIn } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
 import FormPasswordInput from "../components/form/FormPasswordInput";
+import { FetchStatus } from "../types/apiTypes";
+import { SignIn } from "../types/userTypes";
 
 export default function SigninPage() {
   const [formData, setFormData] = useState<SignIn>({ userData: "", password: "" });
@@ -24,7 +25,6 @@ export default function SigninPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const signInResponse = await signIn(formData, setStatus, setError, dispatch);
-    console.log("Res: ", signInResponse);
 
     if (signInResponse) {
       navigate("/account");

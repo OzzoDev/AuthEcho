@@ -1,13 +1,14 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, EmailValidation, FetchStatus, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, User, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, VerifyAccountCredz } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
-import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, UnlockAccountRequest } from "../types/apiTypes";
+import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, FetchStatus } from "../types/apiTypes";
 import { getToken, handleError, removeToken, storeData, storeToken } from "./utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { setAuth, signin, signup } from "../store/authSlice";
 import { AppDispatch } from "../store/store";
+import { NewAccount, UnlockAccount } from "../types/auth";
 
-export async function signUp(userData: User, setStatus: (status: FetchStatus) => void, setError: (error: string) => void, dispatch: AppDispatch): Promise<AxiosResponse<JwtTokenResponse> | null> {
+export async function signUp(userData: NewAccount, setStatus: (status: FetchStatus) => void, setError: (error: string) => void, dispatch: AppDispatch): Promise<AxiosResponse<JwtTokenResponse> | null> {
   try {
     setStatus("loading");
     setError("");
@@ -225,7 +226,7 @@ export async function updatePassword(updateData: UpdatePassword, setStatus: (sta
   }
 }
 
-export async function unlockAccount(unlockData: UnlockAccountRequest, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<ApiResponse> | null> {
+export async function unlockAccount(unlockData: UnlockAccount, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<ApiResponse> | null> {
   try {
     setStatus("loading");
     setError("");

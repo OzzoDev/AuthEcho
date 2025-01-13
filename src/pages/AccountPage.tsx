@@ -4,12 +4,13 @@ import { useRef, useState } from "react";
 import { getData, removeData, removeToken } from "../utils/utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
-import { FetchStatus, Password } from "../types/userTypes";
+import { Password } from "../types/userTypes";
 import ReactLoading from "react-loading";
 import { sendVerificationCode, updateEmail, updatePassword, updateUsername, validateEmail } from "../utils/ServerClient";
 import { useDispatch } from "react-redux";
 import { signout } from "../store/authSlice";
 import Navbar from "../components/Navbar";
+import { FetchStatus } from "../types/apiTypes";
 
 export default function AccountPage() {
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
