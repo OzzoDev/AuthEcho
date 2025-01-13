@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FetchStatus } from "../../types/apiTypes";
 import { Verify } from "../../types/auth";
-import { UserFormData } from "../../types/types";
+import { FormState, UserFormData } from "../../types/types";
 import useVerify from "../../hooks/useVerify";
 import useClipboard from "../../hooks/useClipboard";
 
@@ -10,14 +10,15 @@ interface Props {
   verify: Verify;
   setStatus: (status: FetchStatus) => void;
   setError: (error: string) => void;
-  setFormData: (formData: UserFormData) => void;
+  setFormState: (formState: FormState) => void;
+  setFormData?: (formData: UserFormData) => void;
 }
 
-export default function FormVerify({ formData, verify, setStatus, setError }: Props) {
+export default function FormVerify({ formData, verify, setStatus, setError, setFormState, setFormData }: Props) {
   const [code, setCode] = useState<string[]>(Array(8).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(8).fill(null));
 
-  const verifyCode = useVerify({ formData, code: code.join(""), verify, setStatus, setError });
+  const verifyCode = useVerify({ formData, code: code.join(""), verify, setStatus, setError, setFormState, setFormData });
 
   const { lastClipboard } = useClipboard({ setCode });
 

@@ -57,7 +57,7 @@ export default function UnlockAccountPage() {
           <>
             <h2 className="form-headline">Verify to Unlock!</h2>
             <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-            <FormVerify formData={formData} verify="unlock" setStatus={setStatus} setError={setError} setFormData={setFormData} />
+            <FormVerify formData={formData} verify="unlock" setStatus={setStatus} setError={setError} setFormState={setFormState} />
           </>
         )}
       </form>

@@ -15,6 +15,12 @@ export type JwtTokenResponse = {
   jwtToken: string;
 };
 
+export type SecurityQuestionResponse = {
+  message: string;
+  success: boolean;
+  question: string;
+};
+
 export type DefaultResponse = {
   message: string;
   success: boolean;
@@ -30,6 +36,14 @@ export type SecurityQuestionsResponse = {
   message: string;
   success: string;
   questions: SecurityQuestion[];
+};
+
+export type ValidateSecurityQuestionRequest = {
+  userData: string;
+  verificationCode: string;
+  newPassword: string;
+  confirmNewPassword: string;
+  securityQuestionAnswer: string;
 };
 
 export type VerificationCodeRequest = {

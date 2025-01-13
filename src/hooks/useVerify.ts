@@ -1,8 +1,8 @@
-import { UserFormData } from "../types/types";
+import { FormState, UserFormData } from "../types/types";
 import { Verify } from "../types/auth";
 import { FetchStatus } from "../types/apiTypes";
 import { useDispatch } from "react-redux";
-import { resetPassword, unlockAccount, verifyAccount } from "../utils/ServerClient";
+import { getUserSecurityQuestion, unlockAccount, verifyAccount } from "../utils/ServerClient";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -11,9 +11,11 @@ interface Props {
   verify: Verify;
   setStatus: (status: FetchStatus) => void;
   setError: (error: string) => void;
+  setFormState: (formState: FormState) => void;
+  setFormData?: (formData: UserFormData) => void;
 }
 
-const useVerify = ({ formData, code, verify, setStatus, setError }: Props) => {
+const useVerify = ({ formData, code, verify, setStatus, setError, setFormState, setFormData }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -23,28 +25,27 @@ const useVerify = ({ formData, code, verify, setStatus, setError }: Props) => {
 
       switch (verify) {
         case "signup":
-          response = await verifyAccount({ email: formData.email || "", verificationCode: code }, setStatus, setError);
+          response = await verifyAccount({ email: formData.email || "", verificationCode: code }, setStatus, setError, dispatch);
+          if (response) {
+            navigate("/account");
+          }
           break;
         case "reset":
-          response = await resetPassword({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: code }, setStatus, setError, dispatch);
+          response = await getUserSecurityQuestion({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: code }, setStatus, setError);
+          if (response && setFormData) {
+            const updatedFormData = { ...formData, verificationCode: code, securityQuestion: response.data.question };
+            console.log("Updated data: ", updatedFormData);
+
+            setFormData(updatedFormData);
+            setFormState("question");
+          }
           break;
         case "unlock":
           response = await unlockAccount({ userData: formData.userData || "", verificationCode: code }, setStatus, setError);
-          break;
-      }
-
-      if (response) {
-        switch (verify) {
-          case "signup":
-            navigate("/account");
-            break;
-          case "reset":
-            navigate("/account");
-            break;
-          case "unlock":
+          if (response) {
             navigate("/signin");
-            break;
-        }
+          }
+          break;
       }
     }
   };

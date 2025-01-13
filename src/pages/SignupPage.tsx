@@ -1,6 +1,5 @@
 import { getSecurityQuestions, setSecurityQuestion, signUp } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
-import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
 import FormPasswordInput from "../components/form/FormPasswordInput";
@@ -12,7 +11,7 @@ import Dropdown from "../components/Dropdown";
 import Stepper from "../components/Stepper";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<UserFormData>({ name: "", email: "", password: "", confirmPassword: "", securityQuestionId: "", securityQuestionAnswer: "" });
+  const [formData, setFormData] = useState<UserFormData>({ name: "", email: "", password: "", confirmPassword: "", securityQuestion: "", securityQuestionAnswer: "" });
   const [formState, setFormState] = useState<FormState>("default");
   const [securityQuestions, setSecurityQuestions] = useState<SecurityQuestion[]>([]);
   const [status, setStatus] = useState<FetchStatus>("idle");
@@ -41,7 +40,7 @@ export default function SignUpPage() {
   };
 
   const handleSecurityQuestionSelect = (question: SecurityQuestion) => {
-    setFormData((prevData) => ({ ...prevData, securityQuestionId: question.id.toString() }));
+    setFormData((prevData) => ({ ...prevData, securityQuestion: question.question }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,11 +51,11 @@ export default function SignUpPage() {
         setFormState("question");
       }
     } else if (formState === "question") {
-      if (formData.securityQuestionId === "") {
+      if (formData.securityQuestion === "") {
         setError("Select a security question");
         setStatus("error");
       } else {
-        const questionResponse = await setSecurityQuestion({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "", securityQuestionId: formData.securityQuestionId || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
+        const questionResponse = await setSecurityQuestion({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "", securityQuestion: formData.securityQuestion || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
         if (questionResponse) {
           setFormState("verify");
         }
@@ -79,7 +78,6 @@ export default function SignUpPage() {
         <>
           <Navbar />
           <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security in 3 Simple Steps!</h1>
-          <Stepper steps={3} selectedIndex={currentStep} />
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Create your account!</h2>
             <FormInput labelText="Username" name="name" value={formData.name || ""} onChange={handleFormChange} required />
@@ -90,6 +88,7 @@ export default function SignUpPage() {
               Sign Up
             </button>
           </form>
+          <Stepper steps={3} selectedIndex={currentStep} />
           <h2 className="errorMessage">{error}</h2>
         </>
       );
@@ -98,7 +97,6 @@ export default function SignUpPage() {
         <>
           <Navbar />
           <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security!</h1>
-          <Stepper steps={3} selectedIndex={currentStep} />
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Select Security Question!</h2>
             <p className="form-info">Implementing a security question significantly enhances your account's protection. Please choose a question that you can easily remember for future reference.</p>
@@ -108,6 +106,7 @@ export default function SignUpPage() {
               Continue
             </button>
           </form>
+          <Stepper steps={3} selectedIndex={currentStep} />
           <h2 className="errorMessage">{error}</h2>
         </>
       );
@@ -116,12 +115,12 @@ export default function SignUpPage() {
         <>
           <Navbar />
           <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security!</h1>
-          <Stepper steps={3} selectedIndex={currentStep} />
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Verify Email!</h2>
             <p className="form-info">An email has been sent to {formData.email}. Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-            <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormData={setFormData} />
+            <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormState={setFormState} />
           </form>
+          <Stepper steps={3} selectedIndex={currentStep} />
           <h2 className="errorMessage">{error}</h2>
         </>
       );

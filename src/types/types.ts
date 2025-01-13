@@ -5,7 +5,7 @@ export type UserFormData = {
   password?: string;
   confirmPassword?: string;
   verificationCode?: string;
-  securityQuestionId?: string;
+  securityQuestion?: string;
   securityQuestionAnswer?: string;
 };
 
@@ -14,4 +14,4 @@ export type SecurityQuestion = {
   question: string;
 };
 
-export type FormState = "default" | "question" | "verify";
+export type FormState = "default" | "verify" | "question";

@@ -75,6 +75,6 @@ export type SetSecurityQuestion = {
   email: string;
   password: string;
   confirmPassword: string;
-  securityQuestionId: string;
+  securityQuestion: string;
   securityQuestionAnswer: string;
 };
