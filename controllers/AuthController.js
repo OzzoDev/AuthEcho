@@ -466,7 +466,7 @@ const setSecurityQuestion = async (req, res) => {
     }
 
     user.securityQuestion = securityQuestion;
-    user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer, 10);
+    user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer.toLowerCase(), 10);
     await user.save();
 
     const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
@@ -503,7 +503,7 @@ const validateSecurityQuestion = async (req, res) => {
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
-    const rightAnswer = await bcrypt.compare(securityQuestionAnswer, user.securityQuestionAnswer);
+    const rightAnswer = await bcrypt.compare(securityQuestionAnswer.toLowerCase(), user.securityQuestionAnswer);
 
     if (!rightAnswer) {
       return res.status(403).json({ message: "Wrong answer", success: false });
