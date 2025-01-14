@@ -1,4 +1,4 @@
-import { getSecurityQuestions, setSecurityQuestion, signUp } from "../utils/ServerClient";
+import { getSecurityQuestions, sendVerificationCode, setSecurityQuestion, signUp } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
@@ -50,21 +50,27 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formState === "default") {
-      const signUpResponse = await signUp({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "" }, setStatus, setError);
-      if (signUpResponse) {
-        setFormState("verify");
-      }
-    } else if (formState === "question") {
-      if (formData.securityQuestion === "") {
-        setError("Select a security question");
-        setStatus("error");
-      } else {
-        const questionResponse = await setSecurityQuestion({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "", securityQuestion: formData.securityQuestion || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError, dispatch);
-        if (questionResponse) {
-          navigate("/account");
+    switch (formState) {
+      case "default":
+        const signUpResponse = await signUp({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "" }, setStatus, setError);
+        if (signUpResponse) {
+          setFormState("verify");
         }
-      }
+        break;
+      case "verify":
+        await sendVerificationCode({ userData: formData.name || formData.email || "", action: "verifyEmail" }, setStatus, setError);
+        break;
+      case "question":
+        if (formData.securityQuestion === "") {
+          setError("Select a security question");
+          setStatus("error");
+        } else {
+          const questionResponse = await setSecurityQuestion({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "", securityQuestion: formData.securityQuestion || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError, dispatch);
+          if (questionResponse) {
+            navigate("/account");
+          }
+        }
+        break;
     }
   };
 
@@ -99,6 +105,25 @@ export default function SignUpPage() {
           <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
+    case "verify":
+      return (
+        <>
+          <Navbar />
+          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
+          <form onSubmit={handleSubmit}>
+            <h2 className="form-headline">Verify Email!</h2>
+            <p className="form-info">Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If you require a new code, please use the "Regenerate Code" button to receive a fresh verification code via email.</p>
+            <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormState={setFormState} />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
+            <button type="submit" className="submit-btn btn btn-primary">
+              Regenerate Code
+            </button>
+          </form>
+          <Stepper steps={3} selectedIndex={currentStep} />
+        </>
+      );
     case "question":
       return (
         <>
@@ -113,24 +138,8 @@ export default function SignUpPage() {
               <p className="error-message">{error}</p>
             </div>
             <button type="submit" className="submit-btn btn btn-primary">
-              Verify
+              Continue
             </button>
-          </form>
-          <Stepper steps={3} selectedIndex={currentStep} />
-        </>
-      );
-    case "verify":
-      return (
-        <>
-          <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
-          <form onSubmit={handleSubmit}>
-            <h2 className="form-headline">Verify Email!</h2>
-            <p className="form-info">An email has been sent to {formData.email}. Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
-            <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormState={setFormState} />
-            <div className="error-container">
-              <p className="error-message">{error}</p>
-            </div>
           </form>
           <Stepper steps={3} selectedIndex={currentStep} />
         </>

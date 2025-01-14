@@ -31,22 +31,29 @@ export default function UnlockAccountPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formState === "default") {
-      const isSuspendedResponse = await isSuspended(formData.userData || "", setStatus, setError);
-      if (isSuspendedResponse) {
-        const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData || "", action: "unlockAccount" }, setStatus, setError);
-        if (verificationCodeResponse) {
-          setFormState("verify");
+
+    switch (formState) {
+      case "default":
+        const isSuspendedResponse = await isSuspended(formData.userData || "", setStatus, setError);
+        if (isSuspendedResponse) {
+          const verificationCodeResponse = await sendVerificationCode({ userData: formData.userData || "", action: "unlockAccount" }, setStatus, setError);
+          if (verificationCodeResponse) {
+            setFormState("verify");
+          }
         }
-      }
-    } else if (formState === "question") {
-      const validateSecurityQuestionResponse = await validateSecurityQuestion({ userData: formData.userData || "", verificationCode: formData.verificationCode || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
-      if (validateSecurityQuestionResponse) {
-        const unlockResponse = await unlockAccount({ userData: formData.userData || "", verificationCode: formData.verificationCode || "" }, setStatus, setError, dispatch);
-        if (unlockResponse) {
-          navigate("/signin");
+        break;
+      case "verify":
+        await sendVerificationCode({ userData: formData.userData || "", action: "unlockAccount" }, setStatus, setError);
+        break;
+      case "question":
+        const validateSecurityQuestionResponse = await validateSecurityQuestion({ userData: formData.userData || "", verificationCode: formData.verificationCode || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
+        if (validateSecurityQuestionResponse) {
+          const unlockResponse = await unlockAccount({ userData: formData.userData || "", verificationCode: formData.verificationCode || "" }, setStatus, setError, dispatch);
+          if (unlockResponse) {
+            navigate("/signin");
+          }
         }
-      }
+        break;
     }
   };
 
@@ -85,11 +92,14 @@ export default function UnlockAccountPage() {
           <h1 className="page-headline">Unlock Your Account and Take Control of Your Access!</h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Verify to Unlock!</h2>
-            <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
+            <p className="form-info">Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If you require a new code, please use the "Regenerate Code" button to receive a fresh verification code via email.</p>
             <FormVerify formData={formData} verify="unlock" setStatus={setStatus} setError={setError} setFormState={setFormState} setFormData={setFormData} />
             <div className="error-container">
               <p className="error-message">{error}</p>
             </div>
+            <button type="submit" className="submit-btn btn btn-primary">
+              Regenerate Code
+            </button>
           </form>
           <Stepper steps={3} selectedIndex={currentStep} />
         </>
