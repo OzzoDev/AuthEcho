@@ -9,7 +9,7 @@ export type VerifyUser = {
   verificationCode: string;
 };
 
-export type VerifySecurityQuestion = {
+export type ValidateSecurityQuestion = {
   userData: string;
   verificationCode: string;
   securityQuestionAnswer: string;

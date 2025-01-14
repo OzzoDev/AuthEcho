@@ -48,11 +48,13 @@ export default function SigninPage() {
         <h2 className="form-headline">Access your account!</h2>
         <FormInput labelText="Username" name="userData" value={formData.userData} onChange={handleChange} required />
         <FormPasswordInput labelText="Password" name="password" value={formData.password} onChange={handleChange} required />
+        <div className="error-container">
+          <p className="error-message">{error}</p>
+        </div>
         <button type="submit" className="submit-btn btn btn-primary">
           Sign In
         </button>
       </form>
-      <h2 className="errorMessage">{error}</h2>
     </>
   );
 }

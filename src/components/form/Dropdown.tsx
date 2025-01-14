@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { FixedSizeList as List } from "react-window";
-import { SecurityQuestion } from "../types/types";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import useOutsideClick from "../hooks/useOutsideClick";
+import { SecurityQuestion } from "../../types/types";
+import useOutsideClick from "../../hooks/useOutsideClick";
 
 interface Props {
   questions: SecurityQuestion[];

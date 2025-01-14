@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { resetPassword, sendVerificationCode, validatePassword, validateSecurityQuestion } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import Navbar from "../components/Navbar";
@@ -9,15 +9,21 @@ import { FetchStatus } from "../types/apiTypes";
 import { FormState, UserFormData } from "../types/types";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Stepper from "../components/Stepper";
 
 export default function SigninPage() {
   const [formData, setFormData] = useState<UserFormData>({ userData: "", password: "", confirmPassword: "", verificationCode: "", securityQuestionAnswer: "" });
   const [formState, setFormState] = useState<FormState>("default");
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
+  const [currentStep, setCurrentStep] = useState<number>(0);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setCurrentStep(formState === "default" ? 0 : formState === "verify" ? 1 : 2);
+  }, [formState]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -67,11 +73,14 @@ export default function SigninPage() {
             <FormInput labelText="Email or username" name="userData" value={formData.userData || ""} onChange={handleChange} required />
             <FormPasswordInput labelText="New password" name="password" value={formData.password || ""} onChange={handleChange} required />
             <FormPasswordInput labelText="Confirm new password" name="confirmPassword" value={formData.confirmPassword || ""} onChange={handleChange} required />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
             <button type="submit" className="submit-btn btn btn-primary">
               Reset
             </button>
           </form>
-          <h2 className="errorMessage">{error}</h2>
+          <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
     case "verify":
@@ -83,8 +92,11 @@ export default function SigninPage() {
             <h2 className="form-headline">Verify to reset!</h2>
             <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
             <FormVerify formData={formData} verify="reset" setStatus={setStatus} setError={setError} setFormState={setFormState} setFormData={setFormData} />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
           </form>
-          <h2 className="errorMessage">{error}</h2>
+          <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
     case "question":
@@ -95,13 +107,16 @@ export default function SigninPage() {
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Final step!</h2>
             <p className="form-info">Enter the answer of your security question below</p>
-            <p className="form-info">{formData.securityQuestion}</p>
+            <p className="form-info security-question">{formData.securityQuestion}</p>
             <FormInput labelText="Security question answer" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleChange} required />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
             <button type="submit" className="submit-btn btn btn-primary">
               Verify
             </button>
           </form>
-          <h2 className="errorMessage">{error}</h2>
+          <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
   }

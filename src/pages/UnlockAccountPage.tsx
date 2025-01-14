@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import { isSuspended, sendVerificationCode, unlockAccount, validateSecurityQuestion } from "../utils/ServerClient";
 import Navbar from "../components/Navbar";
@@ -8,16 +8,21 @@ import { FormState, UserFormData } from "../types/types";
 import { FetchStatus } from "../types/apiTypes";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Stepper from "../components/Stepper";
 
 export default function UnlockAccountPage() {
   const [formData, setFormData] = useState<UserFormData>({ userData: "", verificationCode: "" });
-
   const [formState, setFormState] = useState<FormState>("default");
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
+  const [currentStep, setCurrentStep] = useState<number>(0);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setCurrentStep(formState === "default" ? 0 : formState === "verify" ? 1 : 2);
+  }, [formState]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -63,11 +68,14 @@ export default function UnlockAccountPage() {
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Unlock your account!</h2>
             <FormInput labelText="Email or username" name="userData" value={formData.userData || ""} onChange={handleChange} required />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
             <button type="submit" className="submit-btn btn btn-primary">
               Unlock
             </button>
           </form>
-          <h2 className="errorMessage">{error}</h2>
+          <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
     case "verify":
@@ -79,8 +87,11 @@ export default function UnlockAccountPage() {
             <h2 className="form-headline">Verify to Unlock!</h2>
             <p className="form-info">Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
             <FormVerify formData={formData} verify="unlock" setStatus={setStatus} setError={setError} setFormState={setFormState} setFormData={setFormData} />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
           </form>
-          <h2 className="errorMessage">{error}</h2>
+          <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
     case "question":
@@ -91,13 +102,16 @@ export default function UnlockAccountPage() {
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Final step!</h2>
             <p className="form-info">Enter the answer of your security question below</p>
-            <p className="form-info">{formData.securityQuestion}</p>
+            <p className="form-info security-question">{formData.securityQuestion}</p>
             <FormInput labelText="Security question answer" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleChange} required />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
             <button type="submit" className="submit-btn btn btn-primary">
               Verify
             </button>
           </form>
-          <h2 className="errorMessage">{error}</h2>
+          <Stepper steps={3} selectedIndex={currentStep} />
         </>
       );
   }

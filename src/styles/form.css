@@ -1,5 +1,6 @@
 form {
-  width: min(100%, 700px);
+  width: min(80%, 700px);
+  margin: 20px 0 50px 0;
   padding: 50px 50px;
   display: flex;
   flex-direction: column;
@@ -44,6 +45,10 @@ form::before {
   border-bottom: 1px solid var(--secondary-color);
 }
 
+.input-container:first-of-type {
+  margin-top: 30px;
+}
+
 .input-container label {
   position: absolute;
   top: 0px;
@@ -81,7 +86,7 @@ form::before {
 
 .password-toggle {
   width: fit-content;
-  margin: 0;
+  margin: 0 0 0 20px;
   padding: 0;
   background-color: transparent;
 }
@@ -189,6 +194,39 @@ form::before {
 .step.active {
   opacity: 0.8;
   background: linear-gradient(120deg, var(--accent-color) 10%, var(--neutral-color) 100%);
+}
+.error-container {
+  width: 100%;
+  height: 60px;
+  margin: -30px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-message {
+  font-weight: bolder;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  text-align: center;
+  background: linear-gradient(270deg, rgb(133, 4, 4), rgb(250, 2, 2));
+  background-size: 400% 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradientAnimation 3s ease infinite;
+}
+
+.security-question {
+  font-weight: bold;
+}
+
+@keyframes progress-animation {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
 }
 
 @media (max-width: 475px) {

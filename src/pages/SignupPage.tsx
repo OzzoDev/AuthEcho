@@ -7,10 +7,10 @@ import FormVerify from "../components/form/FormVerify";
 import { FetchStatus } from "../types/apiTypes";
 import { FormState, SecurityQuestion, UserFormData } from "../types/types";
 import { useEffect, useState } from "react";
-import Dropdown from "../components/Dropdown";
 import Stepper from "../components/Stepper";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import Dropdown from "../components/form/Dropdown";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<UserFormData>({ name: "", email: "", password: "", confirmPassword: "", securityQuestion: "", securityQuestionAnswer: "" });
@@ -82,51 +82,57 @@ export default function SignUpPage() {
       return (
         <>
           <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security in 3 Simple Steps!</h1>
+          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Create your account!</h2>
             <FormInput labelText="Username" name="name" value={formData.name || ""} onChange={handleFormChange} required />
             <FormInput labelText="Email" name="email" value={formData.email || ""} onChange={handleFormChange} required />
             <FormPasswordInput labelText="Password" name="password" value={formData.password || ""} onChange={handleFormChange} required />
             <FormPasswordInput labelText="Confirm password" name="confirmPassword" value={formData.confirmPassword || ""} onChange={handleFormChange} required />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
             <button type="submit" className="submit-btn btn btn-primary">
               Sign Up
             </button>
           </form>
           <Stepper steps={3} selectedIndex={currentStep} />
-          <h2 className="errorMessage">{error}</h2>
         </>
       );
     case "question":
       return (
         <>
           <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security!</h1>
+          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Select Security Question!</h2>
             <p className="form-info">Implementing a security question significantly enhances your account's protection. Please choose a question that you can easily remember for future reference.</p>
             <Dropdown questions={securityQuestions} onSelect={handleSecurityQuestionSelect} />
             <FormInput labelText="Your answer" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleFormChange} required />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
             <button type="submit" className="submit-btn btn btn-primary">
               Verify
             </button>
           </form>
           <Stepper steps={3} selectedIndex={currentStep} />
-          <h2 className="errorMessage">{error}</h2>
         </>
       );
     case "verify":
       return (
         <>
           <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management and Ultimate Security!</h1>
+          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Verify Email!</h2>
             <p className="form-info">An email has been sent to {formData.email}. Please check your inbox for an 8-character verification code and enter it in the field provided below</p>
             <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormState={setFormState} />
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
           </form>
           <Stepper steps={3} selectedIndex={currentStep} />
-          <h2 className="errorMessage">{error}</h2>
         </>
       );
   }
