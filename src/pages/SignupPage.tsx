@@ -9,6 +9,8 @@ import { FormState, SecurityQuestion, UserFormData } from "../types/types";
 import { useEffect, useState } from "react";
 import Dropdown from "../components/Dropdown";
 import Stepper from "../components/Stepper";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<UserFormData>({ name: "", email: "", password: "", confirmPassword: "", securityQuestion: "", securityQuestionAnswer: "" });
@@ -18,8 +20,11 @@ export default function SignUpPage() {
   const [error, setError] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    setCurrentStep(formState === "default" ? 0 : formState === "question" ? 1 : 2);
+    setCurrentStep(formState === "default" ? 0 : formState === "verify" ? 1 : 2);
   }, [formState]);
 
   useEffect(() => {
@@ -48,16 +53,16 @@ export default function SignUpPage() {
     if (formState === "default") {
       const signUpResponse = await signUp({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "" }, setStatus, setError);
       if (signUpResponse) {
-        setFormState("question");
+        setFormState("verify");
       }
     } else if (formState === "question") {
       if (formData.securityQuestion === "") {
         setError("Select a security question");
         setStatus("error");
       } else {
-        const questionResponse = await setSecurityQuestion({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "", securityQuestion: formData.securityQuestion || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
+        const questionResponse = await setSecurityQuestion({ name: formData.name || "", email: formData.email || "", password: formData.password || "", confirmPassword: formData.confirmPassword || "", securityQuestion: formData.securityQuestion || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError, dispatch);
         if (questionResponse) {
-          setFormState("verify");
+          navigate("/account");
         }
       }
     }
@@ -103,7 +108,7 @@ export default function SignUpPage() {
             <Dropdown questions={securityQuestions} onSelect={handleSecurityQuestionSelect} />
             <FormInput labelText="Your answer" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleFormChange} required />
             <button type="submit" className="submit-btn btn btn-primary">
-              Continue
+              Verify
             </button>
           </form>
           <Stepper steps={3} selectedIndex={currentStep} />

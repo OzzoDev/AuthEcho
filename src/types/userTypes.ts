@@ -53,7 +53,10 @@ export type EmailValidation = {
 };
 
 export type VerifyAccountCredz = {
+  name: string;
   email: string;
+  password: string;
+  confirmPassword: string;
   verificationCode: string;
 };
 

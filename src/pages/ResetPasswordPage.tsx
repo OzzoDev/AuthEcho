@@ -19,12 +19,6 @@ export default function SigninPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (formData.securityQuestion) {
-  //     setFormState("question");
-  //   }
-  // }, [formData.securityQuestion]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -103,6 +97,9 @@ export default function SigninPage() {
             <p className="form-info">Enter the answer of your security question below</p>
             <p className="form-info">{formData.securityQuestion}</p>
             <FormInput labelText="Email or username" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleChange} required />
+            <button type="submit" className="submit-btn btn btn-primary">
+              Verify
+            </button>
           </form>
           <h2 className="errorMessage">{error}</h2>
         </>

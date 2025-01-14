@@ -26,18 +26,12 @@ export async function signUp(userData: NewAccount, setStatus: (status: FetchStat
   }
 }
 
-export async function verifyAccount(credentials: VerifyAccountCredz, setStatus: (status: FetchStatus) => void, setError: (error: string) => void, dispatch: AppDispatch): Promise<AxiosResponse<JwtTokenResponse> | null> {
+export async function verifyAccount(credentials: VerifyAccountCredz, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
   try {
     setStatus("loading");
     setError("");
 
-    const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.VERIFYACCOUNT, credentials);
-
-    const token: string = response.data.jwtToken;
-    if (token) {
-      storeToken(token);
-      dispatch(signup());
-    }
+    const response = await axios.post<DefaultResponse>(AUTH_ENDPOINTS.VERIFYACCOUNT, credentials);
 
     setStatus("success");
 
@@ -306,12 +300,19 @@ export async function getSecurityQuestions(setStatus: (status: FetchStatus) => v
   }
 }
 
-export async function setSecurityQuestion(questionData: SetSecurityQuestion, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
+export async function setSecurityQuestion(questionData: SetSecurityQuestion, setStatus: (status: FetchStatus) => void, setError: (error: string) => void, dispatch: AppDispatch): Promise<AxiosResponse<JwtTokenResponse> | null> {
   try {
     setStatus("loading");
     setError("");
 
-    const response = await axios.post<DefaultResponse>(AUTH_ENDPOINTS.SETSECURITYQUESTION, questionData);
+    const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.SETSECURITYQUESTION, questionData);
+
+    const token: string = response.data.jwtToken;
+
+    if (token) {
+      storeToken(token);
+      dispatch(signup());
+    }
 
     setStatus("success");
 
