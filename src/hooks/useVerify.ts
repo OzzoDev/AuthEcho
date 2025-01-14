@@ -1,8 +1,7 @@
 import { FormState, UserFormData } from "../types/types";
 import { Verify } from "../types/auth";
 import { FetchStatus } from "../types/apiTypes";
-import { getUserSecurityQuestion, unlockAccount, verifyAccount } from "../utils/ServerClient";
-import { useNavigate } from "react-router-dom";
+import { getUserSecurityQuestion, verifyAccount } from "../utils/ServerClient";
 
 interface Props {
   formData: UserFormData;
@@ -15,8 +14,6 @@ interface Props {
 }
 
 const useVerify = ({ formData, code, verify, setStatus, setError, setFormState, setFormData }: Props) => {
-  const navigate = useNavigate();
-
   const verifyCode = async () => {
     if (code.length === 8) {
       let response;
@@ -29,17 +26,12 @@ const useVerify = ({ formData, code, verify, setStatus, setError, setFormState, 
           }
           break;
         case "reset":
-          response = await getUserSecurityQuestion({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: code }, setStatus, setError);
+        case "unlock":
+          response = await getUserSecurityQuestion({ userData: formData.userData || "", verificationCode: code }, setStatus, setError);
           if (response && setFormData) {
             const updatedFormData = { ...formData, verificationCode: code, securityQuestion: response.data.question };
             setFormData(updatedFormData);
             setFormState("question");
-          }
-          break;
-        case "unlock":
-          response = await unlockAccount({ userData: formData.userData || "", verificationCode: code }, setStatus, setError);
-          if (response) {
-            navigate("/signin");
           }
           break;
       }

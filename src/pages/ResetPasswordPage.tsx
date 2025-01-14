@@ -36,7 +36,7 @@ export default function SigninPage() {
         }
       }
     } else if (formState === "question") {
-      const validateSecurityQuestionResponse = await validateSecurityQuestion({ userData: formData.userData || "", verificationCode: formData.verificationCode || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
+      const validateSecurityQuestionResponse = await validateSecurityQuestion({ userData: formData.userData || "", verificationCode: formData.verificationCode || "", securityQuestionAnswer: formData.securityQuestionAnswer || "" }, setStatus, setError);
 
       if (validateSecurityQuestionResponse) {
         const resetPasswordResponse = await resetPassword({ userData: formData.userData || "", newPassword: formData.password || "", confirmNewPassword: formData.confirmPassword || "", verificationCode: formData.verificationCode || "" }, setStatus, setError, dispatch);
@@ -96,7 +96,7 @@ export default function SigninPage() {
             <h2 className="form-headline">Final step!</h2>
             <p className="form-info">Enter the answer of your security question below</p>
             <p className="form-info">{formData.securityQuestion}</p>
-            <FormInput labelText="Email or username" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleChange} required />
+            <FormInput labelText="Security question answer" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleChange} required />
             <button type="submit" className="submit-btn btn btn-primary">
               Verify
             </button>

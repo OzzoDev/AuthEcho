@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SetSecurityQuestion, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, VerifyAccountCredz } from "../types/userTypes";
+import { ApiResponse, EmailValidation, PasswordValidation, ResetPassword, SetSecurityQuestion, SignIn, UpdateEmail, UpdatePassword, UpdateUsername, ValidateSecurityQuestion, VerifyAccountCredz, VerifyUser } from "../types/userTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
-import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, FetchStatus, SecurityQuestionsResponse, SecurityQuestionResponse, ValidateSecurityQuestionRequest } from "../types/apiTypes";
+import { JwtTokenResponse, DefaultResponse, UserDataResponse, UserData, VerificationCodeRequest, FetchStatus, SecurityQuestionsResponse, SecurityQuestionResponse } from "../types/apiTypes";
 import { getToken, handleError, removeToken, storeData, storeToken } from "./utils";
 import { USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { setAuth, signin, signup } from "../store/authSlice";
@@ -221,12 +221,19 @@ export async function updatePassword(updateData: UpdatePassword, setStatus: (sta
   }
 }
 
-export async function unlockAccount(unlockData: UnlockAccount, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<ApiResponse> | null> {
+export async function unlockAccount(unlockData: UnlockAccount, setStatus: (status: FetchStatus) => void, setError: (error: string) => void, dispatch: AppDispatch): Promise<AxiosResponse<JwtTokenResponse> | null> {
   try {
     setStatus("loading");
     setError("");
 
-    const response = await axios.post<ApiResponse>(AUTH_ENDPOINTS.UNLOCKACCOUNT, unlockData);
+    const response = await axios.post<JwtTokenResponse>(AUTH_ENDPOINTS.UNLOCKACCOUNT, unlockData);
+
+    const token: string = response.data.jwtToken;
+
+    if (token) {
+      storeToken(token);
+      dispatch(setAuth(true));
+    }
 
     setStatus("success");
     return response;
@@ -323,7 +330,7 @@ export async function setSecurityQuestion(questionData: SetSecurityQuestion, set
   }
 }
 
-export async function getUserSecurityQuestion(questionData: ResetPassword, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<SecurityQuestionResponse> | null> {
+export async function getUserSecurityQuestion(questionData: VerifyUser, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<SecurityQuestionResponse> | null> {
   try {
     setStatus("loading");
     setError("");
@@ -339,7 +346,7 @@ export async function getUserSecurityQuestion(questionData: ResetPassword, setSt
   }
 }
 
-export async function validateSecurityQuestion(questionData: ValidateSecurityQuestionRequest, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
+export async function validateSecurityQuestion(questionData: ValidateSecurityQuestion, setStatus: (status: FetchStatus) => void, setError: (error: string) => void): Promise<AxiosResponse<DefaultResponse> | null> {
   try {
     setStatus("loading");
     setError("");

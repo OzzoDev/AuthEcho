@@ -38,14 +38,6 @@ export type SecurityQuestionsResponse = {
   questions: SecurityQuestion[];
 };
 
-export type ValidateSecurityQuestionRequest = {
-  userData: string;
-  verificationCode: string;
-  newPassword: string;
-  confirmNewPassword: string;
-  securityQuestionAnswer: string;
-};
-
 export type VerificationCodeRequest = {
   userData: string;
   action: "verifyEmail" | "verifyPassword" | "unlockAccount";

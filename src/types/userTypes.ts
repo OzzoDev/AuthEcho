@@ -4,6 +4,17 @@ export type User = {
   password: string;
 };
 
+export type VerifyUser = {
+  userData: string;
+  verificationCode: string;
+};
+
+export type VerifySecurityQuestion = {
+  userData: string;
+  verificationCode: string;
+  securityQuestionAnswer: string;
+};
+
 export type UpdateEmail = {
   userData: string;
   email: string;
