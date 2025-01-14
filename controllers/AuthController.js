@@ -55,13 +55,13 @@ const verifyAccount = async (req, res) => {
 
     const isVerificationEqual = verificationCode === user.verificationCode;
 
+    user.verificationCode = hex8BitKey();
+    await user.save();
+
     if (!isVerificationEqual) {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const newVerificationCode = hex8BitKey();
-
-    user.verificationCode = newVerificationCode;
     user.verified = true;
     await user.save();
 
@@ -494,7 +494,12 @@ const getUserSecurityQuestion = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (verificationCode !== user.verificationCode) {
+    const isVerificationEqual = verificationCode === user.verificationCode;
+
+    user.verificationCode = hex8BitKey();
+    await user.save();
+
+    if (!isVerificationEqual) {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
