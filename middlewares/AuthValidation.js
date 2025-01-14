@@ -2,7 +2,7 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/User");
 
-const newAccountValidation = (req, res, next) => {
+const newAccountValidation = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (name.length < 3 || name.length > 20) {

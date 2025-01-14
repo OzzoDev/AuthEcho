@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { getDate } = require("../utils/date");
-const { hex8BitKey } = require("../utils/crypto");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -18,7 +17,7 @@ const UserSchema = new Schema({
   },
   verificationCode: {
     type: String,
-    default: hex8BitKey(),
+    required: true,
   },
   verified: {
     type: Boolean,

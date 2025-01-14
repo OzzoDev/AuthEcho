@@ -24,20 +24,18 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "Username already exists", success: false });
     }
 
-    // const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
+    const verificationCode = hex8BitKey();
 
-    // if (!verificationCodeSent) {
-    //   return res.status(500).json({ message: `Email error ${userName}`, success: false });
-    // }
+    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
 
-    const userModel = new UserModel({ name, email, password });
+    if (!verificationCodeSent) {
+      return res.status(500).json({ message: `Email error ${userName}`, success: false });
+    }
+
+    const userModel = new UserModel({ name, email, password, verificationCode });
     userModel.password = await bcrypt.hash(password, 10);
     await userModel.save();
 
-    // const user = await UserModel.findOne({ email });
-    // const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
-
-    // res.status(201).json({ message: "Signup successfully", success: true, jwtToken });
     res.status(201).json({ message: "Signup successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
@@ -67,9 +65,7 @@ const verifyAccount = async (req, res) => {
     user.verified = true;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
-
-    res.status(201).json({ message: "Verification successfully", success: true, jwtToken });
+    res.status(201).json({ message: "Verification successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -473,7 +469,9 @@ const setSecurityQuestion = async (req, res) => {
     user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer, 10);
     await user.save();
 
-    res.status(201).json({ message: "Set security question successfully", success: true });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(201).json({ message: "Set security question successfully", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);

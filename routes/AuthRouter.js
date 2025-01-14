@@ -6,7 +6,7 @@ const router = require("express").Router();
 
 router.get("/verify", ensureAuthenticated, verifyAuthorization);
 router.post("/signup", newAccountValidation, signup);
-router.post("/verifyaccount", verifyAccount);
+router.post("/verifyaccount", newAccountValidation, verifyAccount);
 router.post("/signin", signin);
 router.put("/updateemail", ensureAuthenticated, updateEmail);
 router.put("/updateusername", ensureAuthenticated, usernameValidation, updateUsername);
