@@ -292,6 +292,10 @@ const validatePassword = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (user.suspended) {
+      return res.status(403).json({ message: "Account is suspended. Unlock account to reset password", success: false });
+    }
+
     const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
 
     if (!isPasswordVaild.isValid) {
@@ -394,7 +398,9 @@ const unlockAccount = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    res.status(200).json({ message: "Account successfully unlocked", success: true });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(200).json({ message: "Account successfully unlocked", success: true, jwtToken });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -479,13 +485,17 @@ const setSecurityQuestion = async (req, res) => {
 };
 
 const getUserSecurityQuestion = async (req, res) => {
-  const { userData } = req.body;
+  const { userData, verificationCode } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (verificationCode !== user.verificationCode) {
+      return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
     const question = user.securityQuestion;

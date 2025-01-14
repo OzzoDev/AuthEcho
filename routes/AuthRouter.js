@@ -20,7 +20,7 @@ router.post("/issuspended", isSuspended);
 router.post("/userdata", getUserData);
 router.get("/securityquestions", getSecurityQuestions);
 router.post("/setsecurityquestion", newAccountValidation, setSecurityQuestion);
-router.post("/getusersecurityquestion", passwordResetValidation, getUserSecurityQuestion);
-router.post("/validatesecurityquestion", passwordResetValidation, validateSecurityQuestion);
+router.post("/getusersecurityquestion", getUserSecurityQuestion);
+router.post("/validatesecurityquestion", validateSecurityQuestion);
 
 module.exports = router;
