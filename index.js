@@ -18,6 +18,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use("/verifyauthentication", createProxyMiddleware({ target: `${targetServer}/verifyauthentication`, changeOrigin: true }));
 app.use("/signup", createProxyMiddleware({ target: `${targetServer}/signup`, changeOrigin: true }));
 app.use("/verifyaccount", createProxyMiddleware({ target: `${targetServer}/verifyaccount`, changeOrigin: true }));
 app.use("/signin", createProxyMiddleware({ target: `${targetServer}/signin`, changeOrigin: true }));
@@ -30,7 +31,6 @@ app.use("/resetpassword", createProxyMiddleware({ target: `${targetServer}/reset
 app.use("/updatepassword", createProxyMiddleware({ target: `${targetServer}/updatepassword`, changeOrigin: true }));
 app.use("/unlockaccount", createProxyMiddleware({ target: `${targetServer}/unlockaccount`, changeOrigin: true }));
 app.use("/issuspended", createProxyMiddleware({ target: `${targetServer}/issuspended`, changeOrigin: true }));
-app.use("/verify", createProxyMiddleware({ target: `${targetServer}/verify`, changeOrigin: true }));
 app.use("/userdata", createProxyMiddleware({ target: `${targetServer}/userdata`, changeOrigin: true }));
 app.use("/securityquestions", createProxyMiddleware({ target: `${targetServer}/securityQuestions`, changeOrigin: true }));
 app.use("/setsecurityquestion", createProxyMiddleware({ target: `${targetServer}/setsecurityQuestion`, changeOrigin: true }));
