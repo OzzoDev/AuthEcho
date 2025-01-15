@@ -36,6 +36,8 @@ app.use("/securityquestions", createProxyMiddleware({ target: `${targetServer}/s
 app.use("/setsecurityquestion", createProxyMiddleware({ target: `${targetServer}/setsecurityQuestion`, changeOrigin: true }));
 app.use("/getusersecurityquestion", createProxyMiddleware({ target: `${targetServer}/getusersecurityquestion`, changeOrigin: true }));
 app.use("/validatesecurityquestion", createProxyMiddleware({ target: `${targetServer}/validatesecurityquestion`, changeOrigin: true }));
+app.use("/clearcookies", createProxyMiddleware({ target: `${targetServer}/clearcookies`, changeOrigin: true }));
+
 app.use("/ping", createProxyMiddleware({ target: `${targetServer}/ping`, changeOrigin: true }));
 
 app.listen(PORT, () => {
