@@ -1,6 +1,7 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
@@ -8,7 +9,14 @@ const PORT = process.env.PROXY_PORT || 8080;
 const targetServer = process.env.PROXY_TARGET_SERVER;
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use("/signup", createProxyMiddleware({ target: `${targetServer}/signup`, changeOrigin: true }));
 app.use("/verifyaccount", createProxyMiddleware({ target: `${targetServer}/verifyaccount`, changeOrigin: true }));
