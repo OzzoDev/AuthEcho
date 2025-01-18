@@ -1,0 +1,34 @@
+.accountContainer {
+  width: min(100%, 700px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  .updateWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    .updateContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      .updateControls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
+
+  button {
+    margin: 0;
+    width: fit-content;
+  }
+
+  input {
+    margin: 0;
+  }
+}

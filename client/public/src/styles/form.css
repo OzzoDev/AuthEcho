@@ -1,0 +1,241 @@
+form {
+  width: min(80%, 700px);
+  margin: 20px 0 50px 0;
+  padding: 50px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  border-radius: 20px;
+  background-color: var(--primary-color);
+  position: relative;
+}
+
+form::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  z-index: -1;
+  border-radius: 20px;
+  animation: gradientAnimation 7s ease infinite;
+  background: linear-gradient(270deg, #048ba8, #f24c00, #f24c00, #048ba8);
+  background-size: 400% 400%;
+}
+
+.form-headline {
+  font-size: 2rem;
+  align-self: flex-start;
+  color: var(--neutral-color);
+}
+
+.form-info {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  align-self: flex-start;
+}
+
+.input-container {
+  width: 100%;
+  position: relative;
+  display: flex;
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.input-container:first-of-type {
+  margin-top: 30px;
+}
+
+.input-container label {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  pointer-events: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.input-container input {
+  margin: 0;
+  display: block;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  width: 100%;
+  padding: 8px 0 5px 0;
+  font-size: 1.2rem;
+  box-shadow: none;
+  color: var(--text-color);
+}
+
+.input-container input:focus {
+  border: none;
+  outline: none;
+}
+
+.input-container input:focus ~ label,
+.input-container input:valid ~ label {
+  top: -1rem;
+  font-size: 1rem;
+  opacity: 0.4;
+}
+
+.password-toggle {
+  width: fit-content;
+  margin: 0 0 0 20px;
+  padding: 0;
+  background-color: transparent;
+}
+
+.password-toggle:hover,
+.password-toggle:focus {
+  transform: translate(0);
+}
+
+.verify-conatiner {
+  display: flex;
+  gap: 5px;
+}
+
+.verify-input {
+  width: clamp(36px, 3vw, 80px);
+  aspect-ratio: 1;
+  font-size: clamp(2rem, 2.2vw, 3rem);
+  border-radius: 10px;
+  text-align: center;
+  border: 0;
+  outline: none;
+  box-shadow: inset 0 0 10px var(--neutral-color);
+  color: var(--text-color);
+  background-color: transparent;
+}
+
+.submit-btn,
+.remeber-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+}
+
+.remeber-btn {
+  margin: 0 0 -30px 0;
+}
+
+.dropdown {
+  width: 100%;
+  height: 70px;
+  padding: 30px;
+  border-radius: 20px;
+  color: var(--text-color);
+  background-color: var(--shadow-color);
+  position: relative;
+}
+
+.dropdown-toggle {
+  position: absolute;
+  right: 20px;
+  top: 55%;
+  transform: translateY(-50%);
+  z-index: 1000;
+}
+
+.drop-down-display {
+  width: 80%;
+  font-size: 1.2rem;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dropdown-list-wrapper {
+  width: 100%;
+  min-height: 300px;
+  padding: 20px 30px;
+  position: absolute;
+  left: 0;
+  z-index: 100;
+  overflow-y: auto;
+  border-radius: 20px;
+  background-color: var(--shadow-color);
+}
+
+.drop-down-list {
+  width: 90%;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  list-style-type: none;
+}
+
+.drop-down-list-item {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.drop-down-list-item:hover,
+.drop-down-list-item:focus {
+  color: var(--neutral-color);
+}
+
+.stepper-container {
+  margin-top: 50px;
+  display: flex;
+  gap: 10px;
+}
+
+.step {
+  width: 50px;
+  height: 5px;
+  opacity: 0.3;
+  background-color: var(--text-color);
+}
+
+.step.active {
+  opacity: 0.8;
+  background: linear-gradient(120deg, var(--accent-color) 10%, var(--neutral-color) 100%);
+}
+.error-container {
+  width: 100%;
+  height: 60px;
+  margin: -30px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-message {
+  font-weight: bolder;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  text-align: center;
+  background: linear-gradient(270deg, rgb(133, 4, 4), rgb(250, 2, 2));
+  background-size: 400% 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradientAnimation 3s ease infinite;
+}
+
+.security-question {
+  font-weight: bold;
+}
+
+@keyframes progress-animation {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}
+
+@media (max-width: 475px) {
+  .dropdown {
+    height: 80px;
+  }
+}
