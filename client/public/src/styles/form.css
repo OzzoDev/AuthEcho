@@ -184,7 +184,7 @@ form::before {
 }
 
 .stepper-container {
-  margin-top: 50px;
+  margin-top: -50px;
   display: flex;
   gap: 10px;
 }
@@ -198,7 +198,11 @@ form::before {
 
 .step.active {
   opacity: 0.8;
-  background: linear-gradient(120deg, var(--accent-color) 10%, var(--neutral-color) 100%);
+  background: linear-gradient(
+    120deg,
+    var(--accent-color) 10%,
+    var(--neutral-color) 100%
+  );
 }
 .error-container {
   width: 100%;
