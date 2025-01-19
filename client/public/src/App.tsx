@@ -8,22 +8,10 @@ import store from "./store/store";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UnlockAccountPage from "./pages/UnlockAccountPage";
 import StartPage from "./pages/StartPage";
-import { useEffect } from "react";
-import { verifyAuthentication } from "./utils/ServerClient";
-import { sessionStore } from "./utils/utils";
-import { AUTH_KEY } from "./constants/contants";
+import useAuth from "./hooks/useAuth";
 
 function App() {
-  // useEffect(() => {
-  //   const authenticate = async () => {
-  //     const response = await verifyAuthentication();
-  //     if (response) {
-  //       sessionStore(AUTH_KEY, true);
-  //     }
-  //   };
-
-  //   authenticate();
-  // }, []);
+  useAuth();
 
   return (
     <Provider store={store}>

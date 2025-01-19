@@ -509,15 +509,36 @@ const updatePassword = async (req, res) => {
 };
 
 const verifyAuthentication = async (req, res) => {
-  console.log("Cookies: ", req.cookie);
-
   if (req.cookies.jwtToken) {
-    console.log("Jwt token: ", req.cookies);
+    const jwtToken = req.cookies.jwtToken;
+    const rememberUser = req.cookies.rememberUser;
 
-    if (req.cookies.rememberUser === false) {
+    console.log("JWT token: ", jwtToken);
+    console.log("Remember User: ", rememberUser);
+
+    if (
+      rememberUser === "" ||
+      rememberUser === "undefined" ||
+      rememberUser === "false" ||
+      rememberUser === false
+    ) {
       res.cookie("jwtToken", "", {
         httpOnly: true,
+        secure: false,
+        sameSite: "Strict",
         expires: new Date(0),
+        path: "/",
+      });
+    }
+
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
+
+    console.log("Decoded jwt token: ", decoded);
+
+    if (!decoded) {
+      return res.status(401).json({
+        message: "Unauthenticated",
+        success: false,
       });
     }
 

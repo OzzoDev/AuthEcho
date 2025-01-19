@@ -16,6 +16,8 @@ import {
 import Navbar from "../components/Navbar";
 import { FetchStatus } from "../types/apiTypes";
 import useSessionStorage from "../hooks/useSessionStorage";
+import useAuth from "../hooks/useAuth";
+import useApi from "../hooks/useApi";
 
 export default function AccountPage() {
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
@@ -31,9 +33,12 @@ export default function AccountPage() {
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
-  const { removeSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { fetchData: signOut } = useApi("GET", "SIGNOUT");
+  const { removeSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
+
+  useAuth(() => navigate("/signin"));
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -118,7 +123,8 @@ export default function AccountPage() {
     }
   };
 
-  const logOut = () => {
+  const handleSignOut = async () => {
+    await signOut();
     removeData(USERNAME_KEY);
     removeData(USEREMAIL_KEY);
     removeSessionValue();
@@ -130,7 +136,7 @@ export default function AccountPage() {
       <h1>Your are signed in!</h1>
       <p>Username: {name}</p>
       <p>Email: {email}</p>
-      <button onClick={logOut}>Log out</button>
+      <button onClick={handleSignOut}>Log out</button>
       {status === "loading" ? (
         <ReactLoading type="spin" color="#00f" height={50} width={50} />
       ) : (

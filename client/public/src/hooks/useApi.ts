@@ -7,16 +7,19 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
   const url: string = AUTH_ENDPOINTS[useCase];
 
   const fetchData = async (
-    setStatus: (status: FetchStatus) => void,
-    setError: (error: string) => void,
+    setStatus?: (status: FetchStatus) => void,
+    setError?: (error: string) => void,
     apiParams?: ApiRequest
   ): Promise<AxiosResponse<ApiResponse> | null> => {
     console.log("Api params: ", apiParams);
 
     try {
-      setStatus("loading");
-
-      setError("");
+      if (setStatus) {
+        setStatus("loading");
+      }
+      if (setError) {
+        setError("");
+      }
 
       const config: AxiosRequestConfig = {
         method,
@@ -30,11 +33,14 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
 
       const response = await axios<ApiResponse>(config);
 
-      setStatus("success");
-
+      if (setStatus) {
+        setStatus("success");
+      }
       return response;
     } catch (error: unknown) {
-      handleError(error, setStatus, setError);
+      if (setStatus && setError) {
+        handleError(error, setStatus, setError);
+      }
       return null;
     }
   };

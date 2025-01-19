@@ -25,17 +25,18 @@ const {
   usernameValidation,
   passwordResetValidation,
 } = require("../middlewares/AuthValidation");
-const { setCookies } = require("../middlewares/Cookies");
-
+const { setCookies, removeCookies } = require("../middlewares/Cookies");
 const router = require("express").Router();
 
 router.get("/verifyauthentication", verifyAuthentication);
+router.get("/signout", removeCookies);
 router.post("/signup", newAccountValidation, signup);
-router.post("/verifyaccount", verifyAccount);
 router.post("/signin", signin);
+router.post("/verifyaccount", verifyAccount);
+router.post("/sendverificationcode", sendVerificationcode);
+
 router.put("/updateemail", ensureAuthenticated, updateEmail);
 router.put("/updateusername", ensureAuthenticated, usernameValidation, updateUsername);
-router.post("/sendverificationcode", sendVerificationcode);
 router.post("/validateemail", emailValidation, validateEmail);
 router.post("/validatepassword", validatePassword);
 router.post("/resetpassword", passwordResetValidation, resetPassword);
