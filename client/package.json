@@ -8,7 +8,8 @@
     "proxy": "node reverseProxy.js",
     "react": "cd public && npm run dev",
     "build": "cd public && npm run build",
-    "start:prod": "NODE_ENV=production node reverseProxy.js"
+    "start:prod": "NODE_ENV=production node reverseProxy.js",
+    "install": "concurrently \"npm install\" \"cd public && npm install\""
   },
   "keywords": [],
   "author": "",
