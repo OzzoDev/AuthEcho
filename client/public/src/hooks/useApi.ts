@@ -11,6 +11,8 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
     setError: (error: string) => void,
     apiParams?: ApiRequest
   ): Promise<AxiosResponse<ApiResponse> | null> => {
+    console.log("Api params: ", apiParams);
+
     try {
       setStatus("loading");
 

@@ -12,8 +12,6 @@ const { securityQuestions } = require("../utils/security");
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
-  console.log("Signin up...");
-
   try {
     const userEmail = await UserModel.findOne({ email }).collation({ locale: "en", strength: 1 });
     const userName = await UserModel.findOne({ name }).collation({ locale: "en", strength: 1 });
@@ -28,7 +26,11 @@ const signup = async (req, res) => {
 
     const verificationCode = hex8BitKey();
 
-    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
+    const verificationCodeSent = await sendEmail(
+      email,
+      "Authecho",
+      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`
+    );
 
     if (!verificationCodeSent) {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
@@ -105,7 +107,10 @@ const signin = async (req, res) => {
         user.suspended = true;
         await user.save();
 
-        return res.status(403).json({ message: "Too many failed login attempts. The account has been suspended. ", success: false });
+        return res.status(403).json({
+          message: "Too many failed login attempts. The account has been suspended. ",
+          success: false,
+        });
       }
 
       return res.status(403).json({ message: "Wrong password", success: false });
@@ -118,7 +123,9 @@ const signin = async (req, res) => {
     const name = user.name;
     const email = user.email;
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     const cookieOptions = {
       httpOnly: true,
@@ -164,7 +171,9 @@ const updateEmail = async (req, res) => {
     }
 
     if (newEmail.toLowerCase() === currentEmail.toLowerCase()) {
-      return res.status(409).json({ message: "New email must be different from current email", success: false });
+      return res
+        .status(409)
+        .json({ message: "New email must be different from current email", success: false });
     }
 
     const schema = Joi.object({
@@ -198,7 +207,9 @@ const updateEmail = async (req, res) => {
     user.verificationCode = newVerificationCode;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     const cookieOptions = {
       httpOnly: true,
@@ -244,7 +255,9 @@ const updateUsername = async (req, res) => {
     }
 
     if (newName === currentName) {
-      return res.status(409).json({ message: "New username must be different from current username", success: false });
+      return res
+        .status(409)
+        .json({ message: "New username must be different from current username", success: false });
     }
 
     const usernameDuplicate = await UserModel.findOne({
@@ -259,7 +272,9 @@ const updateUsername = async (req, res) => {
     user.name = newName;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     const cookieOptions = {
       httpOnly: true,
@@ -303,10 +318,16 @@ const sendVerificationcode = async (req, res) => {
     const username = user.name;
     const userVerificationCode = user.verificationCode;
 
-    const verificationCodeSent = await sendEmail(userEmail, "Authecho", `${getEmailText(action, username)} ${userVerificationCode}`);
+    const verificationCodeSent = await sendEmail(
+      userEmail,
+      "Authecho",
+      `${getEmailText(action, username)} ${userVerificationCode}`
+    );
 
     if (!verificationCodeSent) {
-      return res.status(500).json({ message: `Verification code error ${username}`, success: false });
+      return res
+        .status(500)
+        .json({ message: `Verification code error ${username}`, success: false });
     }
 
     res.status(200).json({ message: `Verification code sent for ${username}`, success: true });
@@ -331,7 +352,9 @@ const validateEmail = async (req, res) => {
     }
 
     if (newEmail.toLowerCase() === user.email.toLowerCase()) {
-      return res.status(409).json({ message: "New email must be different from current email", success: false });
+      return res
+        .status(409)
+        .json({ message: "New email must be different from current email", success: false });
     }
 
     const emailDuplicate = await UserModel.findOne({
@@ -361,10 +384,17 @@ const validatePassword = async (req, res) => {
     }
 
     if (user.suspended) {
-      return res.status(403).json({ message: "Account is suspended. Unlock account to reset password", success: false });
+      return res.status(403).json({
+        message: "Account is suspended. Unlock account to reset password",
+        success: false,
+      });
     }
 
-    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
+    const isPasswordVaild = await validateNewPassword(
+      newPassword,
+      confirmNewPassword,
+      user.password
+    );
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
@@ -391,7 +421,9 @@ const resetPassword = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     const cookieOptions = {
       httpOnly: true,
@@ -431,7 +463,11 @@ const updatePassword = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
+    const isPasswordVaild = await validateNewPassword(
+      newPassword,
+      confirmNewPassword,
+      user.password
+    );
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
@@ -440,7 +476,9 @@ const updatePassword = async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     const cookieOptions = {
       httpOnly: true,
@@ -509,7 +547,9 @@ const unlockAccount = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     const cookieOptions = {
       httpOnly: true,
@@ -570,7 +610,11 @@ const getUserData = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    res.status(200).json({ message: "User found", success: true, userData: { name: user.name, email: user.email } });
+    res.status(200).json({
+      message: "User found",
+      success: true,
+      userData: { name: user.name, email: user.email },
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -581,8 +625,9 @@ const getSecurityQuestions = async (_, res) => {
   res.status(200).json({ message: "Success", success: true, questions: securityQuestions });
 };
 
-const setSecurityQuestion = async (req, res) => {
-  const { name, email, password, securityQuestion, securityQuestionAnswer, rememberUser } = req.body;
+const setSecurityQuestion = async (req, res, next) => {
+  const { name, email, password, securityQuestion, securityQuestionAnswer, rememberUser } =
+    req.body;
 
   try {
     const user = await UserModel.findOne({ name });
@@ -597,7 +642,11 @@ const setSecurityQuestion = async (req, res) => {
       return res.status(403).json({ message: "Wrong password", success: false });
     }
 
-    const verificationCodeSent = await sendEmail(email, "Authecho", `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${user.verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`);
+    const verificationCodeSent = await sendEmail(
+      email,
+      "Authecho",
+      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${user.verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`
+    );
 
     if (!verificationCodeSent) {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
@@ -607,30 +656,11 @@ const setSecurityQuestion = async (req, res) => {
     user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer.toLowerCase(), 10);
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    req.body.user = user;
+    req.body.statusCode = 201;
+    req.body.message = "Set security question successfully";
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
-    res.status(201).json({ message: "Set security question successfully", success: true });
+    next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -658,7 +688,9 @@ const getUserSecurityQuestion = async (req, res) => {
 
     const question = user.securityQuestion;
 
-    res.status(200).json({ message: "Security question successfully fetched", success: true, question });
+    res
+      .status(200)
+      .json({ message: "Security question successfully fetched", success: true, question });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -671,7 +703,10 @@ const validateSecurityQuestion = async (req, res) => {
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
-    const rightAnswer = await bcrypt.compare(securityQuestionAnswer.toLowerCase(), user.securityQuestionAnswer);
+    const rightAnswer = await bcrypt.compare(
+      securityQuestionAnswer.toLowerCase(),
+      user.securityQuestionAnswer
+    );
 
     if (!rightAnswer) {
       return res.status(403).json({ message: "Wrong answer", success: false });

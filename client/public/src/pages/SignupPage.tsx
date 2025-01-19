@@ -73,14 +73,16 @@ export default function SignUpPage() {
       setError("Select a security question");
       setStatus("error");
     } else {
-      const response = await setQuestion(setStatus, setError, {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        securityQuestion: formData.securityQuestion,
-        securityQuestionAnswer: formData.securityQuestionAnswer,
-      });
+      // const response = await setQuestion(setStatus, setError, {
+      //   name: formData.name,
+      //   email: formData.email,
+      //   password: formData.password,
+      //   confirmPassword: formData.confirmPassword,
+      //   securityQuestion: formData.securityQuestion,
+      //   securityQuestionAnswer: formData.securityQuestionAnswer,
+      // });
+
+      const response = await setQuestion(setStatus, setError, formData);
 
       if (response) {
         navigate("/account");

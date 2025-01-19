@@ -25,6 +25,7 @@ const {
   usernameValidation,
   passwordResetValidation,
 } = require("../middlewares/AuthValidation");
+const { setCookies } = require("../middlewares/Cookies");
 
 const router = require("express").Router();
 
@@ -43,14 +44,8 @@ router.post("/unlockaccount", unlockAccount);
 router.post("/issuspended", isSuspended);
 router.post("/userdata", getUserData);
 router.get("/securityquestions", getSecurityQuestions);
-router.post("/setsecurityquestion", newAccountValidation, setSecurityQuestion);
+router.post("/setsecurityquestion", newAccountValidation, setSecurityQuestion, setCookies);
 router.post("/getusersecurityquestion", getUserSecurityQuestion);
 router.post("/validatesecurityquestion", validateSecurityQuestion);
-
-const pong = (_, res) => {
-  res.send("PONG");
-};
-
-router.get("/ping", pong);
 
 module.exports = router;
