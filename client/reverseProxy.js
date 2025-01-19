@@ -4,52 +4,31 @@ const path = require("path");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Reverse proxy port
+const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || "development";
-const TARGET_SERVER = process.env.TARGET_SERVER || "http://localhost:3000"; // Backend server
-const REACT_DEV_SERVER = "http://localhost:5173"; // React Vite dev server
+const TARGET_SERVER = process.env.TARGET_SERVER || "http://localhost:3000";
+const REACT_DEV_SERVER = "http://localhost:5173";
 
-// Proxy React's Vite Dev Server in Development Mode
-if (NODE_ENV !== "production") {
-  console.log("Running in development mode...");
-
-  app.use(
-    "/",
-    createProxyMiddleware({
-      target: REACT_DEV_SERVER, // Vite dev server
-      changeOrigin: true,
-      ws: true, // Enable WebSocket for Vite's HMR (Hot Module Reloading)
-      logLevel: "debug", // Optional: Debug proxy requests
-    })
-  );
-}
-
-// Serve Static Files from React's Build Output in Production Mode
-if (NODE_ENV === "production") {
-  console.log("Running in production mode...");
-  app.use(express.static(path.join(__dirname, "public", "dist"))); // Serve React build files
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "dist", "index.html"));
-  });
-}
-
-// Proxy API Requests to the Backend Server
 app.use(
   "/api",
   createProxyMiddleware({
     target: TARGET_SERVER,
     changeOrigin: true,
-    pathRewrite: {
-      "^/api": "", // Remove "/api" prefix before forwarding to the backend
+    pathRewrite: (_, req) => {
+      return req.originalUrl.replace(/^\/api/, "/auth");
     },
+    logLevel: "debug",
     onProxyReq: (proxyReq, req, res) => {
+      console.log(
+        `Proxying request to: ${req.url} -> ${TARGET_SERVER}/auth${req.url.replace("/api", "")}`
+      );
       const cookieHeader = req.headers.cookie;
       if (cookieHeader) {
-        proxyReq.setHeader("Cookie", cookieHeader); // Forward cookies
+        proxyReq.setHeader("Cookie", cookieHeader);
       }
     },
     onProxyRes: (proxyRes, req, res) => {
+      console.log(`Received response from: ${TARGET_SERVER}${req.url}`);
       const setCookieHeaders = proxyRes.headers["set-cookie"];
       if (setCookieHeaders) {
         if (Array.isArray(setCookieHeaders)) {
@@ -64,7 +43,29 @@ app.use(
   })
 );
 
-// Start the Reverse Proxy Server
+if (NODE_ENV !== "production") {
+  console.log("Running in development mode...");
+
+  app.use(
+    "/",
+    createProxyMiddleware({
+      target: REACT_DEV_SERVER,
+      changeOrigin: true,
+      ws: true,
+      logLevel: "debug",
+    })
+  );
+}
+
+if (NODE_ENV === "production") {
+  console.log("Running in production mode...");
+  app.use(express.static(path.join(__dirname, "public", "dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "dist", "index.html"));
+  });
+}
+
 app.listen(PORT, () => {
   console.log(`Reverse proxy server is running on http://localhost:${PORT}`);
 });

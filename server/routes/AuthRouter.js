@@ -1,6 +1,30 @@
-const { signup, signin, updateEmail, updateUsername, sendVerificationcode, resetPassword, verifyAccount, validatePassword, getUserData, validateEmail, updatePassword, unlockAccount, isSuspended, getSecurityQuestions, setSecurityQuestion, validateSecurityQuestion, getUserSecurityQuestion, verifyAuthentication } = require("../controllers/AuthController");
+const {
+  signup,
+  signin,
+  updateEmail,
+  updateUsername,
+  sendVerificationcode,
+  resetPassword,
+  verifyAccount,
+  validatePassword,
+  getUserData,
+  validateEmail,
+  updatePassword,
+  unlockAccount,
+  isSuspended,
+  getSecurityQuestions,
+  setSecurityQuestion,
+  validateSecurityQuestion,
+  getUserSecurityQuestion,
+  verifyAuthentication,
+} = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
-const { newAccountValidation, emailValidation, usernameValidation, passwordResetValidation } = require("../middlewares/AuthValidation");
+const {
+  newAccountValidation,
+  emailValidation,
+  usernameValidation,
+  passwordResetValidation,
+} = require("../middlewares/AuthValidation");
 
 const router = require("express").Router();
 
@@ -22,5 +46,11 @@ router.get("/securityquestions", getSecurityQuestions);
 router.post("/setsecurityquestion", newAccountValidation, setSecurityQuestion);
 router.post("/getusersecurityquestion", getUserSecurityQuestion);
 router.post("/validatesecurityquestion", validateSecurityQuestion);
+
+const pong = (_, res) => {
+  res.send("PONG");
+};
+
+router.get("/ping", pong);
 
 module.exports = router;

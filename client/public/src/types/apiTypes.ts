@@ -30,6 +30,16 @@ export type ApiRequest = {
   action?: "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
 };
 
+export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
+
+export type ApiUseCase =
+  | "SIGNUP"
+  | "SIGNIN"
+  | "VERIFYACCOUNT"
+  | "SECURITYQUESTIONS"
+  | "SETSECURITYQUESTION"
+  | "SENDVERIFICATIONCODE";
+
 export type JwtTokenResponse = {
   message: string;
   success: boolean;

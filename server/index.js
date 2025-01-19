@@ -23,10 +23,6 @@ app.use(bodyParser.json());
 
 app.use("/auth", AuthRouter);
 
-app.get("/ping", (_, res) => {
-  res.send("PONG");
-});
-
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

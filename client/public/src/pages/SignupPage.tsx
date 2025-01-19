@@ -1,4 +1,3 @@
-import { getSecurityQuestions, sendVerificationCode, setSecurityQuestion, signUp } from "../utils/ServerClient";
 import ReactLoading from "react-loading";
 import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
@@ -10,15 +9,27 @@ import { useEffect, useState } from "react";
 import Stepper from "../components/Stepper";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../components/form/Dropdown";
+import useApi from "../hooks/useApi";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<UserFormData>({ name: "", email: "", password: "", confirmPassword: "", securityQuestion: "", securityQuestionAnswer: "", rememberUser: false });
+  const [formData, setFormData] = useState<UserFormData>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    securityQuestion: "",
+    securityQuestionAnswer: "",
+    rememberUser: false,
+  });
   const [formState, setFormState] = useState<FormState>("default");
   const [securityQuestions, setSecurityQuestions] = useState<SecurityQuestion[]>([]);
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
-
+  const { fetchData: getSecurityQuestions } = useApi("GET", "SECURITYQUESTIONS");
+  const { fetchData: signUp } = useApi("POST", "SIGNUP");
+  const { fetchData: verify } = useApi("POST", "SENDVERIFICATIONCODE");
+  const { fetchData: setQuestion } = useApi("POST", "SETSECURITYQUESTION");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,14 +39,54 @@ export default function SignUpPage() {
   useEffect(() => {
     if (formState === "question") {
       const fetchSecurityQuestions = async () => {
-        const questionsResponse = await getSecurityQuestions(setStatus, setError);
-        if (questionsResponse && questionsResponse.data.questions) {
-          setSecurityQuestions(questionsResponse.data.questions);
+        const response = await getSecurityQuestions(setStatus, setError);
+        if (response && response.data.questions) {
+          setSecurityQuestions(response.data.questions);
         }
       };
       fetchSecurityQuestions();
     }
   }, [formState]);
+
+  const handleSignUp = async () => {
+    const response = await signUp(setStatus, setError, {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    });
+
+    if (response) {
+      setFormState("verify");
+    }
+  };
+
+  const handleVerify = async () => {
+    await verify(setStatus, setError, {
+      userData: formData.name || formData.email,
+      action: "verifyEmail",
+    });
+  };
+
+  const handleSetQuestion = async () => {
+    if (formData.securityQuestion === "") {
+      setError("Select a security question");
+      setStatus("error");
+    } else {
+      const response = await setQuestion(setStatus, setError, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        securityQuestion: formData.securityQuestion,
+        securityQuestionAnswer: formData.securityQuestionAnswer,
+      });
+
+      if (response) {
+        navigate("/account");
+      }
+    }
+  };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,31 +94,30 @@ export default function SignUpPage() {
   };
 
   const handleSecurityQuestionSelect = (question: SecurityQuestion) => {
-    setFormData((prevData) => ({ ...prevData, securityQuestion: question.question }));
+    setFormData((prevData) => ({
+      ...prevData,
+      securityQuestion: question.question,
+    }));
+  };
+
+  const handleRemeberUser = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      rememberUser: !prevData.rememberUser,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     switch (formState) {
       case "default":
-        const signUpResponse = await signUp({ name: formData.name, email: formData.email, password: formData.password, confirmPassword: formData.confirmPassword }, setStatus, setError);
-        if (signUpResponse) {
-          setFormState("verify");
-        }
+        await handleSignUp();
         break;
       case "verify":
-        await sendVerificationCode({ userData: formData.name || formData.email, action: "verifyEmail" }, setStatus, setError);
+        await handleVerify();
         break;
       case "question":
-        if (formData.securityQuestion === "") {
-          setError("Select a security question");
-          setStatus("error");
-        } else {
-          const questionResponse = await setSecurityQuestion({ name: formData.name, email: formData.email, password: formData.password, confirmPassword: formData.confirmPassword, securityQuestion: formData.securityQuestion, securityQuestionAnswer: formData.securityQuestionAnswer }, setStatus, setError);
-          if (questionResponse) {
-            navigate("/account");
-          }
-        }
+        await handleSetQuestion();
         break;
     }
   };
@@ -86,13 +136,39 @@ export default function SignUpPage() {
       return (
         <>
           <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
+          <h1 className="page-headline">
+            Join Now for Effortless Account Management in 3 Simple Steps!
+          </h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Create your account!</h2>
-            <FormInput labelText="Username" name="name" value={formData.name || ""} onChange={handleFormChange} required />
-            <FormInput labelText="Email" name="email" value={formData.email || ""} onChange={handleFormChange} required />
-            <FormPasswordInput labelText="Password" name="password" value={formData.password || ""} onChange={handleFormChange} required />
-            <FormPasswordInput labelText="Confirm password" name="confirmPassword" value={formData.confirmPassword || ""} onChange={handleFormChange} required />
+            <FormInput
+              labelText="Username"
+              name="name"
+              value={formData.name || ""}
+              onChange={handleFormChange}
+              required
+            />
+            <FormInput
+              labelText="Email"
+              name="email"
+              value={formData.email || ""}
+              onChange={handleFormChange}
+              required
+            />
+            <FormPasswordInput
+              labelText="Password"
+              name="password"
+              value={formData.password || ""}
+              onChange={handleFormChange}
+              required
+            />
+            <FormPasswordInput
+              labelText="Confirm password"
+              name="confirmPassword"
+              value={formData.confirmPassword || ""}
+              onChange={handleFormChange}
+              required
+            />
             <div className="error-container">
               <p className="error-message">{error}</p>
             </div>
@@ -107,11 +183,24 @@ export default function SignUpPage() {
       return (
         <>
           <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
+          <h1 className="page-headline">
+            Join Now for Effortless Account Management in 3 Simple Steps!
+          </h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Verify Email!</h2>
-            <p className="form-info">Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If you require a new code, please use the "Regenerate Code" button to receive a fresh verification code via email.</p>
-            <FormVerify formData={formData} verify="signup" setStatus={setStatus} setError={setError} setFormState={setFormState} />
+            <p className="form-info">
+              Please check your inbox for an 8-character verification code and enter it below. For
+              your security, this code is valid for only one attempt. If you require a new code,
+              please use the "Regenerate Code" button to receive a fresh verification code via
+              email.
+            </p>
+            <FormVerify
+              formData={formData}
+              verify="signup"
+              setStatus={setStatus}
+              setError={setError}
+              setFormState={setFormState}
+            />
             <div className="error-container">
               <p className="error-message">{error}</p>
             </div>
@@ -126,16 +215,35 @@ export default function SignUpPage() {
       return (
         <>
           <Navbar />
-          <h1 className="page-headline">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
+          <h1 className="page-headline">
+            Join Now for Effortless Account Management in 3 Simple Steps!
+          </h1>
           <form onSubmit={handleSubmit}>
             <h2 className="form-headline">Select Security Question!</h2>
-            <p className="form-info">Implementing a security question significantly enhances your account's protection. Please choose a question that you can easily remember for future reference.</p>
+            <p className="form-info">
+              Implementing a security question significantly enhances your account's protection.
+              Please choose a question that you can easily remember for future reference.
+            </p>
             <Dropdown questions={securityQuestions} onSelect={handleSecurityQuestionSelect} />
-            <FormInput labelText="Your answer" name="securityQuestionAnswer" value={formData.securityQuestionAnswer || ""} onChange={handleFormChange} required />
+            <FormInput
+              labelText="Your answer"
+              name="securityQuestionAnswer"
+              value={formData.securityQuestionAnswer || ""}
+              onChange={handleFormChange}
+              required
+            />
             <div className="error-container">
               <p className="error-message">{error}</p>
             </div>
-            <button type="button" onClick={() => setFormData((prevData) => ({ ...prevData, rememberUser: !formData.rememberUser }))} onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()} className={formData.rememberUser ? `remeber-btn btn btn-check btn-check-selected` : `remeber-btn btn btn-check`}>
+            <button
+              type="button"
+              onClick={handleRemeberUser}
+              onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
+              className={
+                formData.rememberUser
+                  ? `remeber-btn btn btn-check btn-check-selected`
+                  : `remeber-btn btn btn-check`
+              }>
               Remember me
             </button>
             <button type="submit" className="submit-btn btn btn-primary">

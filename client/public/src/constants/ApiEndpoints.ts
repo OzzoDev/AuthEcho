@@ -1,9 +1,7 @@
-export const API_BASE_URL = "http://localhost:3001";
+export const API_BASE_URL = "http://localhost:3001/api";
 
 export const AUTH_ENDPOINTS = {
-  SIGNUP: `${API_BASE_URL}/auth/signup`,
-  // SIGNUP: "http://localhost:3000/auth/signup",
-  // SIGNUP: "http://localhost:3001/auth/signup",
+  SIGNUP: `${API_BASE_URL}/signup`,
   VERIFYACCOUNT: `${API_BASE_URL}/verifyaccount`,
   SIGNIN: `${API_BASE_URL}/signin`,
   UPDATEEMAIL: `${API_BASE_URL}/updateemail`,
