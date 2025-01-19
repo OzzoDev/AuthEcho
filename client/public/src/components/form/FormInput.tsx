@@ -3,13 +3,11 @@ import React, { useEffect, useRef } from "react";
 interface Props {
   labelText: string;
   name: string;
-  value: string;
   error?: string;
-  required?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function FormInput({ labelText, name, value, error, required, onChange }: Props) {
+export default function FormInput({ labelText, name, error, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -20,7 +18,14 @@ export default function FormInput({ labelText, name, value, error, required, onC
 
   return (
     <div className="input-container">
-      <input type="text" ref={inputRef} name={name} value={value} required={required} onChange={onChange} autoComplete="off" />
+      <input
+        type="text"
+        ref={inputRef}
+        name={name}
+        onChange={onChange}
+        autoComplete="off"
+        required
+      />
       <label>{labelText}</label>
     </div>
   );

@@ -1,24 +1,39 @@
 import { useEffect, useRef, useState } from "react";
-import { FetchStatus } from "../../types/apiTypes";
+import { ApiRequest, FetchStatus } from "../../types/apiTypes";
 import { Verify } from "../../types/auth";
-import { FormState, UserFormData } from "../../types/types";
+import { FormState } from "../../types/types";
 import useVerify from "../../hooks/useVerify";
 import useClipboard from "../../hooks/useClipboard";
 
 interface Props {
-  formData: UserFormData;
+  formData: ApiRequest;
   verify: Verify;
   setStatus: (status: FetchStatus) => void;
   setError: (error: string) => void;
   setFormState: (formState: FormState) => void;
-  setFormData?: (formData: UserFormData) => void;
+  setFormData?: (formData: ApiRequest) => void;
 }
 
-export default function FormVerify({ formData, verify, setStatus, setError, setFormState, setFormData }: Props) {
+export default function FormVerify({
+  formData,
+  verify,
+  setStatus,
+  setError,
+  setFormState,
+  setFormData,
+}: Props) {
   const [code, setCode] = useState<string[]>(Array(8).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(8).fill(null));
 
-  const verifyCode = useVerify({ formData, code: code.join(""), verify, setStatus, setError, setFormState, setFormData });
+  const verifyCode = useVerify({
+    formData,
+    code: code.join(""),
+    verify,
+    setStatus,
+    setError,
+    setFormState,
+    setFormData,
+  });
 
   const { lastClipboard } = useClipboard({ setCode });
 
@@ -48,7 +63,16 @@ export default function FormVerify({ formData, verify, setStatus, setError, setF
   return (
     <div className="verify-conatiner">
       {code.map((char, index) => (
-        <input key={index} ref={(el) => (inputRefs.current[index] = el)} type="text" maxLength={1} value={char} onChange={(e) => handleChange(index, e.target.value)} onPaste={handlePaste} className="verify-input" />
+        <input
+          key={index}
+          ref={(el) => (inputRefs.current[index] = el)}
+          type="text"
+          maxLength={1}
+          value={char}
+          onChange={(e) => handleChange(index, e.target.value)}
+          onPaste={handlePaste}
+          className="verify-input"
+        />
       ))}
     </div>
   );
