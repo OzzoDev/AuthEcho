@@ -28,6 +28,7 @@ export type ApiRequest = {
   securityQuestion?: string;
   securityQuestionAnswer?: string;
   action?: "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
+  rememberUser?: boolean;
 };
 
 export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
@@ -35,10 +36,20 @@ export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
 export type ApiUseCase =
   | "SIGNUP"
   | "SIGNIN"
+  | "SENDVERIFICATIONCODE"
   | "VERIFYACCOUNT"
+  | "VERIFYAUTHENTICATION"
   | "SECURITYQUESTIONS"
   | "SETSECURITYQUESTION"
-  | "SENDVERIFICATIONCODE";
+  | "GETUSERSECURITYQUESTION"
+  | "UPDATEEMAIL"
+  | "UPDATEUSERNAME"
+  | "UPDATEPASSWORD"
+  | "VALIDATEEMAIL"
+  | "VALIDATEPASSWORD"
+  | "RESETPASSWORD"
+  | "UNLOCKACCOUNT"
+  | "ISSUSPENDED";
 
 export type JwtTokenResponse = {
   message: string;

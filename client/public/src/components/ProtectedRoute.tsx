@@ -1,12 +1,10 @@
 import { ProtectedRouteProps } from "../types/auth";
 import { Navigate } from "react-router-dom";
-import { getSessionData } from "../utils/utils";
 import { AUTH_KEY } from "../constants/contants";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = Boolean(getSessionData(AUTH_KEY));
+  const { sessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
 
-  console.log("isAuthenticated", isAuthenticated);
-
-  return isAuthenticated ? <>{children}</> : <Navigate to="/signin" />;
+  return sessionValue ? <>{children}</> : <Navigate to="/signin" />;
 }

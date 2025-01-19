@@ -3,24 +3,18 @@ import Navbar from "../components/Navbar";
 import FormInput from "../components/form/FormInput";
 import FormPasswordInput from "../components/form/FormPasswordInput";
 import FormVerify from "../components/form/FormVerify";
-import { FetchStatus } from "../types/apiTypes";
-import { FormState, SecurityQuestion, UserFormData } from "../types/types";
+import { ApiRequest, FetchStatus } from "../types/apiTypes";
+import { FormState, SecurityQuestion } from "../types/types";
 import { useEffect, useState } from "react";
 import Stepper from "../components/Stepper";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../components/form/Dropdown";
 import useApi from "../hooks/useApi";
+import useSessionStorage from "../hooks/useSessionStorage";
+import { AUTH_KEY } from "../constants/contants";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<UserFormData>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    securityQuestion: "",
-    securityQuestionAnswer: "",
-    rememberUser: false,
-  });
+  const [formData, setFormData] = useState<ApiRequest>({});
   const [formState, setFormState] = useState<FormState>("default");
   const [securityQuestions, setSecurityQuestions] = useState<SecurityQuestion[]>([]);
   const [status, setStatus] = useState<FetchStatus>("idle");
@@ -30,6 +24,7 @@ export default function SignUpPage() {
   const { fetchData: signUp } = useApi("POST", "SIGNUP");
   const { fetchData: verify } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: setQuestion } = useApi("POST", "SETSECURITYQUESTION");
+  const { setSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,12 +44,7 @@ export default function SignUpPage() {
   }, [formState]);
 
   const handleSignUp = async () => {
-    const response = await signUp(setStatus, setError, {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword,
-    });
+    const response = await signUp(setStatus, setError, formData);
 
     if (response) {
       setFormState("verify");
@@ -62,10 +52,7 @@ export default function SignUpPage() {
   };
 
   const handleVerify = async () => {
-    await verify(setStatus, setError, {
-      userData: formData.name || formData.email,
-      action: "verifyEmail",
-    });
+    (formData.action = "verifyEmail"), await verify(setStatus, setError, formData);
   };
 
   const handleSetQuestion = async () => {
@@ -73,18 +60,10 @@ export default function SignUpPage() {
       setError("Select a security question");
       setStatus("error");
     } else {
-      // const response = await setQuestion(setStatus, setError, {
-      //   name: formData.name,
-      //   email: formData.email,
-      //   password: formData.password,
-      //   confirmPassword: formData.confirmPassword,
-      //   securityQuestion: formData.securityQuestion,
-      //   securityQuestionAnswer: formData.securityQuestionAnswer,
-      // });
-
       const response = await setQuestion(setStatus, setError, formData);
 
       if (response) {
+        setSessionValue(true);
         navigate("/account");
       }
     }

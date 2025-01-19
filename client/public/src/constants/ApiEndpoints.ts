@@ -14,7 +14,6 @@ export const AUTH_ENDPOINTS = {
   UNLOCKACCOUNT: `${API_BASE_URL}/unlockaccount`,
   ISSUSPENDED: `${API_BASE_URL}/issuspended`,
   VERIFYAUTHENTICATION: `${API_BASE_URL}/verifyauthentication`,
-  USERNAME: `${API_BASE_URL}/userdata`,
   SECURITYQUESTIONS: `${API_BASE_URL}/securityquestions`,
   SETSECURITYQUESTION: `${API_BASE_URL}/setsecurityquestion`,
   GETUSERSECURITYQUESTION: `${API_BASE_URL}/getusersecurityquestion`,
