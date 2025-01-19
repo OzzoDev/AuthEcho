@@ -1,33 +1,39 @@
 //@ts-ignore
 import "../styles/accountPage.css";
 import { useRef, useState } from "react";
-import { getData, removeData, removeSessionData } from "../utils/utils";
+import { getData, removeData } from "../utils/utils";
 import { AUTH_KEY, USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
 import { Password } from "../types/userTypes";
 import ReactLoading from "react-loading";
-import { sendVerificationCode, updateEmail, updatePassword, updateUsername, validateEmail } from "../utils/ServerClient";
-import { useDispatch } from "react-redux";
+import {
+  sendVerificationCode,
+  updateEmail,
+  updatePassword,
+  updateUsername,
+  validateEmail,
+} from "../utils/ServerClient";
 import Navbar from "../components/Navbar";
 import { FetchStatus } from "../types/apiTypes";
-import { removeSessionToken } from "../store/tokenSlice";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 export default function AccountPage() {
   const [name, setName] = useState<string>(getData(USERNAME_KEY));
   const [email, setEmail] = useState<string>(getData(USEREMAIL_KEY));
   const [newEmail, setNewEmail] = useState<string>("");
   const [newName, setNewName] = useState<string>("");
-  const [passwordData, setPasswordData] = useState<Password>({ newPassword: "", confirmNewPassword: "" });
+  const [passwordData, setPasswordData] = useState<Password>({
+    newPassword: "",
+    confirmNewPassword: "",
+  });
   const [comparePasswords, setComparePasswords] = useState<boolean>(false);
   const [verificationCode, setVerificationCode] = useState<string>("123456");
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [error, setError] = useState<string>("");
-
+  const { removeSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
   const passwordInputRef = useRef<HTMLInputElement>(null);
-
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -50,15 +56,27 @@ export default function AccountPage() {
 
   const changeEmail = async () => {
     if (verifyEmail) {
-      const updateEmailResponse = await updateEmail({ userData: email || name, email: newEmail, verificationCode }, setStatus, setError);
+      const updateEmailResponse = await updateEmail(
+        { userData: email || name, email: newEmail, verificationCode },
+        setStatus,
+        setError
+      );
       if (updateEmailResponse) {
         setEmail(newEmail);
         setVerifyEmail(false);
       }
     } else {
-      const validateEmailResponse = await validateEmail({ userData: email || name, email: newEmail }, setStatus, setError);
+      const validateEmailResponse = await validateEmail(
+        { userData: email || name, email: newEmail },
+        setStatus,
+        setError
+      );
       if (validateEmailResponse) {
-        const verficationCodeResponse = await sendVerificationCode({ userData: email || name, action: "verifyEmail" }, setStatus, setError);
+        const verficationCodeResponse = await sendVerificationCode(
+          { userData: email || name, action: "verifyEmail" },
+          setStatus,
+          setError
+        );
         if (verficationCodeResponse) {
           setVerifyEmail(true);
         }
@@ -67,7 +85,11 @@ export default function AccountPage() {
   };
 
   const changeUsername = async () => {
-    const updateUsernameResponse = await updateUsername({ userData: email || name, name: newName }, setStatus, setError);
+    const updateUsernameResponse = await updateUsername(
+      { userData: email || name, name: newName },
+      setStatus,
+      setError
+    );
     if (updateUsernameResponse) {
       setName(newName);
     }
@@ -81,7 +103,15 @@ export default function AccountPage() {
     if (!comparePasswords) {
       setComparePasswords(true);
     } else {
-      const updatePasswordResponse = await updatePassword({ userData: email || name, password: passwordData.newPassword, confirmPassword: passwordData.confirmNewPassword }, setStatus, setError);
+      const updatePasswordResponse = await updatePassword(
+        {
+          userData: email || name,
+          password: passwordData.newPassword,
+          confirmPassword: passwordData.confirmNewPassword,
+        },
+        setStatus,
+        setError
+      );
       if (updatePasswordResponse) {
         setComparePasswords(false);
       }
@@ -91,7 +121,7 @@ export default function AccountPage() {
   const logOut = () => {
     removeData(USERNAME_KEY);
     removeData(USEREMAIL_KEY);
-    removeSessionData(AUTH_KEY);
+    removeSessionValue();
     navigate("/signin");
   };
 
@@ -111,21 +141,34 @@ export default function AccountPage() {
             <div className="updateContainer">
               <label>Update Email</label>
               <div className="updateControls">
-                <input type="text" placeholder={verifyEmail ? "Enter verification code" : "Enter new email"} onChange={handleEmailChange} />
+                <input
+                  type="text"
+                  placeholder={verifyEmail ? "Enter verification code" : "Enter new email"}
+                  onChange={handleEmailChange}
+                />
                 <button onClick={changeEmail}>{verifyEmail ? "Verify" : "Update"}</button>
               </div>
             </div>
             <div className="updateContainer">
               <label>Update Username</label>
               <div className="updateControls">
-                <input type="text" placeholder="Enter new username" onChange={handleUsernameChange} />
+                <input
+                  type="text"
+                  placeholder="Enter new username"
+                  onChange={handleUsernameChange}
+                />
                 <button onClick={changeUsername}>Update</button>
               </div>
             </div>
             <div className="updateContainer">
               <label>Update Password</label>
               <div className="updateControls">
-                <input type="password" ref={passwordInputRef} placeholder={comparePasswords ? "Confirm new password" : "Enter new password"} onChange={handlePasswordChange} />
+                <input
+                  type="password"
+                  ref={passwordInputRef}
+                  placeholder={comparePasswords ? "Confirm new password" : "Enter new password"}
+                  onChange={handlePasswordChange}
+                />
                 <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
               </div>
             </div>
