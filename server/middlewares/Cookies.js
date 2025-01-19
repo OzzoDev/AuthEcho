@@ -11,6 +11,9 @@ const setCookies = (req, res) => {
     expiresIn: "1h",
   });
 
+  const name = user.name;
+  const email = user.email;
+
   const cookieOptions = {
     httpOnly: true,
     secure: false,
@@ -30,7 +33,7 @@ const setCookies = (req, res) => {
 
   res.cookie(REMEMBER_USER_KEY, rememberUser, cookieOptions);
 
-  res.status(statusCode).json({ message, success: true });
+  res.status(statusCode).json({ message, success: true, name, email });
 };
 
 const removeCookies = (_, res) => {

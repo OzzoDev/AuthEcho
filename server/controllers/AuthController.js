@@ -76,8 +76,8 @@ const verifyAccount = async (req, res) => {
   }
 };
 
-const signin = async (req, res) => {
-  const { userData, password, rememberUser } = req.body;
+const signin = async (req, res, next) => {
+  const { userData, password } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -120,43 +120,19 @@ const signin = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    const name = user.name;
-    const email = user.email;
+    req.body.user = user;
+    req.body.statusCode = 200;
+    req.body.message = "Signed in successfully";
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
-    res.status(200).json({ message: "Signin successfully", success: true, name, email });
+    next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
   }
 };
 
-const updateEmail = async (req, res) => {
-  const { userData, email: newEmail, verificationCode, rememberUser } = req.body;
+const updateEmail = async (req, res, next) => {
+  const { userData, email: newEmail, verificationCode } = req.body;
   const { email: currentEmail } = req.user;
 
   try {
@@ -207,40 +183,19 @@ const updateEmail = async (req, res) => {
     user.verificationCode = newVerificationCode;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    req.body.user = user;
+    req.body.statusCode = 200;
+    req.body.message = "Email updated successfully";
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
-    res.status(200).json({ message: "Email updated successfully", success: true });
+    next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
   }
 };
 
-const updateUsername = async (req, res) => {
-  const { userData, name: newName, rememberUser } = req.body;
+const updateUsername = async (req, res, next) => {
+  const { userData, name: newName } = req.body;
   const { name: currentName } = req.user;
 
   try {
@@ -272,32 +227,11 @@ const updateUsername = async (req, res) => {
     user.name = newName;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    req.body.user = user;
+    req.body.statusCode = 200;
+    req.body.message = "Username updated successfully";
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
-    res.status(200).json({ message: "Username updated successfully", success: true });
+    next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -407,8 +341,8 @@ const validatePassword = async (req, res) => {
   }
 };
 
-const resetPassword = async (req, res) => {
-  const { userData, newPassword, rememberUser } = req.body;
+const resetPassword = async (req, res, next) => {
+  const { userData, newPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -421,40 +355,19 @@ const resetPassword = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    req.body.user = user;
+    req.body.statusCode = 200;
+    req.body.message = "Password reset successfully";
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
-    res.status(200).json({ message: `Password successfully updated`, success: true });
+    next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
   }
 };
 
-const updatePassword = async (req, res) => {
-  const { userData, newPassword, confirmNewPassword, rememberUser } = req.body;
+const updatePassword = async (req, res, next) => {
+  const { userData, newPassword, confirmNewPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -476,31 +389,11 @@ const updatePassword = async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    req.body.user = user;
+    req.body.statusCode = 200;
+    req.body.message = "Password updated successfully";
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
+    next();
     res.status(200).json({ message: "Password updated successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
@@ -512,9 +405,6 @@ const verifyAuthentication = async (req, res) => {
   if (req.cookies.jwtToken) {
     const jwtToken = req.cookies.jwtToken;
     const rememberUser = req.cookies.rememberUser;
-
-    console.log("JWT token: ", jwtToken);
-    console.log("Remember User: ", rememberUser);
 
     if (
       rememberUser === "" ||
@@ -533,8 +423,6 @@ const verifyAuthentication = async (req, res) => {
 
     const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
-    console.log("Decoded jwt token: ", decoded);
-
     if (!decoded) {
       return res.status(401).json({
         message: "Unauthenticated",
@@ -547,8 +435,8 @@ const verifyAuthentication = async (req, res) => {
   res.status(401).json({ message: "Unauthenticated", success: false });
 };
 
-const unlockAccount = async (req, res) => {
-  const { userData, verificationCode, rememberUser } = req.body;
+const unlockAccount = async (req, res, next) => {
+  const { userData, verificationCode } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -568,32 +456,11 @@ const unlockAccount = async (req, res) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    req.body.user = user;
+    req.body.statusCode = 200;
+    req.body.message = "Account successfully unlocked";
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    };
-
-    if (rememberUser) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      cookieOptions.expires = expires;
-    }
-
-    res.cookie("jwtToken", jwtToken, cookieOptions);
-
-    res.cookie("rememberUser", rememberUser, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      expires: rememberUser ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : 0,
-    });
-
-    res.status(200).json({ message: "Account successfully unlocked", success: true });
+    next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -647,8 +514,7 @@ const getSecurityQuestions = async (_, res) => {
 };
 
 const setSecurityQuestion = async (req, res, next) => {
-  const { name, email, password, securityQuestion, securityQuestionAnswer, rememberUser } =
-    req.body;
+  const { name, email, password, securityQuestion, securityQuestionAnswer } = req.body;
 
   try {
     const user = await UserModel.findOne({ name });
