@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import useApi from "./useApi";
 import useFormStore from "./useFormStore";
-import { FormUsage } from "../types/auth";
+import { FormUsage } from "../types/types";
 
 const useVerify = (formUsage: FormUsage, code: string) => {
   const { setFormState, setFormData } = useFormStore();

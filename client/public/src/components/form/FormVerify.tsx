@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { FormUsage } from "../../types/auth";
 import useVerify from "../../hooks/useVerify";
 import useClipboard from "../../hooks/useClipboard";
 import useFormStore from "../../hooks/useFormStore";
 import React from "react";
+import { FormUsage } from "../../types/types";
 
 interface Props {
   formUsage: FormUsage;

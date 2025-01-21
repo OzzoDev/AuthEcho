@@ -1,6 +1,5 @@
 import ReactLoading from "react-loading";
 import useFormStore from "../../hooks/useFormStore";
-import { FormUsage } from "../../types/auth";
 import { AUTH_HELPER } from "../../utils/authHelper";
 import Dropdown from "./Dropdown";
 import FormInput from "./FormInput";
@@ -8,6 +7,7 @@ import FormPasswordInput from "./FormPasswordInput";
 import FormVerify from "./FormVerify";
 import Stepper from "../Stepper";
 import { useEffect, useState } from "react";
+import { FormUsage } from "../../types/types";
 
 interface Props {
   formUsage: FormUsage;
