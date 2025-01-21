@@ -10,7 +10,7 @@ export type UnlockAccount = {
   verificationCode: string;
 };
 
-export type Verify = "signup" | "signin" | "reset" | "unlock";
+export type FormUsage = "SIGNUP" | "SIGNIN" | "RESETPASSWORD" | "UNLOCKACCOUNT";
 
 export type AuthState = {
   isAuthenticated: boolean;

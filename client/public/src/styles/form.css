@@ -31,7 +31,7 @@ form::before {
   color: var(--neutral-color);
 }
 
-.form-info {
+.form-subline {
   font-size: 1.2rem;
   margin-bottom: 20px;
   color: var(--text-color);
@@ -198,11 +198,7 @@ form::before {
 
 .step.active {
   opacity: 0.8;
-  background: linear-gradient(
-    120deg,
-    var(--accent-color) 10%,
-    var(--neutral-color) 100%
-  );
+  background: linear-gradient(120deg, var(--accent-color) 10%, var(--neutral-color) 100%);
 }
 .error-container {
   width: 100%;

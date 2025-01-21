@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Verify } from "../../types/auth";
+import { FormUsage } from "../../types/auth";
 import useVerify from "../../hooks/useVerify";
 import useClipboard from "../../hooks/useClipboard";
 import useFormStore from "../../hooks/useFormStore";
 import React from "react";
 
 interface Props {
-  verify: Verify;
+  formUsage: FormUsage;
 }
 
-export default function FormVerify({ verify }: Props): JSX.Element {
-  const { setFormData } = useFormStore();
+export default function FormVerify({ formUsage }: Props): JSX.Element {
+  const { formError, setFormData } = useFormStore();
   const [code, setCode] = useState<string>("");
 
   const numberOfInputs = 8;
@@ -18,13 +18,14 @@ export default function FormVerify({ verify }: Props): JSX.Element {
   const [inputValues, setInputValues] = useState(Array(numberOfInputs).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(numberOfInputs).fill(null));
 
-  useVerify(verify, code);
+  useVerify(formUsage, code);
 
   const handleAutoPatse = (verificationCode: string) => {
-    const updatedVerificationCode = verificationCode.slice(0, 8).split("");
-    setInputValues(updatedVerificationCode);
-    setCode(updatedVerificationCode.join(""));
-    setFormData({ verificationCode: updatedVerificationCode.join("") }, "verificationCode");
+    if (verificationCode.length === 8) {
+      setInputValues(verificationCode.split(""));
+      setCode(verificationCode);
+      setFormData({ verificationCode: verificationCode }, "verificationCode");
+    }
   };
 
   const { lastClipboard } = useClipboard(handleAutoPatse);
@@ -90,6 +91,7 @@ export default function FormVerify({ verify }: Props): JSX.Element {
     <div className="verify-conatiner">
       {Array.from({ length: numberOfInputs }, (_, index) => (
         <input
+          disabled={!!formError}
           key={index}
           ref={(el) => (inputRefs.current[index] = el)}
           type="text"

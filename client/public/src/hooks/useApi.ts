@@ -10,7 +10,7 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
   const url: string = AUTH_ENDPOINTS[useCase];
 
   const fetchData = async (useStatus?: boolean): Promise<AxiosResponse<ApiResponse> | null> => {
-    // console.log("Sending data... ", formData);
+    console.log("Sending data...", formData);
 
     try {
       if (useStatus) {

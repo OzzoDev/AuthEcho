@@ -7,6 +7,7 @@ import UnlockAccountPage from "./pages/UnlockAccountPage";
 import StartPage from "./pages/StartPage";
 import useAuth from "./hooks/useAuth";
 import SignupPage from "./pages/SignupPage";
+import Navbar from "./components/Navbar";
 
 function App() {
   useAuth();
@@ -14,21 +15,24 @@ function App() {
   return (
     // <Provider store={store}>
     <Router>
-      <Routes>
-        <Route path="/" element={<StartPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/signin" element={<SigninPage />} />
-        <Route path="/resetPassword" element={<ResetPasswordPage />} />
-        <Route path="/unlockaccount" element={<UnlockAccountPage />} />
-        <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <AccountPage />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<StartPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/signin" element={<SigninPage />} />
+          <Route path="/resetPassword" element={<ResetPasswordPage />} />
+          <Route path="/unlockaccount" element={<UnlockAccountPage />} />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </>
     </Router>
     // </Provider>
   );

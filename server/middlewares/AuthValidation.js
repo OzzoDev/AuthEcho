@@ -6,7 +6,10 @@ const newAccountValidation = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (name.length < 3 || name.length > 20) {
-    return res.status(400).json({ message: "Username must be minimum 3 and maximum 20 characters long", success: false });
+    return res.status(400).json({
+      message: "Username must be minimum 3 and maximum 20 characters long",
+      success: false,
+    });
   }
 
   const schema = Joi.object({
@@ -20,7 +23,9 @@ const newAccountValidation = async (req, res, next) => {
   }
 
   if (password.length < 8) {
-    return res.status(400).json({ message: "Password must be atleast 8 characters long", success: false });
+    return res
+      .status(400)
+      .json({ message: "Password must be atleast 8 characters long", success: false });
   }
 
   if (password !== confirmPassword) {
@@ -30,16 +35,16 @@ const newAccountValidation = async (req, res, next) => {
   next();
 };
 
-const validateNewPassword = async (newPassword, confirmNewPassword, currentPassword) => {
-  if (newPassword.length < 8) {
+const validateNewPassword = async (password, confirmpassword, currentPassword) => {
+  if (password.length < 8) {
     return { isValid: false, message: "Password length must be at least 8 characters long" };
   }
 
-  if (newPassword !== confirmNewPassword) {
+  if (password !== confirmpassword) {
     return { isValid: false, message: "Passwords must match" };
   }
 
-  const unupdatedPassword = await bcrypt.compare(newPassword, currentPassword);
+  const unupdatedPassword = await bcrypt.compare(password, currentPassword);
 
   if (unupdatedPassword) {
     return { isValid: false, message: "New password must be different from current password" };
@@ -73,14 +78,17 @@ const usernameValidation = (req, res, next) => {
   const { error } = schema.validate({ name });
 
   if (error) {
-    return res.status(400).json({ message: "Username must be minimum 3 characters and maximum 20 characters long", error });
+    return res.status(400).json({
+      message: "Username must be minimum 3 characters and maximum 20 characters long",
+      error,
+    });
   }
 
   next();
 };
 
 const passwordResetValidation = async (req, res, next) => {
-  const { userData, verificationCode, newPassword, confirmNewPassword } = req.body;
+  const { userData, verificationCode, password, confirmPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -95,7 +103,7 @@ const passwordResetValidation = async (req, res, next) => {
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
-    const isPasswordVaild = await validateNewPassword(newPassword, confirmNewPassword, user.password);
+    const isPasswordVaild = await validateNewPassword(password, confirmPassword, user.password);
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });

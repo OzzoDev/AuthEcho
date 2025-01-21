@@ -27,10 +27,12 @@ export type ApiRequest = {
   verificationCode?: string;
   securityQuestion?: string;
   securityQuestionAnswer?: string;
-  action?: "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
+  action?: VerifyAction;
   rememberUser?: boolean;
   [key: string]: string | boolean | undefined;
 };
+
+export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
 
 export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
 
@@ -44,6 +46,7 @@ export type ApiUseCase =
   | "SECURITYQUESTIONS"
   | "SETSECURITYQUESTION"
   | "GETUSERSECURITYQUESTION"
+  | "VALIDATESECURITYQUESTION"
   | "UPDATEEMAIL"
   | "UPDATEUSERNAME"
   | "UPDATEPASSWORD"

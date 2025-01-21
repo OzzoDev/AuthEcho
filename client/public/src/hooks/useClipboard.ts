@@ -28,9 +28,7 @@ const useClipboard = (setClip: (clip: string) => void) => {
             setClip(clip);
           }
         }
-      } catch (err) {
-        // console.error("Failed to read clipboard: ", err);
-      }
+      } catch {}
     }, 100);
 
     return () => clearInterval(intervalId);

@@ -310,7 +310,7 @@ const validateEmail = async (req, res) => {
 };
 
 const validatePassword = async (req, res) => {
-  const { userData, newPassword, confirmNewPassword } = req.body;
+  const { userData, password, confirmPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -326,11 +326,7 @@ const validatePassword = async (req, res) => {
       });
     }
 
-    const isPasswordVaild = await validateNewPassword(
-      newPassword,
-      confirmNewPassword,
-      user.password
-    );
+    const isPasswordVaild = await validateNewPassword(password, confirmPassword, user.password);
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
@@ -344,15 +340,13 @@ const validatePassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res, next) => {
-  const { userData, newPassword } = req.body;
+  const { userData, password } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
-    const newVerificationCode = hex8BitKey();
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.verificationCode = newVerificationCode;
+    user.password = await bcrypt.hash(password, 10);
+    user.verificationCode = hex8BitKey();
     user.suspended = false;
     user.failedLoginAttempts = 0;
     await user.save();
@@ -369,7 +363,7 @@ const resetPassword = async (req, res, next) => {
 };
 
 const updatePassword = async (req, res, next) => {
-  const { userData, newPassword, confirmNewPassword } = req.body;
+  const { userData, password, confirmPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -378,17 +372,13 @@ const updatePassword = async (req, res, next) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isPasswordVaild = await validateNewPassword(
-      newPassword,
-      confirmNewPassword,
-      user.password
-    );
+    const isPasswordVaild = await validateNewPassword(password, confirmPassword, user.password);
 
     if (!isPasswordVaild.isValid) {
       return res.status(400).json({ message: isPasswordVaild.message, success: false });
     }
 
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = await bcrypt.hash(password, 10);
     await user.save();
 
     req.body.user = user;
@@ -567,9 +557,6 @@ const getUserSecurityQuestion = async (req, res) => {
     }
 
     const isVerificationEqual = verificationCode === user.verificationCode;
-
-    user.verificationCode = hex8BitKey();
-    await user.save();
 
     if (!isVerificationEqual) {
       return res.status(400).json({ message: "Verification code is wrong", success: false });

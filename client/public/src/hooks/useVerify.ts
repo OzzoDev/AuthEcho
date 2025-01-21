@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { Verify } from "../types/auth";
 import useApi from "./useApi";
 import useFormStore from "./useFormStore";
+import { FormUsage } from "../types/auth";
 
-const useVerify = (verify: Verify, code: string) => {
+const useVerify = (formUsage: FormUsage, code: string) => {
   const { formData, setFormState, setFormData } = useFormStore();
   const { fetchData: verifyAccount } = useApi("POST", "VERIFYACCOUNT");
   const { fetchData: userSecurityQuestion } = useApi("POST", "GETUSERSECURITYQUESTION");
@@ -14,8 +14,8 @@ const useVerify = (verify: Verify, code: string) => {
       if (shouldVerify) {
         let response;
 
-        switch (verify) {
-          case "signup":
+        switch (formUsage) {
+          case "SIGNUP":
             response = await verifyAccount(true);
 
             if (response) {
@@ -23,14 +23,14 @@ const useVerify = (verify: Verify, code: string) => {
               setFormState("question");
             }
             break;
-          case "signin":
+          case "SIGNIN":
             response = await verifyAccount(true);
             if (response) {
               setFormState("password");
             }
             break;
-          case "reset":
-          case "unlock":
+          case "RESETPASSWORD":
+          case "UNLOCKACCOUNT":
             response = await userSecurityQuestion(true);
             if (response) {
               const updatedFormData = {
