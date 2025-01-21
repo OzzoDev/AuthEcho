@@ -107,7 +107,10 @@ export default function AuthForm({
               </button>
             )}
             {BTNTEXT && (
-              <button type="submit" className="submit-btn btn btn-primary">
+              <button
+                onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
+                type="submit"
+                className="submit-btn btn btn-primary">
                 {BTNTEXT}
               </button>
             )}

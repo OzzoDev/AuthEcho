@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import useFormStore from "../hooks/useFormStore";
 import useApi from "../hooks/useApi";
 import AuthForm from "../components/form/AuthForm";
+import { ApiRequest } from "../types/types";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function SigninPage() {
     if (typeof param !== "string") {
       const { name, value } = param.target;
       setFormData(
-        (prevData) => ({ ...prevData, [name]: value }),
+        (prevData: ApiRequest) => ({ ...prevData, [name]: value }),
         undefined,
         "verifyAccess",
         "SIGNIN"

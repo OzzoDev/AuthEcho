@@ -7,7 +7,7 @@ import UnlockAccountPage from "./pages/UnlockAccountPage";
 import StartPage from "./pages/StartPage";
 import useAuth from "./hooks/useAuth";
 import SignupPage from "./pages/SignupPage";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/nav/NavBar";
 
 function App() {
   useAuth();

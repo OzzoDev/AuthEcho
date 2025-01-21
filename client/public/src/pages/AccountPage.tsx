@@ -1,37 +1,27 @@
 //@ts-ignore
 import "../styles/accountPage.css";
 import { useRef, useState } from "react";
-import { removeData } from "../utils/utils";
 import { AUTH_KEY, EMAIL_KEY, NAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
-import { Password } from "../types/userTypes";
 import ReactLoading from "react-loading";
-import Navbar from "../components/Navbar";
-import { FetchStatus } from "../types/apiTypes";
 import useSessionStorage from "../hooks/useSessionStorage";
 import useAuth from "../hooks/useAuth";
 import useApi from "../hooks/useApi";
+//@ts-ignore
+import Navbar from "../components/nav/NavBar";
 
 export default function AccountPage() {
-  const { sessionValue: name, setSessionValue: setName } = useSessionStorage<string>(NAME_KEY, "");
-  const { sessionValue: email, setSessionValue: setEmail } = useSessionStorage<string>(
-    EMAIL_KEY,
-    ""
-  );
+  const {
+    sessionValue: name,
+    setSessionValue: setName,
+    removeSessionValue: removeName,
+  } = useSessionStorage<string>(NAME_KEY, "");
+  const {
+    sessionValue: email,
+    setSessionValue: setEmail,
+    removeSessionValue: removeEmail,
+  } = useSessionStorage<string>(EMAIL_KEY, "");
 
-  console.log(name);
-
-  const [newEmail, setNewEmail] = useState<string>("");
-  const [newName, setNewName] = useState<string>("");
-  const [passwordData, setPasswordData] = useState<Password>({
-    newPassword: "",
-    confirmNewPassword: "",
-  });
-  const [comparePasswords, setComparePasswords] = useState<boolean>(false);
-  const [verificationCode, setVerificationCode] = useState<string>("123456");
-  const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
-  const [status, setStatus] = useState<FetchStatus>("idle");
-  const [error, setError] = useState<string>("");
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { fetchData: signOut } = useApi("GET", "SIGNOUT");
@@ -40,22 +30,22 @@ export default function AccountPage() {
   useAuth(() => navigate("/signin"));
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    verifyEmail ? setVerificationCode(value) : setNewEmail(value);
+    // const { value } = e.target;
+    // verifyEmail ? setVerificationCode(value) : setNewEmail(value);
   };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setNewName(value);
+    // const { value } = e.target;
+    // setNewName(value);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    if (comparePasswords) {
-      setPasswordData((prevData) => ({ ...prevData, ["confirmNewPassword"]: value }));
-    } else {
-      setPasswordData((prevData) => ({ ...prevData, ["newPassword"]: value }));
-    }
+    // const { value } = e.target;
+    // if (comparePasswords) {
+    //   setPasswordData((prevData) => ({ ...prevData, ["confirmNewPassword"]: value }));
+    // } else {
+    //   setPasswordData((prevData) => ({ ...prevData, ["newPassword"]: value }));
+    // }
   };
 
   const changeEmail = async () => {
@@ -123,8 +113,8 @@ export default function AccountPage() {
 
   const handleSignOut = async () => {
     await signOut();
-    removeData(NAME_KEY);
-    removeData(EMAIL_KEY);
+    removeName();
+    removeEmail();
     removeSessionValue();
     navigate("/signin");
   };
@@ -140,7 +130,7 @@ export default function AccountPage() {
       ) : (
         <>
           <Navbar />
-          <div className="updateWrapper">
+          {/* <div className="updateWrapper">
             <p className="error">{error}</p>
             <div className="updateContainer">
               <label>Update Email</label>
@@ -176,7 +166,7 @@ export default function AccountPage() {
                 <button onClick={changePassword}>{comparePasswords ? "Confirm" : "Update"}</button>
               </div>
             </div>
-          </div>
+          </div> */}
         </>
       )}
     </div>

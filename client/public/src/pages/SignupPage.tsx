@@ -21,7 +21,7 @@ export default function SignUpPage() {
       const fetchSecurityQuestions = async () => {
         const response = await getSecurityQuestions(false);
         if (response && response.data.questions) {
-          const questions = response.data.questions.map((ques) => ques.question);
+          const questions = response.data.questions;
           setSecurityQuestions(questions);
         }
       };
