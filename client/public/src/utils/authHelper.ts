@@ -119,7 +119,7 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         state: "default",
         headline: "Unlock your account!",
         btnText: "Unlock",
-        inputs: [{ labelText: "Security question answer", name: "securityQuestionAnswer" }],
+        inputs: [{ labelText: "Email or username", name: "userData" }],
       },
       {
         state: "verify",

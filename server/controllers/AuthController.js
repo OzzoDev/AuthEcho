@@ -88,12 +88,12 @@ const signin = async (req, res, next) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (!user.verified) {
-      return res.status(403).json({ message: "Account is not verified", success: false });
-    }
-
     if (user.suspended) {
       return res.status(403).json({ message: "Account is suspended", success: false });
+    }
+
+    if (!user.verified) {
+      return res.status(403).json({ message: "Account is not verified", success: false });
     }
 
     const isPasswordEqual = await bcrypt.compare(password, user.password);

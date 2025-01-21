@@ -38,6 +38,11 @@ form::before {
   align-self: flex-start;
 }
 
+.form-dynamicText {
+  font-weight: bold;
+  color: var(--neutral-color);
+}
+
 .input-container {
   width: 100%;
   position: relative;

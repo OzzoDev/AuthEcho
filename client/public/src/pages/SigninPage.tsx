@@ -13,7 +13,7 @@ export default function SigninPage() {
 
   const navigate = useNavigate();
 
-  const handleVerificationCode = async () => {
+  const handleRequestVerificationCode = async () => {
     const response = await requestVerificationCode(true);
     if (response) {
       setFormState("verify");
@@ -44,7 +44,7 @@ export default function SigninPage() {
 
     switch (formState) {
       case "default":
-        await handleVerificationCode();
+        await handleRequestVerificationCode();
         break;
       case "verify":
         await requestVerificationCode(true);

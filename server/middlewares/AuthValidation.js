@@ -97,6 +97,10 @@ const passwordResetValidation = async (req, res, next) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (user.suspended) {
+      return res.status(403).json({ message: "Account is suspended", success: false });
+    }
+
     const isVerificationEqual = verificationCode === user.verificationCode;
 
     if (!isVerificationEqual) {
