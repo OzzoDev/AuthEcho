@@ -1,5 +1,4 @@
-import { FormUsage } from "../types/auth";
-import { FormState } from "../types/types";
+import { FormState, FormUsage } from "../types/types";
 
 interface FormInput {
   labelText?: string;

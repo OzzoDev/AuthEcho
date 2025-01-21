@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ApiRequest, FetchStatus } from "../types/apiTypes";
-import { FormState } from "../types/types";
+import { ApiRequest, FetchStatus, FormState } from "../types/types";
 
 interface FormSliceState {
   status: FetchStatus;

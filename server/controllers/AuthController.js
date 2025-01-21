@@ -548,7 +548,8 @@ const getUserData = async (req, res) => {
 };
 
 const getSecurityQuestions = async (_, res) => {
-  res.status(200).json({ message: "Success", success: true, questions: securityQuestions });
+  const questions = securityQuestions.map((ques) => ques.question);
+  res.status(200).json({ message: "Success", success: true, questions });
 };
 
 const setSecurityQuestion = async (req, res, next) => {

@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ApiMethod, ApiResponse, ApiUseCase } from "../types/apiTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
 import useFormStore from "./useFormStore";
 import { AUTH_KEY } from "../constants/contants";
 import useSessionStorage from "./useSessionStorage";
+import { ApiMethod, ApiResponse, ApiUseCase } from "../types/types";
 
 const useApi = (method: ApiMethod, useCase: ApiUseCase, callback?: () => void) => {
   const { formData, setFormError, setFormStatus } = useFormStore();
