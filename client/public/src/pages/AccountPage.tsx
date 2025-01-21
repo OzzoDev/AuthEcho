@@ -1,18 +1,11 @@
 //@ts-ignore
 import "../styles/accountPage.css";
 import { useRef, useState } from "react";
-import { getData, removeData } from "../utils/utils";
-import { AUTH_KEY, USEREMAIL_KEY, USERNAME_KEY } from "../constants/contants";
+import { removeData } from "../utils/utils";
+import { AUTH_KEY, EMAIL_KEY, NAME_KEY } from "../constants/contants";
 import { useNavigate } from "react-router-dom";
 import { Password } from "../types/userTypes";
 import ReactLoading from "react-loading";
-import {
-  sendVerificationCode,
-  updateEmail,
-  updatePassword,
-  updateUsername,
-  validateEmail,
-} from "../utils/ServerClient";
 import Navbar from "../components/Navbar";
 import { FetchStatus } from "../types/apiTypes";
 import useSessionStorage from "../hooks/useSessionStorage";
@@ -20,8 +13,14 @@ import useAuth from "../hooks/useAuth";
 import useApi from "../hooks/useApi";
 
 export default function AccountPage() {
-  const [name, setName] = useState<string>(getData(USERNAME_KEY));
-  const [email, setEmail] = useState<string>(getData(USEREMAIL_KEY));
+  const { sessionValue: name, setSessionValue: setName } = useSessionStorage<string>(NAME_KEY, "");
+  const { sessionValue: email, setSessionValue: setEmail } = useSessionStorage<string>(
+    EMAIL_KEY,
+    ""
+  );
+
+  console.log(name);
+
   const [newEmail, setNewEmail] = useState<string>("");
   const [newName, setNewName] = useState<string>("");
   const [passwordData, setPasswordData] = useState<Password>({
@@ -60,73 +59,72 @@ export default function AccountPage() {
   };
 
   const changeEmail = async () => {
-    if (verifyEmail) {
-      const updateEmailResponse = await updateEmail(
-        { userData: email || name, email: newEmail, verificationCode },
-        setStatus,
-        setError
-      );
-      if (updateEmailResponse) {
-        setEmail(newEmail);
-        setVerifyEmail(false);
-      }
-    } else {
-      const validateEmailResponse = await validateEmail(
-        { userData: email || name, email: newEmail },
-        setStatus,
-        setError
-      );
-      if (validateEmailResponse) {
-        const verficationCodeResponse = await sendVerificationCode(
-          { userData: email || name, action: "verifyEmail" },
-          setStatus,
-          setError
-        );
-        if (verficationCodeResponse) {
-          setVerifyEmail(true);
-        }
-      }
-    }
+    // if (verifyEmail) {
+    //   const updateEmailResponse = await updateEmail(
+    //     { userData: email || name, email: newEmail, verificationCode },
+    //     setStatus,
+    //     setError
+    //   );
+    //   if (updateEmailResponse) {
+    //     setEmail(newEmail);
+    //     setVerifyEmail(false);
+    //   }
+    // } else {
+    //   const validateEmailResponse = await validateEmail(
+    //     { userData: email || name, email: newEmail },
+    //     setStatus,
+    //     setError
+    //   );
+    //   if (validateEmailResponse) {
+    //     const verficationCodeResponse = await sendVerificationCode(
+    //       { userData: email || name, action: "verifyEmail" },
+    //       setStatus,
+    //       setError
+    //     );
+    //     if (verficationCodeResponse) {
+    //       setVerifyEmail(true);
+    //     }
+    //   }
+    // }
   };
 
   const changeUsername = async () => {
-    const updateUsernameResponse = await updateUsername(
-      { userData: email || name, name: newName },
-      setStatus,
-      setError
-    );
-    if (updateUsernameResponse) {
-      setName(newName);
-    }
+    // const updateUsernameResponse = await updateUsername(
+    //   { userData: email || name, name: newName },
+    //   setStatus,
+    //   setError
+    // );
+    // if (updateUsernameResponse) {
+    //   setName(newName);
+    // }
   };
 
   const changePassword = async () => {
-    if (passwordInputRef.current) {
-      passwordInputRef.current.value = "";
-    }
-
-    if (!comparePasswords) {
-      setComparePasswords(true);
-    } else {
-      const updatePasswordResponse = await updatePassword(
-        {
-          userData: email || name,
-          password: passwordData.newPassword,
-          confirmPassword: passwordData.confirmNewPassword,
-        },
-        setStatus,
-        setError
-      );
-      if (updatePasswordResponse) {
-        setComparePasswords(false);
-      }
-    }
+    // if (passwordInputRef.current) {
+    //   passwordInputRef.current.value = "";
+    // }
+    // if (!comparePasswords) {
+    //   setComparePasswords(true);
+    // } else {
+    //   const updatePasswordResponse = await updatePassword(
+    //     {
+    //       userData: email || name,
+    //       password: passwordData.newPassword,
+    //       confirmPassword: passwordData.confirmNewPassword,
+    //     },
+    //     setStatus,
+    //     setError
+    //   );
+    //   if (updatePasswordResponse) {
+    //     setComparePasswords(false);
+    //   }
+    // }
   };
 
   const handleSignOut = async () => {
     await signOut();
-    removeData(USERNAME_KEY);
-    removeData(USEREMAIL_KEY);
+    removeData(NAME_KEY);
+    removeData(EMAIL_KEY);
     removeSessionValue();
     navigate("/signin");
   };

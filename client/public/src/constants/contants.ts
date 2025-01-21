@@ -1,3 +1,3 @@
-export const USERNAME_KEY = "userName";
-export const USEREMAIL_KEY = "userEmail";
-export const AUTH_KEY = "authentication";
+export const NAME_KEY = "AUTHECHO_USERNAME";
+export const EMAIL_KEY = "AUTHECHO_EMAIL";
+export const AUTH_KEY = "AUTHECHO_AUTHENTICATION";

@@ -472,7 +472,10 @@ const verifyAuthentication = async (req, res) => {
       });
     }
 
-    return res.status(200).json({ message: "Authenticated", success: true });
+    const name = decoded.name;
+    const email = decoded.email;
+
+    return res.status(200).json({ message: "Authenticated", success: true, name, email });
   }
   res.status(401).json({ message: "Unauthenticated", success: false });
 };

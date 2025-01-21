@@ -7,9 +7,13 @@ const REMEMBER_USER_KEY = "rememberUser";
 const setCookies = (req, res) => {
   const { user, rememberUser, statusCode, message } = req.body;
 
-  const jwtToken = jwt.sign({ email: user.email, _id: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+  const jwtToken = jwt.sign(
+    { email: user.email, name: user.name, _id: user.id },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
 
   const name = user.name;
   const email = user.email;
