@@ -19,6 +19,7 @@ export type ApiResponse = {
 };
 
 export type ApiRequest = {
+  useCase?: ApiUseCase;
   userData?: string;
   name?: string;
   email?: string;
@@ -40,6 +41,7 @@ export type ApiUseCase =
   | "SIGNUP"
   | "SIGNIN"
   | "SENDVERIFICATIONCODE"
+  | "REQUESTUNLOCKCODE"
   | "VERIFYACCOUNT"
   | "VERIFYAUTHENTICATION"
   | "SIGNOUT"

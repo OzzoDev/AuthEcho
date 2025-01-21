@@ -4,7 +4,7 @@ import useFormStore from "./useFormStore";
 import { FormUsage } from "../types/auth";
 
 const useVerify = (formUsage: FormUsage, code: string) => {
-  const { formData, setFormState, setFormData } = useFormStore();
+  const { setFormState, setFormData } = useFormStore();
   const { fetchData: verifyAccount } = useApi("POST", "VERIFYACCOUNT");
   const { fetchData: userSecurityQuestion } = useApi("POST", "GETUSERSECURITYQUESTION");
 
@@ -17,9 +17,7 @@ const useVerify = (formUsage: FormUsage, code: string) => {
         switch (formUsage) {
           case "SIGNUP":
             response = await verifyAccount(true);
-
             if (response) {
-              setFormData({ verificationCode: "" }, "verificationCode");
               setFormState("question");
             }
             break;
@@ -27,18 +25,23 @@ const useVerify = (formUsage: FormUsage, code: string) => {
             response = await verifyAccount(true);
             if (response) {
               setFormState("password");
+            } else {
+              const question = await userSecurityQuestion(true);
+              if (question) {
+                setFormData({ securityQuestion: question.data.question }, "securityQuestion");
+                setFormState("question");
+              }
             }
             break;
           case "RESETPASSWORD":
           case "UNLOCKACCOUNT":
-            response = await userSecurityQuestion(true);
-            if (response) {
-              const updatedFormData = {
-                ...formData,
-                securityQuestion: response.data.question,
-              };
-              setFormData(updatedFormData);
-              setFormState("question");
+            const ensureAuth = await verifyAccount(true);
+            if (ensureAuth) {
+              response = await userSecurityQuestion(true);
+              if (response) {
+                setFormData({ securityQuestion: response.data.question }, "securityQuestion");
+                setFormState("question");
+              }
             }
             break;
         }

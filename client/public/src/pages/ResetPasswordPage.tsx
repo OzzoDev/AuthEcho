@@ -2,18 +2,14 @@ import { useNavigate } from "react-router-dom";
 import useFormStore from "../hooks/useFormStore";
 import useApi from "../hooks/useApi";
 import AuthForm from "../components/form/AuthForm";
-import { AUTH_KEY } from "../constants/contants";
-import useSessionStorage from "../hooks/useSessionStorage";
 
 export default function SigninPage() {
+  const navigate = useNavigate();
   const { formData, formState, setFormState, setFormData } = useFormStore(true);
   const { fetchData: validatePassword } = useApi("POST", "VALIDATEPASSWORD");
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
-  const { fetchData: resetPassword } = useApi("POST", "RESETPASSWORD");
-  const { setSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
-
-  const navigate = useNavigate();
+  const { fetchData: resetPassword } = useApi("POST", "RESETPASSWORD", () => navigate("/account"));
 
   const handleValidatePassword = async () => {
     const response = await validatePassword(true);
@@ -28,11 +24,7 @@ export default function SigninPage() {
   const handleValidateQuestion = async () => {
     const response = await validateQuestion(true);
     if (response) {
-      const allowPasswordReset = await resetPassword(true);
-      if (allowPasswordReset) {
-        setSessionValue(true);
-        navigate("/account");
-      }
+      await resetPassword(true);
     }
   };
 
@@ -49,7 +41,6 @@ export default function SigninPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     switch (formState) {
       case "default":
         await handleValidatePassword();
@@ -58,7 +49,7 @@ export default function SigninPage() {
         await requestVerificationCode(true);
         break;
       case "question":
-        handleValidateQuestion();
+        await handleValidateQuestion();
         break;
     }
   };

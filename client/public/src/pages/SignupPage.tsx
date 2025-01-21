@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
-import useSessionStorage from "../hooks/useSessionStorage";
-import { AUTH_KEY } from "../constants/contants";
 import AuthForm from "../components/form/AuthForm";
 import useFormStore from "../hooks/useFormStore";
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const { formData, formState, setFormStatus, setFormError, setFormState, setFormData } =
     useFormStore(true);
   const [securityQuestions, setSecurityQuestions] = useState<string[]>([]);
   const { fetchData: getSecurityQuestions } = useApi("GET", "SECURITYQUESTIONS");
   const { fetchData: signUp } = useApi("POST", "SIGNUP");
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
-  const { fetchData: setQuestion } = useApi("POST", "SETSECURITYQUESTION");
-  const { setSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
-  const navigate = useNavigate();
+  const { fetchData: setQuestion } = useApi("POST", "SETSECURITYQUESTION", () =>
+    navigate("/account")
+  );
 
   useEffect(() => {
     if (formState === "question") {
@@ -43,12 +42,7 @@ export default function SignUpPage() {
       setFormError("Select a security question");
       setFormStatus("error");
     } else {
-      const response = await setQuestion(true);
-
-      if (response) {
-        setSessionValue(true);
-        navigate("/account");
-      }
+      await setQuestion(true);
     }
   };
 

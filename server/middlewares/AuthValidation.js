@@ -2,6 +2,29 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/User");
 
+const ensureVerificationCode = async (req, res, next) => {
+  const { userData, email, name, verificationCode } = req.body;
+
+  try {
+    const user = await UserModel.findOne({
+      $or: [{ email: userData }, { name: userData }, { email: email }, { name: name }],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (verificationCode !== user.prevVerificationCode) {
+      return res.status(403).json({ message: "Verification code is wrong", success: false });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
 const newAccountValidation = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
@@ -88,7 +111,7 @@ const usernameValidation = (req, res, next) => {
 };
 
 const passwordResetValidation = async (req, res, next) => {
-  const { userData, verificationCode, password, confirmPassword } = req.body;
+  const { userData, password, confirmPassword } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -97,14 +120,8 @@ const passwordResetValidation = async (req, res, next) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (user.suspended) {
+    if (user.suspended || user.blocked) {
       return res.status(403).json({ message: "Account is suspended", success: false });
-    }
-
-    const isVerificationEqual = verificationCode === user.verificationCode;
-
-    if (!isVerificationEqual) {
-      return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
     const isPasswordVaild = await validateNewPassword(password, confirmPassword, user.password);
@@ -121,6 +138,7 @@ const passwordResetValidation = async (req, res, next) => {
 };
 
 module.exports = {
+  ensureVerificationCode,
   newAccountValidation,
   validateNewPassword,
   emailValidation,

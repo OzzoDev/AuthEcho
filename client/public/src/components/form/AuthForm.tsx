@@ -7,6 +7,7 @@ import FormInput from "./FormInput";
 import FormPasswordInput from "./FormPasswordInput";
 import FormVerify from "./FormVerify";
 import Stepper from "../Stepper";
+import { useEffect, useState } from "react";
 
 interface Props {
   formUsage: FormUsage;
@@ -26,6 +27,7 @@ export default function AuthForm({
   onSubmit,
 }: Props) {
   const { formError, formStatus, formData, formState } = useFormStore();
+  const [lastestStep, setLastestStep] = useState<number>(0);
 
   const HELPER = AUTH_HELPER[formUsage];
   const STATES = HELPER.formStates;
@@ -37,8 +39,16 @@ export default function AuthForm({
   const BTNTEXT = STATE?.btnText;
   const RENDERREMEMBERBTN = STATE?.renderRememberUser && onRemember;
 
-  const maxSteps = STATES.length;
-  const currentStep = STATES.indexOf(STATE);
+  const excludedSteps = STATES.filter((state) => state?.excludeStep).length;
+  const availableSteps = STATES.filter((state) => !state?.excludeStep);
+  const maxSteps = STATES.length - excludedSteps;
+  const currentStep = availableSteps.indexOf(STATE);
+
+  useEffect(() => {
+    if (currentStep !== -1) {
+      setLastestStep(currentStep);
+    }
+  }, [currentStep]);
 
   return (
     <>
@@ -96,11 +106,13 @@ export default function AuthForm({
                 Remember me
               </button>
             )}
-            <button type="submit" className="submit-btn btn btn-primary">
-              {BTNTEXT}
-            </button>
+            {BTNTEXT && (
+              <button type="submit" className="submit-btn btn btn-primary">
+                {BTNTEXT}
+              </button>
+            )}
           </form>
-          <Stepper steps={maxSteps} selectedIndex={currentStep} />
+          <Stepper steps={maxSteps} selectedIndex={lastestStep} />
         </>
       )}
     </>

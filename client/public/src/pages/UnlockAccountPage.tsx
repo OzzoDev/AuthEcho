@@ -2,23 +2,19 @@ import { useNavigate } from "react-router-dom";
 import useFormStore from "../hooks/useFormStore";
 import useApi from "../hooks/useApi";
 import AuthForm from "../components/form/AuthForm";
-import { AUTH_KEY } from "../constants/contants";
-import useSessionStorage from "../hooks/useSessionStorage";
 
 export default function SigninPage() {
+  const navigate = useNavigate();
   const { formData, formState, setFormState, setFormData } = useFormStore(true);
   const { fetchData: checkSuspended } = useApi("POST", "ISSUSPENDED");
-  const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
+  const { fetchData: requestUnlockCode } = useApi("POST", "REQUESTUNLOCKCODE");
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
-  const { fetchData: unlockAccount } = useApi("POST", "UNLOCKACCOUNT");
-  const { setSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
-
-  const navigate = useNavigate();
+  const { fetchData: unlockAccount } = useApi("POST", "UNLOCKACCOUNT", () => navigate("/signin"));
 
   const handleRequestVerificationCode = async () => {
     const isSuspended = await checkSuspended(true);
     if (isSuspended) {
-      const response = await requestVerificationCode(true);
+      const response = await requestUnlockCode(true);
       if (response) {
         setFormState("verify");
       }
@@ -28,11 +24,7 @@ export default function SigninPage() {
   const handleValidateQuestion = async () => {
     const response = await validateQuestion(true);
     if (response) {
-      const allowPasswordReset = await unlockAccount(true);
-      if (allowPasswordReset) {
-        setSessionValue(true);
-        navigate("/account");
-      }
+      await unlockAccount(true);
     }
   };
 
@@ -49,16 +41,15 @@ export default function SigninPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     switch (formState) {
       case "default":
         await handleRequestVerificationCode();
         break;
       case "verify":
-        await requestVerificationCode(true);
+        await requestUnlockCode(true);
         break;
       case "question":
-        handleValidateQuestion();
+        await handleValidateQuestion();
         break;
     }
   };

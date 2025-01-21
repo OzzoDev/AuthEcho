@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useEffect } from "react";
 import { resetForm, setError, setStatus, setData, setState } from "../store/formSlice";
-import { ApiRequest, FetchStatus, VerifyAction } from "../types/apiTypes";
+import { ApiRequest, ApiUseCase, FetchStatus, VerifyAction } from "../types/apiTypes";
 import { FormState } from "../types/types";
 
 const useFormStore = (shouldReset?: boolean) => {
@@ -30,12 +30,14 @@ const useFormStore = (shouldReset?: boolean) => {
   const setFormData = (
     formData: ApiRequest | ((prevData: ApiRequest) => ApiRequest),
     key?: keyof ApiRequest,
-    action?: VerifyAction
+    action?: VerifyAction,
+    useCase?: ApiUseCase
   ) => {
     if (typeof formData === "function") {
       const updatedData: ApiRequest = {
         ...formState.formData,
         action: !formState.formData.action && action ? action : formState.formData.action,
+        useCase: !formState.formData.useCase && useCase ? useCase : formState.formData.useCase,
       };
       dispatch(setData(formData(updatedData)));
     } else {

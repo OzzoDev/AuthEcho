@@ -11,10 +11,11 @@ interface State {
   state: FormState;
   headline: string;
   subline?: string;
-  btnText: string;
+  btnText?: string;
   dynamicLine?: boolean;
   renderRememberUser?: boolean;
   regenerateCode?: boolean;
+  excludeStep?: boolean;
   inputs: FormInput[];
 }
 
@@ -68,10 +69,18 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         state: "verify",
         headline: "Authenticate Your Account!",
         subline:
-          'Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If you require a new code, please use the "Regenerate Code" button to receive a fresh verification code via email.',
-        btnText: "Regenerate Code",
-        regenerateCode: true,
+          "Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If the incorrect code is entered, you will need to answer your security question to proceed with the sign-in process.",
         inputs: [{ type: "code" }],
+      },
+      {
+        state: "question",
+        headline: "Verify authenticity!",
+        subline:
+          "To verify your identity, please respond to your security question, as the verification code provided was incorrect. Enter the answer to your security question below to proceed with the sign-in process.",
+        btnText: "Continue",
+        dynamicLine: true,
+        excludeStep: true,
+        inputs: [{ labelText: "Security question answer", name: "securityQuestionAnswer" }],
       },
       {
         state: "password",

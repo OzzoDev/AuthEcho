@@ -48,7 +48,7 @@ const signup = async (req, res) => {
 };
 
 const verifyAccount = async (req, res) => {
-  const { userData, email, name, verificationCode } = req.body;
+  const { userData, email, name, verificationCode, useCase } = req.body;
 
   try {
     const user = await UserModel.findOne({
@@ -59,19 +59,24 @@ const verifyAccount = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const isVerificationEqual = verificationCode === user.verificationCode;
+    const codeToVerify = user.verificationCode;
 
     user.verificationCode = hex8BitKey();
+    user.prevVerificationCode = verificationCode;
     await user.save();
 
-    if (!isVerificationEqual) {
+    if (verificationCode !== codeToVerify) {
+      if (useCase === "SIGNIN") {
+        user.blocked = true;
+        await user.save();
+      }
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
     user.verified = true;
     await user.save();
 
-    res.status(201).json({ message: "Verification successfully", success: true });
+    res.status(200).json({ message: "Verification successfully", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -241,7 +246,44 @@ const updateUsername = async (req, res, next) => {
 };
 
 const sendVerificationcode = async (req, res) => {
-  const { userData, action } = req.body;
+  const { userData, email, name, action } = req.body;
+
+  try {
+    const user = await UserModel.findOne({
+      $or: [{ email: userData }, { name: userData }, { email: email }, { name: name }],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.blocked || user.suspended) {
+      return res
+        .status(403)
+        .json({ message: "Account is suspended. Unlock account to regain access" });
+    }
+
+    const userVerificationCode = user.verificationCode;
+
+    const verificationCodeSent = await sendEmail(
+      email || user.email,
+      "Authecho",
+      `${getEmailText(action, name || user.name)} ${userVerificationCode}`
+    );
+
+    if (!verificationCodeSent) {
+      return res.status(500).json({ message: `Verification code error`, success: false });
+    }
+
+    res.status(200).json({ message: `Verification code sent`, success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
+const requestUnlockCode = async (req, res) => {
+  const { userData } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -250,23 +292,25 @@ const sendVerificationcode = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const userEmail = user.email;
-    const username = user.name;
+    if (!user.blocked && !user.suspended) {
+      return res.status(403).json({ message: "Account is active." });
+    }
+
+    const email = user.email;
+    const name = user.name;
     const userVerificationCode = user.verificationCode;
 
     const verificationCodeSent = await sendEmail(
-      userEmail,
+      email,
       "Authecho",
-      `${getEmailText(action, username)} ${userVerificationCode}`
+      `Hello ${name}! Here is the verification code to unlock your account: ${userVerificationCode}`
     );
 
     if (!verificationCodeSent) {
-      return res
-        .status(500)
-        .json({ message: `Verification code error ${username}`, success: false });
+      return res.status(500).json({ message: `Verification code error`, success: false });
     }
 
-    res.status(200).json({ message: `Verification code sent for ${username}`, success: true });
+    res.status(200).json({ message: `Verification code sent`, success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -317,6 +361,12 @@ const validatePassword = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.blocked || user.suspended) {
+      return res
+        .status(403)
+        .json({ message: "Account is suspended. Unlock account to regain access" });
     }
 
     if (user.suspended) {
@@ -428,23 +478,16 @@ const verifyAuthentication = async (req, res) => {
 };
 
 const unlockAccount = async (req, res, next) => {
-  const { userData, verificationCode } = req.body;
+  const { userData } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    if (verificationCode !== user.verificationCode) {
-      return res.status(400).json({ message: "Verification code is wrong", success: false });
-    }
 
     const newVerificationCode = hex8BitKey();
 
     user.verificationCode = newVerificationCode;
     user.suspended = false;
+    user.blocked = false;
     user.failedLoginAttempts = 0;
     await user.save();
 
@@ -469,7 +512,7 @@ const isSuspended = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (!user.suspended) {
+    if (!user.suspended && !user.blocked) {
       return res.status(400).json({ message: "Account is active", success: false });
     }
 
@@ -511,10 +554,6 @@ const setSecurityQuestion = async (req, res, next) => {
   try {
     const user = await UserModel.findOne({ name });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
     const isPasswordEqual = await bcrypt.compare(password, user.password);
 
     if (!isPasswordEqual) {
@@ -547,19 +586,13 @@ const setSecurityQuestion = async (req, res, next) => {
 };
 
 const getUserSecurityQuestion = async (req, res) => {
-  const { userData, verificationCode } = req.body;
+  const { userData } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    const isVerificationEqual = verificationCode === user.verificationCode;
-
-    if (!isVerificationEqual) {
-      return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
     const question = user.securityQuestion;
@@ -574,7 +607,7 @@ const getUserSecurityQuestion = async (req, res) => {
 };
 
 const validateSecurityQuestion = async (req, res) => {
-  const { userData, securityQuestionAnswer } = req.body;
+  const { userData, securityQuestionAnswer, useCase } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -586,6 +619,24 @@ const validateSecurityQuestion = async (req, res) => {
 
     if (!rightAnswer) {
       return res.status(403).json({ message: "Wrong answer", success: false });
+    }
+
+    if (useCase === "SIGNIN") {
+      user.blocked = false;
+      await user.save();
+
+      const name = user.name;
+      const email = user.email;
+
+      const verificationCodeSent = await sendEmail(
+        email,
+        "Authecho",
+        `Hello ${name}! Here is the verification code to regain access to your account. Please return to authco.com and enter the following verification code: ${user.verificationCode}. `
+      );
+
+      if (!verificationCodeSent) {
+        return res.status(500).json({ message: `Email error ${userName}`, success: false });
+      }
     }
 
     res.status(200).json({ message: `Right answer`, success: true });
@@ -603,6 +654,7 @@ module.exports = {
   updateEmail,
   updateUsername,
   sendVerificationcode,
+  requestUnlockCode,
   validatePassword,
   resetPassword,
   updatePassword,
