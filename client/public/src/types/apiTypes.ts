@@ -29,6 +29,7 @@ export type ApiRequest = {
   securityQuestionAnswer?: string;
   action?: "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
   rememberUser?: boolean;
+  [key: string]: string | boolean | undefined;
 };
 
 export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";

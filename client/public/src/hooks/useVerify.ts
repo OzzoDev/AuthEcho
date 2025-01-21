@@ -1,74 +1,52 @@
-import { FormState } from "../types/types";
+import { useEffect } from "react";
 import { Verify } from "../types/auth";
-import { ApiRequest, FetchStatus } from "../types/apiTypes";
-import { getUserSecurityQuestion, verifyAccount } from "../utils/ServerClient";
+import useApi from "./useApi";
+import useFormStore from "./useFormStore";
 
-interface Props {
-  formData: ApiRequest;
-  code: string;
-  verify: Verify;
-  setStatus: (status: FetchStatus) => void;
-  setError: (error: string) => void;
-  setFormState: (formState: FormState) => void;
-  setFormData?: (formData: ApiRequest) => void;
-}
+const useVerify = (verify: Verify, code: string) => {
+  const { formData, setFormState, setFormData } = useFormStore();
+  const { fetchData: verifyAccount } = useApi("POST", "VERIFYACCOUNT");
+  const { fetchData: userSecurityQuestion } = useApi("POST", "GETUSERSECURITYQUESTION");
 
-const useVerify = ({
-  formData,
-  code,
-  verify,
-  setStatus,
-  setError,
-  setFormState,
-  setFormData,
-}: Props) => {
-  const verifyCode = async () => {
-    if (code.length === 8) {
-      let response;
+  useEffect(() => {
+    const shouldVerify = code.length === 8;
+    const verifyCode = async () => {
+      if (shouldVerify) {
+        let response;
 
-      switch (verify) {
-        case "signup":
-          response = await verifyAccount(
-            { userData: formData.name || formData.email, verificationCode: code },
-            setStatus,
-            setError
-          );
-          if (response) {
-            setFormState("question");
-          }
-          break;
-        case "signin":
-          response = await verifyAccount(
-            { userData: formData.userData, verificationCode: code },
-            setStatus,
-            setError
-          );
-          if (response) {
-            setFormState("password");
-          }
-          break;
-        case "reset":
-        case "unlock":
-          response = await getUserSecurityQuestion(
-            { userData: formData.userData || "", verificationCode: code },
-            setStatus,
-            setError
-          );
-          if (response && setFormData) {
-            const updatedFormData = {
-              ...formData,
-              verificationCode: code,
-              securityQuestion: response.data.question,
-            };
-            setFormData(updatedFormData);
-            setFormState("question");
-          }
-          break;
+        switch (verify) {
+          case "signup":
+            response = await verifyAccount(true);
+
+            if (response) {
+              setFormData({ verificationCode: "" }, "verificationCode");
+              setFormState("question");
+            }
+            break;
+          case "signin":
+            response = await verifyAccount(true);
+            if (response) {
+              setFormState("password");
+            }
+            break;
+          case "reset":
+          case "unlock":
+            response = await userSecurityQuestion(true);
+            if (response) {
+              const updatedFormData = {
+                ...formData,
+                securityQuestion: response.data.question,
+              };
+              setFormData(updatedFormData);
+              setFormState("question");
+            }
+            break;
+        }
       }
-    }
-  };
+    };
 
-  return verifyCode;
+    verifyCode();
+  }, [code]);
 };
 
 export default useVerify;

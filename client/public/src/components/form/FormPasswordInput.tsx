@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import useFormStore from "../../hooks/useFormStore";
 
 interface Props {
   labelText: string;
@@ -8,11 +9,19 @@ interface Props {
 }
 
 export default function FormPasswordInput({ labelText, name, onChange }: Props) {
+  const { formData } = useFormStore();
   const [inputType, setInputType] = useState<"text" | "password">("password");
 
   return (
     <div className="input-container">
-      <input type={inputType} name={name} onChange={onChange} autoComplete="off" required />
+      <input
+        type={inputType}
+        name={name}
+        value={(formData[name] as string) || ""}
+        onChange={onChange}
+        autoComplete="off"
+        required
+      />
       <label>{labelText}</label>
       <button
         type="button"

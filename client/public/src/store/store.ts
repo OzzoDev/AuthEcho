@@ -1,18 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./authSlice";
-import rememberUserReducer from "./rememberUserSlice";
-import tokenReducer from "./tokenSlice";
+import formReducer from "./formSlice";
 
 const store = configureStore({
   reducer: {
-    // auth: authReducer,
-    rememberUser: rememberUserReducer,
-    token: tokenReducer,
+    form: formReducer,
   },
 });
 
-export type AppDispatch = typeof store.dispatch;
-
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

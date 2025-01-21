@@ -11,8 +11,6 @@ const useAuth = (callback?: () => void) => {
     const authenticate = async () => {
       const response = await verifyAuthentication();
 
-      console.log("Response: ", response);
-
       if (response) {
         setSessionValue(true);
       } else if (callback) {

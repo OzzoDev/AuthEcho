@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import useFormStore from "../../hooks/useFormStore";
 
 interface Props {
   labelText: string;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function FormInput({ labelText, name, error, onChange }: Props) {
+  const { formData } = useFormStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -22,6 +24,7 @@ export default function FormInput({ labelText, name, error, onChange }: Props) {
         type="text"
         ref={inputRef}
         name={name}
+        value={(formData[name] as string) || ""}
         onChange={onChange}
         autoComplete="off"
         required

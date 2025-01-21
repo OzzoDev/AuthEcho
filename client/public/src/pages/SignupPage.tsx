@@ -1,20 +1,25 @@
 import ReactLoading from "react-loading";
 import Navbar from "../components/Navbar";
-import { ApiRequest, FetchStatus } from "../types/apiTypes";
-import { FormState } from "../types/types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { AUTH_KEY } from "../constants/contants";
 import AuthForm from "../components/form/AuthForm";
+import Stepper from "../components/Stepper";
+import useFormStore from "../hooks/useFormStore";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState<ApiRequest>({});
-  const [formState, setFormState] = useState<FormState>("default");
+  const {
+    formData,
+    formStatus,
+    formState,
+    setFormStatus,
+    setFormError,
+    setFormState,
+    setFormData,
+  } = useFormStore(true);
   const [securityQuestions, setSecurityQuestions] = useState<string[]>([]);
-  const [status, setStatus] = useState<FetchStatus>("idle");
-  const [error, setError] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { fetchData: getSecurityQuestions } = useApi("GET", "SECURITYQUESTIONS");
   const { fetchData: signUp } = useApi("POST", "SIGNUP");
@@ -30,7 +35,7 @@ export default function SignUpPage() {
   useEffect(() => {
     if (formState === "question") {
       const fetchSecurityQuestions = async () => {
-        const response = await getSecurityQuestions(setStatus, setError);
+        const response = await getSecurityQuestions(false);
         if (response && response.data.questions) {
           const questions = response.data.questions.map((ques) => ques.question);
           setSecurityQuestions(questions);
@@ -41,7 +46,7 @@ export default function SignUpPage() {
   }, [formState]);
 
   const handleSignUp = async () => {
-    const response = await signUp(setStatus, setError, formData);
+    const response = await signUp(true);
 
     if (response) {
       setFormState("verify");
@@ -49,15 +54,15 @@ export default function SignUpPage() {
   };
 
   const handleVerify = async () => {
-    (formData.action = "verifyEmail"), await verify(setStatus, setError, formData);
+    (formData.action = "verifyEmail"), await verify(true);
   };
 
   const handleSetQuestion = async () => {
     if (formData.securityQuestion === "") {
-      setError("Select a security question");
-      setStatus("error");
+      setFormError("Select a security question");
+      setFormStatus("error");
     } else {
-      const response = await setQuestion(setStatus, setError, formData);
+      const response = await setQuestion(true);
 
       if (response) {
         setSessionValue(true);
@@ -68,21 +73,16 @@ export default function SignUpPage() {
 
   const handleChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
     if (typeof param === "string") {
-      setFormData((prevData) => ({
-        ...prevData,
-        securityQuestion: param,
-      }));
+      setFormData({ securityQuestion: param }, "securityQuestion");
     } else {
       const { name, value } = param.target;
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
+      setFormData({ [name]: value }, name);
     }
   };
 
   const handleRemeberUser = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      rememberUser: !prevData.rememberUser,
-    }));
+    setFormData({ rememberUser: !formData.rememberUser }, "rememberUser");
+    console.log("remember ", formData.rememberUser);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -100,7 +100,7 @@ export default function SignUpPage() {
     }
   };
 
-  if (status === "loading") {
+  if (formStatus === "loading") {
     return (
       <>
         <Navbar />
@@ -110,23 +110,21 @@ export default function SignUpPage() {
   }
 
   return (
-    <AuthForm
-      formUsage="SIGNUP"
-      formState={formState}
-      formData={formData}
-      verifyType="signup"
-      dropDownItems={securityQuestions}
-      btnTexts={["Sign up", "Verify", "Continue"]}
-      error={error}
-      steps={3}
-      currentStep={currentStep}
-      setStatus={setStatus}
-      setError={setError}
-      setFormState={setFormState}
-      setFormData={setFormData}
-      onChange={handleChange}
-      onRemember={handleRemeberUser}
-      onSubmit={handleSubmit}
-    />
+    <>
+      <Navbar />
+      <h1 className="page-headline">
+        Join Now for Effortless Account Management in 3 Simple Steps!
+      </h1>
+      <AuthForm
+        formUsage="SIGNUP"
+        verifyType="signup"
+        dropDownItems={securityQuestions}
+        btnTexts={["Sign up", "Verify", "Continue"]}
+        onChange={handleChange}
+        onRemember={handleRemeberUser}
+        onSubmit={handleSubmit}
+      />
+      <Stepper steps={3} selectedIndex={currentStep} />
+    </>
   );
 }

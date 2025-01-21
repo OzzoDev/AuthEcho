@@ -9,9 +9,13 @@ import "./styles/navbar.css";
 import "./styles/btn.css";
 //@ts-ignore
 import "./styles/form.css";
+import { Provider } from "react-redux";
+import store from "./store/store.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </StrictMode>
 );

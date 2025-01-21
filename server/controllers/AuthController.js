@@ -48,10 +48,12 @@ const signup = async (req, res) => {
 };
 
 const verifyAccount = async (req, res) => {
-  const { userData, verificationCode } = req.body;
+  const { userData, email, name, verificationCode } = req.body;
 
   try {
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+    const user = await UserModel.findOne({
+      $or: [{ email: userData }, { name: userData }, { email: email }, { name: name }],
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });

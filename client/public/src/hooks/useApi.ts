@@ -1,24 +1,21 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ApiMethod, ApiRequest, ApiResponse, ApiUseCase, FetchStatus } from "../types/apiTypes";
+import { ApiMethod, ApiResponse, ApiUseCase } from "../types/apiTypes";
 import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
+import useFormStore from "./useFormStore";
 
 const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
+  const { formData, setFormError, setFormStatus } = useFormStore();
+
   const url: string = AUTH_ENDPOINTS[useCase];
 
-  const fetchData = async (
-    setStatus?: (status: FetchStatus) => void,
-    setError?: (error: string) => void,
-    apiParams?: ApiRequest
-  ): Promise<AxiosResponse<ApiResponse> | null> => {
-    console.log("Api params: ", apiParams);
+  const fetchData = async (useStatus?: boolean): Promise<AxiosResponse<ApiResponse> | null> => {
+    // console.log("Sending data... ", formData);
 
     try {
-      if (setStatus) {
-        setStatus("loading");
-      }
-      if (setError) {
-        setError("");
+      if (useStatus) {
+        setFormStatus("loading");
+        setFormError("");
       }
 
       const config: AxiosRequestConfig = {
@@ -27,19 +24,19 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
         headers: {
           "Content-Type": "application/json",
         },
-        ...(method !== "GET" && { data: apiParams }),
+        ...(method !== "GET" && { data: formData }),
         withCredentials: true,
       };
 
       const response = await axios<ApiResponse>(config);
 
-      if (setStatus) {
-        setStatus("success");
+      if (useStatus) {
+        setFormStatus("success");
       }
       return response;
     } catch (error: unknown) {
-      if (setStatus && setError) {
-        handleError(error, setStatus, setError);
+      if (useStatus) {
+        handleError(error, setFormStatus, setFormError);
       }
       return null;
     }

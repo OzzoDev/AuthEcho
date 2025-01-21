@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-interface Props {
-  setCode: (code: string[]) => void;
-}
-
-const useClipboard = ({ setCode }: Props) => {
+const useClipboard = (setClip: (clip: string) => void) => {
   const [lastClipboard, setLastClipboard] = useState<string>("");
 
   useEffect(() => {
@@ -28,14 +24,12 @@ const useClipboard = ({ setCode }: Props) => {
 
           if (trimedLastClipboard !== trimedClipboardText) {
             setLastClipboard(trimedClipboardText);
-            if (trimedClipboardText.length >= 8) {
-              const newCode = trimedClipboardText.slice(0, 8).split("");
-              setCode(newCode);
-            }
+            const clip = trimedClipboardText;
+            setClip(clip);
           }
         }
       } catch (err) {
-        console.error("Failed to read clipboard: ", err);
+        // console.error("Failed to read clipboard: ", err);
       }
     }, 100);
 
