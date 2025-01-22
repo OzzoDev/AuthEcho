@@ -21,13 +21,10 @@ app.use(
     target: TARGET_SERVER,
     changeOrigin: true,
     pathRewrite: (_, req) => {
-      return req.originalUrl.replace(/^\/api/, "/auth");
+      return req.originalUrl.replace(/^\/api/, "");
     },
     logLevel: "debug",
     onProxyReq: (proxyReq, req) => {
-      console.log(
-        `Proxying request to: ${req.url} -> ${TARGET_SERVER}/auth${req.url.replace("/api", "")}`
-      );
       const cookieHeader = req.headers.cookie;
       if (cookieHeader) {
         proxyReq.setHeader("Cookie", cookieHeader);

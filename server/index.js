@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const AuthRouter = require("./routes/AuthRouter");
+const ConnectRouter = require("./routes/ConnectRouter");
 const cookieParser = require("cookie-parser");
-const { hex128BitKey } = require("./utils/crypto");
 
 require("dotenv").config();
 require("./models/db");
@@ -12,15 +12,29 @@ const app = express();
 const PORT = process.env.PORT;
 const AUTHECHO_MASTER_API_KEY = process.env.AUTHECHO_MASTER_API_KEY;
 
-const corsOptions = {
+// const corsOptions = {
+//   origin: (_, callback) => {
+//     return callback(null, true);
+//   },
+//   credentials: true,
+//   exposedHeaders: ["authehco-master-api-key"],
+// };
+
+const restrictedCors = cors({
+  origin: "http://localhost:3001",
+  credentials: true,
+  exposedHeaders: ["authehco-master-api-key"],
+});
+
+const openCors = cors({
   origin: (_, callback) => {
     return callback(null, true);
   },
   credentials: true,
   exposedHeaders: ["authehco-master-api-key"],
-};
+});
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -35,7 +49,8 @@ const ensureApiKey = (req, res, next) => {
   next();
 };
 
-app.use("/auth", ensureApiKey, AuthRouter);
+app.use("/auth", restrictedCors, ensureApiKey, AuthRouter);
+app.use("/connect", restrictedCors, ensureApiKey, ConnectRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

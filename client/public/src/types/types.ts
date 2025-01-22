@@ -22,6 +22,10 @@ export type ApiRequest = {
   [key: string]: string | boolean | undefined;
 };
 
+export type ConnectRequest = {
+  appName: string;
+};
+
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
 
 export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
@@ -45,7 +49,8 @@ export type ApiUseCase =
   | "VALIDATEPASSWORD"
   | "RESETPASSWORD"
   | "UNLOCKACCOUNT"
-  | "ISSUSPENDED";
+  | "ISSUSPENDED"
+  | "JOIN";
 
 export type FormState = "default" | "verify" | "question" | "password";
 

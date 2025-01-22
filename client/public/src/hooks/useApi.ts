@@ -1,18 +1,21 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { AUTH_ENDPOINTS } from "../constants/ApiEndpoints";
+import { ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
 import useFormStore from "./useFormStore";
 import { AUTH_KEY } from "../constants/contants";
 import useSessionStorage from "./useSessionStorage";
-import { ApiMethod, ApiResponse, ApiUseCase } from "../types/types";
+import { ApiMethod, ApiRequest, ApiResponse, ApiUseCase, ConnectRequest } from "../types/types";
 
 const useApi = (method: ApiMethod, useCase: ApiUseCase, callback?: () => void) => {
   const { formData, setFormError, setFormStatus } = useFormStore();
   const { setSessionValue } = useSessionStorage<boolean>(AUTH_KEY, false);
 
-  const url: string = AUTH_ENDPOINTS[useCase];
+  const url: string = ENDPOINTS[useCase];
 
-  const fetchData = async (useStatus?: boolean): Promise<AxiosResponse<ApiResponse> | null> => {
+  const fetchData = async (
+    useStatus?: boolean,
+    apiParams?: ConnectRequest | ApiRequest
+  ): Promise<AxiosResponse<ApiResponse> | null> => {
     try {
       if (useStatus) {
         setFormStatus("loading");
@@ -25,7 +28,7 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase, callback?: () => void) =
         headers: {
           "Content-Type": "application/json",
         },
-        ...(method !== "GET" && { data: formData }),
+        ...(method !== "GET" && { data: apiParams ? apiParams : formData }),
         withCredentials: true,
       };
 

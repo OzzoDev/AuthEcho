@@ -31,10 +31,9 @@ const useAuth = (callback?: () => void) => {
       }
     };
 
-    // if (!auth) {
-    //   authenticate();
-    // }
-    authenticate();
+    if (!auth) {
+      authenticate();
+    }
   }, []);
 };
 
