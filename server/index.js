@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const AuthRouter = require("./routes/AuthRouter");
 const ConnectRouter = require("./routes/ConnectRouter");
 const cookieParser = require("cookie-parser");
+const { ensureAuthenticated } = require("./middlewares/Auth");
 
 require("dotenv").config();
 require("./models/db");
@@ -50,7 +51,7 @@ const ensureApiKey = (req, res, next) => {
 };
 
 app.use("/auth", restrictedCors, ensureApiKey, AuthRouter);
-app.use("/connect", restrictedCors, ensureApiKey, ConnectRouter);
+app.use("/connect", restrictedCors, ensureApiKey, ensureAuthenticated, ConnectRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

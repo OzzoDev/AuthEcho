@@ -6,6 +6,18 @@ const AppSchema = new Schema({
     type: String,
     required: true,
   },
+  origin: {
+    type: String,
+    required: true,
+  },
+  admin: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    default: "",
+  },
 });
 
 AppSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });

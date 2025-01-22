@@ -4,7 +4,12 @@ export default function ConnectAppPage() {
   const { fetchData: connectApp } = useApi("POST", "JOIN");
 
   const handleConnect = async () => {
-    await connectApp(true, { appName: "My app" });
+    await connectApp(true, {
+      appName: "My app",
+      origin: "http://localhost:3001",
+      admin: "Ozzo",
+      appDescription: "My first Authecho app",
+    });
   };
 
   return (

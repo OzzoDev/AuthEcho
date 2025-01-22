@@ -4,25 +4,20 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const ensureAuthenticated = (req, res, next) => {
-  const auth = req.headers["authorization"];
+  const jwtToken = req.cookies.jwtToken;
+  if (jwtToken) {
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
-  if (!auth) {
-    return res.status(403).json({ message: "Access denied. Please log in to continue." });
-  }
+    if (!decoded) {
+      return res.status(401).json({
+        message: "Unauthenticated",
+        success: false,
+      });
+    }
 
-  const credentials = auth.split(" ")[1];
-
-  if (!credentials) {
-    return res.status(403).json({ message: "Access denied. Please provide your login credentials." });
-  }
-
-  try {
-    const decoded = jwt.verify(credentials, process.env.JWT_SECRET);
-    req.user = decoded;
     next();
-  } catch (err) {
-    return res.status(403).json({ message: "Access denied. Your session has expired or is invalid. Please log in again." });
   }
+  res.status(401).json({ message: "Unauthenticated", success: false });
 };
 
 const sendEmail = async (recipientEmail, subject, text) => {

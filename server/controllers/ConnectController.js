@@ -1,7 +1,11 @@
 const AppModel = require("../models/App");
 
 const join = async (req, res) => {
-  const { appName } = req.body;
+  const { appName, origin, admin, appDescription } = req.body;
+
+  //   console.log("Request Headers:", req.headers.origin);
+
+  console.log(req.body);
 
   try {
     const appNameExists = await AppModel.findOne({ name: appName }).collation({
@@ -13,7 +17,12 @@ const join = async (req, res) => {
       return res.status(409).json({ message: "App name already exists", success: false });
     }
 
-    const appModel = new AppModel({ name: appName });
+    const appModel = new AppModel({
+      name: appName,
+      origin,
+      description: appDescription ? appDescription : "",
+      admin,
+    });
     await appModel.save();
 
     console.log("Joining app: ", appName);
