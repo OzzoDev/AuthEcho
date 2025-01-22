@@ -41,7 +41,7 @@ export default function Navbar() {
           <div className="controls">
             <Link
               linkText="Connect App"
-              path="/conectapp"
+              path="/connectapp"
               classNames="control-btn btn btn-secondary"
               children={<GoPlus size={26} />}
             />

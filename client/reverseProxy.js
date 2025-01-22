@@ -8,6 +8,12 @@ const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || "development";
 const TARGET_SERVER = process.env.TARGET_SERVER || "http://localhost:3000";
 const REACT_DEV_SERVER = "http://localhost:5173";
+const AUTHECHO_MASTER_API_KEY = process.env.AUTHECHO_MASTER_API_KEY;
+
+app.use("/api", (req, _, next) => {
+  req.headers["authehco-master-api-key"] = AUTHECHO_MASTER_API_KEY;
+  next();
+});
 
 app.use(
   "/api",
@@ -18,7 +24,7 @@ app.use(
       return req.originalUrl.replace(/^\/api/, "/auth");
     },
     logLevel: "debug",
-    onProxyReq: (proxyReq, req, res) => {
+    onProxyReq: (proxyReq, req) => {
       console.log(
         `Proxying request to: ${req.url} -> ${TARGET_SERVER}/auth${req.url.replace("/api", "")}`
       );
@@ -27,6 +33,7 @@ app.use(
         proxyReq.setHeader("Cookie", cookieHeader);
       }
     },
+
     onProxyRes: (proxyRes, req, res) => {
       console.log(`Received response from: ${TARGET_SERVER}${req.url}`);
       const setCookieHeaders = proxyRes.headers["set-cookie"];

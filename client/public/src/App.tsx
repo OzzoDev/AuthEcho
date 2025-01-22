@@ -8,12 +8,12 @@ import StartPage from "./pages/StartPage";
 import useAuth from "./hooks/useAuth";
 import SignupPage from "./pages/SignupPage";
 import Navbar from "./components/nav/NavBar";
+import ConnectAppPage from "./pages/ConnectAppPage";
 
 function App() {
   useAuth();
 
   return (
-    // <Provider store={store}>
     <Router>
       <>
         <Navbar />
@@ -23,6 +23,7 @@ function App() {
           <Route path="/signin" element={<SigninPage />} />
           <Route path="/resetPassword" element={<ResetPasswordPage />} />
           <Route path="/unlockaccount" element={<UnlockAccountPage />} />
+          <Route path="/connectapp" element={<ConnectAppPage />} />
           <Route
             path="/account"
             element={
@@ -34,7 +35,6 @@ function App() {
         </Routes>
       </>
     </Router>
-    // </Provider>
   );
 }
 
