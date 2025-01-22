@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { getDate } = require("../utils/date");
-const { boolean } = require("joi");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
