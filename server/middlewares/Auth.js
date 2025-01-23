@@ -77,6 +77,10 @@ const verifyAppCredentials = async (req, res, next) => {
   try {
     const app = await AppModel.findOne({ name: appName }).collation({ locale: "en", strength: 1 });
 
+    if (!app) {
+      return res.status(404).json({ message: "App not found", success: true });
+    }
+
     const requestOrigin = req.headers.origin;
 
     if (requestOrigin && requestOrigin !== app.origin) {
@@ -91,6 +95,8 @@ const verifyAppCredentials = async (req, res, next) => {
       return res.status(403).json({ message: "App key is wrong", success: false });
     }
 
+    req.app = app;
+
     next();
   } catch (error) {
     console.error(error);
@@ -102,7 +108,9 @@ const ensureUser = async (req, res, next) => {
   const { user: userData } = req.body;
 
   try {
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+    const user = await UserModel.findOne({
+      $or: [{ email: userData }, { name: userData }],
+    }).collation({ locale: "en", strength: 1 });
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });

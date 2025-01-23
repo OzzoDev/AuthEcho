@@ -5,7 +5,7 @@ const JWT_TOKEN_KEY = "jwtToken";
 const REMEMBER_USER_KEY = "rememberUser";
 
 const setCookies = (req, res) => {
-  const { user, rememberUser, statusCode, message } = req.body;
+  const { user, rememberUser, statusCode, message, isAppAdmin } = req.body;
 
   const sessionDuration = req.headers["user-session-duration"];
 
@@ -46,7 +46,7 @@ const setCookies = (req, res) => {
 
   res.cookie(REMEMBER_USER_KEY, rememberUser, cookieOptions);
 
-  res.status(statusCode).json({ message, success: true, name, email });
+  res.status(statusCode).json({ message, success: true, name, email, isAppAdmin });
 };
 
 const removeCookies = (_, res) => {

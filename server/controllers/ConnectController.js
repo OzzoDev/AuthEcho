@@ -33,7 +33,7 @@ const join = async (req, res) => {
       name: appName,
       origin,
       description: appDescription ? appDescription : "",
-      admin,
+      admins: [admin],
       key,
     });
 

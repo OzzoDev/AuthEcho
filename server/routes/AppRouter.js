@@ -12,7 +12,7 @@ const { ensureUser } = require("../middlewares/Auth");
 
 router.get("/signout", removeCookies);
 router.get("/authenticate", verifyAuthentication);
-router.get("/verifySession", verifySession);
+router.get("/verifysession", verifySession);
 
 router.post("/requestcode", ensureUser, requestCode);
 router.post("/verifycode", ensureUser, verifyCode);

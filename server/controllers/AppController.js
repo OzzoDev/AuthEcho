@@ -17,7 +17,7 @@ const requestCode = async (req, res) => {
     const verificationCodeSent = await sendEmail(
       user.email,
       `Sign in to ${appName}`,
-      `Hello ${user.name}! This is your verification code to sign in with your authecho accout at ${appName}: ${user.verificationCode}`
+      `Hello ${user.name}! This is your verification code to sign in with your authecho accout to ${appName}: ${user.verificationCode}`
     );
 
     if (!verificationCodeSent) {
@@ -107,6 +107,7 @@ const validateQuestion = async (req, res) => {
 
 const signIn = async (req, res, next) => {
   const { user: userData, questionAnswer, verificationCode, password } = req.body;
+  const app = req.app;
 
   if (!questionAnswer && !verificationCode) {
     return res.status(400).json({
@@ -178,6 +179,12 @@ const signIn = async (req, res, next) => {
     req.body.statusCode = 200;
     req.body.message = "Signed in successfully";
 
+    const isAppAdmin = app.admins.includes(user.name);
+
+    if (isAppAdmin) {
+      req.body.isAppAdmin = true;
+    }
+
     next();
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
@@ -187,6 +194,8 @@ const signIn = async (req, res, next) => {
 
 const verifySession = (req, res) => {
   const jwtToken = req.cookies.jwtToken;
+  const app = req.app;
+
   if (req.cookies.jwtToken) {
     try {
       const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
@@ -198,7 +207,16 @@ const verifySession = (req, res) => {
         });
       }
 
-      return res.status(200).json({ message: "Authenticated", success: true });
+      let isAppAdmin = false;
+
+      if (app && decoded.name) {
+        const isAdmin = app.admins
+          .map((admin) => admin.toLowerCase())
+          .includes(decoded.name.toLowerCase());
+        isAppAdmin = isAdmin;
+      }
+
+      return res.status(200).json({ message: "Authenticated", success: true, isAppAdmin });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         return res.status(403).json({
@@ -222,4 +240,5 @@ module.exports = {
   validateQuestion,
   signIn,
   verifySession,
+  verifyAdmin,
 };
