@@ -7,11 +7,15 @@ const REMEMBER_USER_KEY = "rememberUser";
 const setCookies = (req, res) => {
   const { user, rememberUser, statusCode, message } = req.body;
 
+  const sessionDuration = req.headers["user-session-duration"];
+
+  const tokenExpiration = rememberUser ? (sessionDuration ? `${sessionDuration}h` : "1y") : "1h";
+
   const jwtToken = jwt.sign(
     { email: user.email, name: user.name, _id: user.id },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1h",
+      expiresIn: tokenExpiration,
     }
   );
 
@@ -32,6 +36,11 @@ const setCookies = (req, res) => {
   cookieOptions.expires = rememberUser ? fullYear() : undefined;
 
   if (rememberUser) {
+    const expiryDate = sessionDuration
+      ? new Date(Date.now() + parseInt(sessionDuration, 10) * 3600000)
+      : fullYear();
+    cookieOptions.expires = expiryDate;
+
     res.cookie(JWT_TOKEN_KEY, jwtToken, cookieOptions);
   }
 

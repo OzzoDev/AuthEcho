@@ -18,6 +18,10 @@ const AppSchema = new Schema({
     type: String,
     default: "",
   },
+  key: {
+    type: String,
+    required: true,
+  },
 });
 
 AppSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });

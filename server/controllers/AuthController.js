@@ -59,13 +59,13 @@ const verifyAccount = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const codeToVerify = user.verificationCode;
+    const userVerificationCode = user.verificationCode;
 
     user.verificationCode = hex8BitKey();
     user.prevVerificationCode = verificationCode;
     await user.save();
 
-    if (verificationCode !== codeToVerify) {
+    if (verificationCode !== userVerificationCode) {
       if (useCase === "SIGNIN") {
         user.blocked = true;
         await user.save();
@@ -93,7 +93,7 @@ const signin = async (req, res, next) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    if (user.suspended) {
+    if (user.suspended || user.blocked) {
       return res.status(403).json({ message: "Account is suspended", success: false });
     }
 
@@ -444,8 +444,8 @@ const updatePassword = async (req, res, next) => {
 };
 
 const verifyAuthentication = async (req, res) => {
-  if (req.cookies.jwtToken) {
-    const jwtToken = req.cookies.jwtToken;
+  const jwtToken = req.cookies.jwtToken;
+  if (jwtToken) {
     const rememberUser = req.cookies.rememberUser;
 
     if (
@@ -463,20 +463,34 @@ const verifyAuthentication = async (req, res) => {
       });
     }
 
-    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
+    try {
+      const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
-    if (!decoded) {
-      return res.status(401).json({
-        message: "Unauthenticated",
+      if (!decoded) {
+        return res.status(401).json({
+          message: "Unauthenticated",
+          success: false,
+        });
+      }
+
+      const name = decoded.name;
+      const email = decoded.email;
+
+      return res.status(200).json({ message: "Authenticated", success: true, name, email });
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        return res.status(403).json({
+          message: "Your session has expired. Please sign in again.",
+          success: false,
+        });
+      }
+      return res.status(500).json({
+        message: "An error occurred during authentication.",
         success: false,
       });
     }
-
-    const name = decoded.name;
-    const email = decoded.email;
-
-    return res.status(200).json({ message: "Authenticated", success: true, name, email });
   }
+
   res.status(401).json({ message: "Unauthenticated", success: false });
 };
 
@@ -629,18 +643,18 @@ const validateSecurityQuestion = async (req, res) => {
       user.blocked = false;
       await user.save();
 
-      const name = user.name;
-      const email = user.email;
+      // const name = user.name;
+      // const email = user.email;
 
-      const verificationCodeSent = await sendEmail(
-        email,
-        "Authecho",
-        `Hello ${name}! Here is the verification code to regain access to your account. Please return to authco.com and enter the following verification code: ${user.verificationCode}. `
-      );
+      // const verificationCodeSent = await sendEmail(
+      //   email,
+      //   "Authecho",
+      //   `Hello ${name}! Here is the verification code to regain access to your account. Please return to authco.com and enter the following verification code: ${user.verificationCode}. `
+      // );
 
-      if (!verificationCodeSent) {
-        return res.status(500).json({ message: `Email error ${userName}`, success: false });
-      }
+      // if (!verificationCodeSent) {
+      //   return res.status(500).json({ message: `Email error ${userName}`, success: false });
+      // }
     }
 
     res.status(200).json({ message: `Right answer`, success: true });

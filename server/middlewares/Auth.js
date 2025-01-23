@@ -1,23 +1,29 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const UserModel = require("../models/User");
+const AppModel = require("../models/App");
 
 require("dotenv").config();
 
+const AUTHECHO_MASTER_API_KEY = process.env.AUTHECHO_MASTER_API_KEY;
+
 const ensureAuthenticated = (req, res, next) => {
   const jwtToken = req.cookies.jwtToken;
-  if (jwtToken) {
-    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
-    if (!decoded) {
-      return res.status(401).json({
-        message: "Unauthenticated",
-        success: false,
-      });
-    }
+  if (!jwtToken) {
+    return res.status(401).json({ message: "Please sign in to continue", success: false });
+  }
+
+  try {
+    jwt.verify(jwtToken, process.env.JWT_SECRET);
 
     next();
+  } catch (error) {
+    return res
+      .status(403)
+      .json({ message: "Your session has expired. Please sign in again", success: false });
   }
-  res.status(401).json({ message: "Unauthenticated", success: false });
 };
 
 const sendEmail = async (recipientEmail, subject, text) => {
@@ -46,7 +52,83 @@ const sendEmail = async (recipientEmail, subject, text) => {
   }
 };
 
+const ensureApiKey = (req, res, next) => {
+  const apiKey = req.headers["authehco-master-api-key"];
+
+  if (apiKey !== AUTHECHO_MASTER_API_KEY) {
+    return res.status(403).json({ message: "Master Api key is wrong or missing", success: false });
+  }
+
+  next();
+};
+
+const verifyAppCredentials = async (req, res, next) => {
+  const appName = req.headers["authecho-app-name"];
+  const appKey = req.headers["authecho-app-key"];
+
+  if (!appName) {
+    return res.status(400).json({ message: "authecho-app-name header is missing", success: false });
+  }
+
+  if (!appKey) {
+    return res.status(400).json({ message: "authecho-app-key header is missing", success: false });
+  }
+
+  try {
+    const app = await AppModel.findOne({ name: appName }).collation({ locale: "en", strength: 1 });
+
+    const requestOrigin = req.headers.origin;
+
+    if (requestOrigin && requestOrigin !== app.origin) {
+      return res
+        .status(403)
+        .json({ message: "Request origin does not match chosen app origin", success: false });
+    }
+
+    const isKeyEqual = await bcrypt.compare(appKey, app.key);
+
+    if (!isKeyEqual) {
+      return res.status(403).json({ message: "App key is wrong", success: false });
+    }
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const ensureUser = async (req, res, next) => {
+  const { user: userData } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.suspended) {
+      return res.status(403).json({ message: "Account is suspended", success: false });
+    }
+
+    if (!user.verified) {
+      return res.status(403).json({ message: "Account is not verified", success: false });
+    }
+
+    req.user = user;
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   ensureAuthenticated,
   sendEmail,
+  ensureApiKey,
+  verifyAppCredentials,
+  ensureUser,
 };

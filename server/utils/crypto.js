@@ -5,7 +5,7 @@ const hex8BitKey = () => {
 };
 
 const hex32BitKey = () => {
-  return crypto.randomBytes(32).toString("hex");
+  return crypto.randomBytes(32).toString("hex").slice(0, 32);
 };
 
 const hex64BitKey = () => {

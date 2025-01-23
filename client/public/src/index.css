@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --primary-color: #080f0f;
   --secondary-color: #048ba8;
@@ -39,11 +43,7 @@ body {
   justify-content: center;
   overflow-x: hidden;
   font-family: "Arial", sans-serif;
-  background: linear-gradient(
-    180deg,
-    rgba(4, 139, 168, 1) 1%,
-    rgba(8, 15, 15, 1) 60%
-  );
+  background: linear-gradient(180deg, rgba(4, 139, 168, 1) 1%, rgba(8, 15, 15, 1) 60%);
 }
 
 .page-headline {
@@ -73,11 +73,7 @@ body {
   margin-bottom: 20px;
   font-size: clamp(4rem, 5vw, 6rem);
   text-align: center;
-  background: linear-gradient(
-    to right,
-    var(--neutral-color),
-    var(--accent-color)
-  );
+  background: linear-gradient(to right, var(--neutral-color), var(--accent-color));
   -webkit-background-clip: text;
   user-select: none;
   -webkit-text-fill-color: transparent;

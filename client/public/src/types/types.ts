@@ -5,6 +5,7 @@ export type ApiResponse = {
   email?: string;
   question?: string;
   questions?: string[];
+  appKey?: string;
 };
 
 export type ApiRequest = {
