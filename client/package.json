@@ -1,0 +1,24 @@
+{
+  "name": "authecho-sdk-client",
+  "version": "1.0.0",
+  "description": "AuthEcho is a powerful MERN-stack application designed to provide a seamless and universal account management solution. This SDK is created to make MERN stack development more effective by providing a ready-use boilerplate that interacts with authecho to handle user authentication",
+  "main": "reverseProxy.js",
+  "scripts": {
+    "start": "concurrently \"npm run proxy\" \"npm run react\"",
+    "proxy": "node reverseProxy.js",
+    "react": "cd public && npm run dev",
+    "build": "cd public && npm run build",
+    "start:prod": "NODE_ENV=production node reverseProxy.js",
+    "install": "concurrently \"npm install\" \"cd public && npm install\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3",
+    "path": "^0.12.7"
+  }
+}

@@ -1,0 +1,205 @@
+nav {
+  width: 100%;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 0 4px cyan;
+  color: white;
+}
+
+.logo-link:hover,
+.logo-link:focus {
+  outline: 0;
+  border: 0;
+}
+
+.logo {
+  width: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.logo:hover,
+.logo:focus {
+  transform: scale(1.07);
+}
+
+.logo:focus {
+  outline: 0;
+  border: 0;
+}
+
+.navigation {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  column-gap: 40px;
+}
+
+.navigation-controls {
+  width: 100%;
+  display: flex;
+}
+
+.navigation-controls.extended {
+  max-height: 500px;
+}
+
+.navigation-links {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  list-style-type: none;
+}
+
+.nav-link {
+  font-size: 1.2rem;
+  text-decoration: none;
+  letter-spacing: 1.1px;
+  white-space: nowrap;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  background-color: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link:focus {
+  outline: 0;
+  border: 0;
+}
+
+.nav-link:hover::after,
+.nav-link:focus::after {
+  width: 100%;
+}
+
+.nav-link-active:focus {
+  outline: none;
+  border: 0;
+}
+
+.nav-icon {
+  width: 35px;
+  height: 30px;
+  margin: 10px 10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2;
+  cursor: pointer;
+  display: none;
+}
+
+.nav-icon span {
+  background-color: white;
+  position: absolute;
+  border-radius: 2px;
+  transition: 0.3s cubic-bezier(0.8, 0.5, 0.2, 1.4);
+  width: 100%;
+  height: 4px;
+  transition-duration: 500ms;
+}
+
+.nav-icon span:nth-child(1) {
+  top: 0px;
+  left: 0px;
+}
+
+.nav-icon span:nth-child(2) {
+  top: 13px;
+  left: 0px;
+  opacity: 1;
+}
+
+.nav-icon span:nth-child(3) {
+  bottom: 0px;
+  left: 0px;
+}
+
+.nav-icon.open span:nth-child(1) {
+  transform: rotate(45deg);
+  top: 13px;
+}
+
+.nav-icon.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-icon.open span:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 13px;
+}
+
+.controls {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 1024px) {
+  nav {
+    flex-direction: column;
+  }
+
+  .navigation {
+    flex-direction: column;
+  }
+
+  .navigation-controls {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .navigation-links {
+    flex-direction: column;
+    align-items: start;
+    padding: 10px;
+    row-gap: 25px;
+  }
+
+  .controls {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .nav-icon {
+    display: inline-block;
+  }
+
+  .nav-icon span {
+    display: inline-block;
+  }
+
+  .nav-icon .open:nth-child(1) {
+    transform: rotate(45deg);
+    top: 13px;
+  }
+
+  .nav-icon .open:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-icon .open:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 13px;
+  }
+}
