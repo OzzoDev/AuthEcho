@@ -37,19 +37,13 @@ const verifyCode = async (req, res) => {
   const { user: userData, verificationCode } = req.body;
 
   if (!verificationCode) {
-    return res
-      .status(400)
-      .json({ message: "Verification code is missing in request body", success: false });
+    return res.status(400).json({ message: "Verification code is missing", success: false });
   }
 
   try {
     const user = await UserModel.findOne({
       $or: [{ email: userData }, { name: userData }],
     }).collation({ locale: "en", strength: 1 });
-
-    if (user.blocked) {
-      return res.status(403).json({ message: "Account is suspended", success: false });
-    }
 
     const userVerificationCode = user.verificationCode;
 
@@ -63,6 +57,11 @@ const verifyCode = async (req, res) => {
       return res.status(403).json({ message: "Verification code is wrong", success: false });
     }
 
+    if (user.blocked) {
+      user.blocked = false;
+      await user.save();
+    }
+
     res.status(200).json({ message: "Verification successful", success: true });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
@@ -71,12 +70,13 @@ const verifyCode = async (req, res) => {
 };
 
 const validateQuestion = async (req, res) => {
+  const appName = req.headers["authecho-app-name"];
   const { user: userData, questionAnswer } = req.body;
 
   if (!questionAnswer) {
     return res
       .status(400)
-      .json({ message: "Answer to security question is missing in request body", success: false });
+      .json({ message: "Answer to security question is missing", success: false });
   }
 
   try {
@@ -95,8 +95,15 @@ const validateQuestion = async (req, res) => {
         .json({ message: "Security question was answered incorrectly", success: false });
     }
 
-    user.blocked = false;
-    await user.save();
+    const verificationCodeSent = await sendEmail(
+      user.email,
+      `Sign in to ${appName}`,
+      `Hello ${user.name}! This is your verification code to sign in with your authecho accout to ${appName}: ${user.verificationCode}`
+    );
+
+    if (!verificationCodeSent) {
+      return res.status(500).json({ message: `Verification code error`, success: false });
+    }
 
     res.status(200).json({ message: "Security question answered correctly", success: true });
   } catch (error) {
@@ -106,19 +113,19 @@ const validateQuestion = async (req, res) => {
 };
 
 const signIn = async (req, res, next) => {
-  const { user: userData, questionAnswer, verificationCode, password } = req.body;
+  const { user: userData, verificationCode, password } = req.body;
   const app = req.app;
 
-  if (!questionAnswer && !verificationCode) {
+  if (!verificationCode) {
     return res.status(400).json({
-      message: "Answer to security question or verificationCode is missing in request body",
+      message: "VerificationCode is missing",
       success: false,
     });
   }
 
   if (!password) {
     return res.status(400).json({
-      message: "Password is missing in request body",
+      message: "Password is missing",
       success: false,
     });
   }
@@ -134,19 +141,6 @@ const signIn = async (req, res, next) => {
 
     if (verificationCode && verificationCode !== user.prevVerificationCode) {
       return res.status(403).json({ message: "Verification code is wrong", success: false });
-    }
-
-    if (questionAnswer) {
-      const isRightAnswer = await bcrypt.compare(
-        questionAnswer.toLowerCase(),
-        user.securityQuestionAnswer
-      );
-
-      if (!isRightAnswer) {
-        return res
-          .status(403)
-          .json({ message: "Security question was answered incorrectly", success: false });
-      }
     }
 
     const isPasswordEqual = await bcrypt.compare(password, user.password);
@@ -192,53 +186,9 @@ const signIn = async (req, res, next) => {
   }
 };
 
-const verifySession = (req, res) => {
-  const jwtToken = req.cookies.jwtToken;
-  const app = req.app;
-
-  if (req.cookies.jwtToken) {
-    try {
-      const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
-
-      if (!decoded) {
-        return res.status(401).json({
-          message: "Unauthenticated",
-          success: false,
-        });
-      }
-
-      let isAppAdmin = false;
-
-      if (app && decoded.name) {
-        const isAdmin = app.admins
-          .map((admin) => admin.toLowerCase())
-          .includes(decoded.name.toLowerCase());
-        isAppAdmin = isAdmin;
-      }
-
-      return res.status(200).json({ message: "Authenticated", success: true, isAppAdmin });
-    } catch (error) {
-      if (error instanceof jwt.TokenExpiredError) {
-        return res.status(403).json({
-          message: "Your session has expired. Please sign in again.",
-          success: false,
-        });
-      }
-      return res.status(500).json({
-        message: "An error occurred during authentication.",
-        success: false,
-      });
-    }
-  }
-
-  res.status(401).json({ message: "Unauthenticated", success: false });
-};
-
 module.exports = {
   requestCode,
   verifyCode,
   validateQuestion,
   signIn,
-  verifySession,
-  verifyAdmin,
 };

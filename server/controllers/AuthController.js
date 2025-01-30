@@ -445,6 +445,7 @@ const updatePassword = async (req, res, next) => {
 
 const verifyAuthentication = async (req, res) => {
   const jwtToken = req.cookies.jwtToken;
+
   if (jwtToken) {
     const rememberUser = req.cookies.rememberUser;
 
