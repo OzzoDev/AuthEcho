@@ -98,11 +98,6 @@ export const DEPENDENCIES: Dependency[] = [
     desc: "Path is a built-in Node.js module that provides utilities for working with file and directory paths. It allows you to manipulate file paths in a cross-platform way, ensuring your application works on different operating systems. For instance, you can use the path module to construct paths to static files in your Express server, making it easier to manage your file structure.",
   },
   {
-    entry: "Reverse proxy server",
-    dependency: "concurrently",
-    desc: "Concurrently is a tool that allows you to run multiple commands simultaneously in your terminal. This is particularly useful in development environments where you need to run both a frontend and a backend server at the same time. For example, you can use concurrently to start your React app and Express server with a single command, streamlining your development workflow.",
-  },
-  {
     entry: "Backend server",
     dependency: "express",
     desc: "Express is also essential for backend server development, providing a simple and flexible framework for creating APIs and serving web content. It handles routing, middleware, and request/response management, making it a powerful choice for building RESTful services. For instance, you might create an Express API to handle user authentication and serve data to your frontend application.",
@@ -136,11 +131,6 @@ export const DEPENDENCIES: Dependency[] = [
     entry: "Backend server",
     dependency: "cookie-parser",
     desc: "Cookie-Parser is a middleware that parses Cookie header and populates req.cookies with an object keyed by the cookie names. This is useful for managing user sessions and storing small pieces of data on the client-side. For instance, you can use cookie-parser to read session cookies, allowing you to maintain user authentication state across requests.",
-  },
-  {
-    entry: "Backend server",
-    dependency: "crypto",
-    desc: "Crypto is a built-in Node.js module that provides cryptographic functionality, including a set of wrappers for OpenSSL's hash, HMAC, cipher, decipher, sign, and verify functions. You can use the crypto module to generate secure random tokens or hashes for various security purposes, such as creating unique identifiers for sessions.",
   },
   {
     entry: "Backend server",

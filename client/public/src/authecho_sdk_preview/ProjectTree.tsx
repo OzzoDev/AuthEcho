@@ -309,28 +309,24 @@ export default function ProjectTree() {
                 />
               </ProjectTreeFolder>
               <ProjectTreeFolder
-                name="nav"
-                desc="Folder containing navigation components for routing and menu structures within the application.">
+                name="header"
+                desc="Folder containing components related to the header section of the application, including navigation elements and menu structures.">
                 <ProjectTreeFile
-                  name="Navbar.tsx"
-                  desc="Navbar component that serves as the primary navigation menu for the application."
+                  name="Header.tsx"
+                  desc="Main header component that integrates navigation functionality and branding elements, providing a cohesive user experience."
                 />
                 <ProjectTreeFile
                   name="Link.tsx"
                   desc="Custom link component for navigation, enhancing styling and behavior of standard links."
                 />
+                <ProjectTreeFile
+                  name="Navbar.tsx"
+                  desc="Navbar component that serves as the primary navigation menu for the application."
+                />
               </ProjectTreeFolder>
-              <ProjectTreeFile
-                name="AuthLayout.tsx"
-                desc="Layout component tailored for authentication-related pages, providing a consistent structure for sign-in and registration."
-              />
               <ProjectTreeFile
                 name="PageTransition.tsx"
                 desc="Component that manages page transition animations, enhancing the user experience during navigation."
-              />
-              <ProjectTreeFile
-                name="SimplifiedLayout.tsx"
-                desc="Minimal layout component designed for pages that require a less complex structure."
               />
             </ProjectTreeFolder>
             <ProjectTreeFolder

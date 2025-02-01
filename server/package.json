@@ -4,17 +4,17 @@
   "description": "AuthEcho is a powerful MERN-stack application designed to provide a seamless and universal account management solution. This SDK is created to make MERN stack development more effective by providing a ready-use boilerplate that interacts with authecho to handle user authentication",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"json-server --watch db.json --port 5501\" \"node index.js\""
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "authecho-sdk": "file:..",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
