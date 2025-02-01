@@ -1,15 +1,15 @@
 {
-  "name": "authecho-sdk",
-  "version": "1.0.0",
-  "description": "Authecho is a powerful MERN-stack application designed to provide a seamless and universal account management solution.",
-  "scripts": {
-    "install:all": "npm install --prefix client && npm install --prefix server",
-    "start:client": "npm start --prefix client",
-    "start:server": "npm start --prefix server",
-    "start": "concurrently \"npm run start:server\" \"npm run start:client\""
-  },
-  "dependencies": {
-    "glob": "^11.0.1",
-    "rimraf": "^6.0.1"
-  }
+    "name": "authecho-sdk",
+    "version": "1.0.0",
+    "description": "AuthEcho is a powerful MERN-stack application designed to provide a seamless and universal account management solution. This SDK is created to make MERN stack development more effective by providing a ready-use boilerplate that interacts with authecho to handle user authentication",
+    "scripts": {
+        "install:all": "npm install --prefix client && npm install --prefix server",
+        "start:client": "npm start --prefix client",
+        "start:server": "npm start --prefix server",
+        "start": "concurrently \"npm run start:server\" \"npm run start:client\""
+    },
+    "dependencies": {
+        "glob": "^11.0.1",
+        "rimraf": "^6.0.1"
+    }
 }
