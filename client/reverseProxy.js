@@ -17,7 +17,7 @@ const NODE_ENV = "development";
 const API = "http://localhost:3004";
 const AUTHECHO_SERVER = "http://localhost:3000";
 const APPNAME = "My app";
-const AUTHECHO_API_KEY = xxxxxxxxxxx;
+const AUTHECHO_API_KEY = "xxxxxxxxxxx";
 
 const REACT_DEV_SERVER = "http://localhost:5174";
 const USER_SESSION_DURATION = 168;
