@@ -12,22 +12,6 @@ export default function ProjectTree() {
         name="client"
         desc="The root directory for the frontend code encompasses a reverse proxy that manages traffic routing to the React server while also serving as a security layer for API calls.">
         <ProjectTreeFile
-          name=".env"
-          desc="Environment variables for securely interacting with the Authecho API through the reverse proxy, ensuring that no sensitive information is exposed to the end user."
-        />
-        <ProjectTreeFile
-          name=".gitignore"
-          desc="Specifies files and directories, such as the .env file and the node_modules folder, to be excluded from version control in Git, preventing them from being pushed to GitHub."
-        />
-        <ProjectTreeFile
-          name="package-lock.json"
-          desc="Automatically generated file that locks the versions of dependencies and their transitive dependencies, ensuring consistent installations across different environments."
-        />
-        <ProjectTreeFile
-          name="package.json"
-          desc="Defines the project's dependencies, scripts, and metadata, serving as the primary configuration file for Node.js projects."
-        />
-        <ProjectTreeFile
           name="reverseProxy.js"
           desc="Manages routing for the React application while providing security for the backend services, ensuring seamless communication and protection against direct access."
         />
@@ -35,24 +19,12 @@ export default function ProjectTree() {
           name="public"
           desc="Directory routed to by the reverse proxy for the React application, containing all frontend-related code, including assets and static files.">
           <ProjectTreeFile
-            name=".gitignore"
-            desc="Specifies files and directories, such as the .env file and the node_modules folder, to be excluded from version control in Git, preventing them from being pushed to GitHub."
-          />
-          <ProjectTreeFile
             name="eslint.config.js"
             desc="Configuration file for ESLint, specifying coding standards and rules to enforce consistent code quality and style across the project."
           />
           <ProjectTreeFile
             name="index.html"
             desc="The main HTML file serving as the entry point for the web application, containing the structure for rendering the React app and linking to styles and scripts."
-          />
-          <ProjectTreeFile
-            name="package-lock.json"
-            desc="Automatically generated file that locks the versions of dependencies and their sub-dependencies for consistent installations across environments."
-          />
-          <ProjectTreeFile
-            name="package.json"
-            desc="Defines project metadata, scripts, and dependencies for the application, managing the project's package configuration."
           />
           <ProjectTreeFile
             name="postcss.config.cjs"
@@ -464,24 +436,8 @@ export default function ProjectTree() {
           />
         </ProjectTreeFolder>
         <ProjectTreeFile
-          name=".env"
-          desc="Environment configuration file for storing sensitive information and environment-specific variables."
-        />
-        <ProjectTreeFile
-          name=".gitignore"
-          desc="File specifying which files and directories should be ignored by Git, helping to keep the repository clean."
-        />
-        <ProjectTreeFile
           name="index.js"
           desc="Main entry point for the backend application, setting up the server and defining routes."
-        />
-        <ProjectTreeFile
-          name="package-lock.json"
-          desc="Automatically generated file that locks the versions of dependencies for consistent installations across environments."
-        />
-        <ProjectTreeFile
-          name="package.json"
-          desc="File that defines the metadata of the project, including dependencies, scripts, and other configurations for the Node.js application."
         />
       </ProjectTreeFolder>
     </div>

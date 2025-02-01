@@ -10,7 +10,8 @@ require("dotenv").config();
 require("./models/db");
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = 3004;
+// const PORT = process.env.PORT;
 
 const openCors = cors({
   origin: (_, callback) => {
