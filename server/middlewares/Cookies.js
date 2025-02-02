@@ -39,7 +39,7 @@ const setCookies = (req, res) => {
   res.cookie(JWT_TOKEN_KEY, jwtToken, cookieOptions);
   res.cookie(REMEMBER_USER_KEY, rememberUser, cookieOptions);
 
-  res.status(statusCode).json({ message, success: true, name, email, isAppAdmin });
+  res.status(statusCode).json({ message, success: true, name, email });
 };
 
 const setAppCookies = (req, res) => {
@@ -207,6 +207,58 @@ const verifyAppSession = (req, res) => {
   res.status(401).json({ message: "Unauthenticated", success: false });
 };
 
+const verifyAuthentication = async (req, res) => {
+  const jwtToken = req.cookies.jwtToken;
+
+  if (jwtToken) {
+    const rememberUser = req.cookies.rememberUser;
+
+    if (
+      rememberUser === "" ||
+      rememberUser === "undefined" ||
+      rememberUser === "false" ||
+      rememberUser === false
+    ) {
+      res.cookie("jwtToken", "", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "Strict",
+        expires: new Date(0),
+        path: "/",
+      });
+    }
+
+    try {
+      const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
+
+      if (!decoded) {
+        return res.status(401).json({
+          message: "Unauthenticated",
+          success: false,
+        });
+      }
+
+      const name = decoded.name;
+      const email = decoded.email;
+
+      return res.status(200).json({ message: "Authenticated", success: true, name, email });
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        return res.status(403).json({
+          message: "Your session has expired. Please sign in again.",
+          success: false,
+        });
+      }
+      return res.status(500).json({
+        message: "An error occurred during authentication.",
+        success: false,
+      });
+    }
+  }
+
+  res.status(401).json({ message: "Unauthenticated", success: false });
+};
+
 module.exports = {
   setCookies,
   setAppCookies,
@@ -214,4 +266,5 @@ module.exports = {
   removeAppCookies,
   authenticateApp,
   verifyAppSession,
+  verifyAuthentication,
 };

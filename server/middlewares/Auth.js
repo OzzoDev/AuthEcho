@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const UserModel = require("../models/User");
 const AppModel = require("../models/App");
+const { verifyTemplate } = require("../utils/emailTemplate");
 
 require("dotenv").config();
 
@@ -26,7 +27,7 @@ const ensureAuthenticated = (req, res, next) => {
   }
 };
 
-const sendEmail = async (recipientEmail, subject, text) => {
+const sendEmail = async (recipientEmail, subject, text, verificationCode) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -39,7 +40,7 @@ const sendEmail = async (recipientEmail, subject, text) => {
     from: process.env.EMAIL_USER,
     to: recipientEmail,
     subject: subject,
-    text: text,
+    html: verifyTemplate(subject, text, verificationCode),
   };
 
   try {

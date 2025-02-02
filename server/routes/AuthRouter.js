@@ -16,7 +16,6 @@ const {
   setSecurityQuestion,
   validateSecurityQuestion,
   getUserSecurityQuestion,
-  verifyAuthentication,
   requestUnlockCode,
 } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
@@ -27,7 +26,7 @@ const {
   passwordResetValidation,
   ensureVerificationCode,
 } = require("../middlewares/AuthValidation");
-const { setCookies, removeCookies } = require("../middlewares/Cookies");
+const { setCookies, removeCookies, verifyAuthentication } = require("../middlewares/Cookies");
 const router = require("express").Router();
 
 router.get("/verifyauthentication", verifyAuthentication);

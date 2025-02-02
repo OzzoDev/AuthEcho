@@ -17,7 +17,8 @@ const requestCode = async (req, res) => {
     const verificationCodeSent = await sendEmail(
       user.email,
       `Sign in to ${appName}`,
-      `Hello ${user.name}! This is your verification code to sign in with your authecho accout to ${appName}: ${user.verificationCode}`
+      `Hello ${user.name}! This is your verification code to sign in with your authecho accout to ${appName}:`,
+      user.verificationCode
     );
 
     if (!verificationCodeSent) {
@@ -98,7 +99,8 @@ const validateQuestion = async (req, res) => {
     const verificationCodeSent = await sendEmail(
       user.email,
       `Sign in to ${appName}`,
-      `Hello ${user.name}! This is your verification code to sign in with your authecho accout to ${appName}: ${user.verificationCode}`
+      `Hello ${user.name}! This is your verification code to sign in with your authecho accout to ${appName}:`,
+      user.verificationCode
     );
 
     if (!verificationCodeSent) {

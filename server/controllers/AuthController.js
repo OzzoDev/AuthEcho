@@ -29,7 +29,8 @@ const signup = async (req, res) => {
     const verificationCodeSent = await sendEmail(
       email,
       "Authecho",
-      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`
+      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code during the sign up process. Return to the sign up page and enter the code and you are all set!`,
+      verificationCode
     );
 
     if (!verificationCodeSent) {
@@ -268,7 +269,8 @@ const sendVerificationcode = async (req, res) => {
     const verificationCodeSent = await sendEmail(
       email || user.email,
       "Authecho",
-      `${getEmailText(action, name || user.name)} ${userVerificationCode}`
+      `${getEmailText(action, name || user.name)}`,
+      userVerificationCode
     );
 
     if (!verificationCodeSent) {
@@ -303,7 +305,8 @@ const requestUnlockCode = async (req, res) => {
     const verificationCodeSent = await sendEmail(
       email,
       "Authecho",
-      `Hello ${name}! Here is the verification code to unlock your account: ${userVerificationCode}`
+      `Hello ${name}! Here is the verification code to unlock your account:`,
+      userVerificationCode
     );
 
     if (!verificationCodeSent) {
@@ -443,58 +446,6 @@ const updatePassword = async (req, res, next) => {
   }
 };
 
-const verifyAuthentication = async (req, res) => {
-  const jwtToken = req.cookies.jwtToken;
-
-  if (jwtToken) {
-    const rememberUser = req.cookies.rememberUser;
-
-    if (
-      rememberUser === "" ||
-      rememberUser === "undefined" ||
-      rememberUser === "false" ||
-      rememberUser === false
-    ) {
-      res.cookie("jwtToken", "", {
-        httpOnly: true,
-        secure: false,
-        sameSite: "Strict",
-        expires: new Date(0),
-        path: "/",
-      });
-    }
-
-    try {
-      const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
-
-      if (!decoded) {
-        return res.status(401).json({
-          message: "Unauthenticated",
-          success: false,
-        });
-      }
-
-      const name = decoded.name;
-      const email = decoded.email;
-
-      return res.status(200).json({ message: "Authenticated", success: true, name, email });
-    } catch (error) {
-      if (error instanceof jwt.TokenExpiredError) {
-        return res.status(403).json({
-          message: "Your session has expired. Please sign in again.",
-          success: false,
-        });
-      }
-      return res.status(500).json({
-        message: "An error occurred during authentication.",
-        success: false,
-      });
-    }
-  }
-
-  res.status(401).json({ message: "Unauthenticated", success: false });
-};
-
 const unlockAccount = async (req, res, next) => {
   const { userData } = req.body;
 
@@ -582,7 +533,8 @@ const setSecurityQuestion = async (req, res, next) => {
     const verificationCodeSent = await sendEmail(
       email,
       "Authecho",
-      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code ${user.verificationCode} during the sign up process. Return to the sign up page and enter the code and you are all set!`
+      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code during the sign up process. Return to the sign up page and enter the code and you are all set!`,
+      user.verificationCode
     );
 
     if (!verificationCodeSent) {
@@ -643,19 +595,6 @@ const validateSecurityQuestion = async (req, res) => {
     if (useCase === "SIGNIN") {
       user.blocked = false;
       await user.save();
-
-      // const name = user.name;
-      // const email = user.email;
-
-      // const verificationCodeSent = await sendEmail(
-      //   email,
-      //   "Authecho",
-      //   `Hello ${name}! Here is the verification code to regain access to your account. Please return to authco.com and enter the following verification code: ${user.verificationCode}. `
-      // );
-
-      // if (!verificationCodeSent) {
-      //   return res.status(500).json({ message: `Email error ${userName}`, success: false });
-      // }
     }
 
     res.status(200).json({ message: `Right answer`, success: true });
@@ -677,7 +616,6 @@ module.exports = {
   validatePassword,
   resetPassword,
   updatePassword,
-  verifyAuthentication,
   unlockAccount,
   isSuspended,
   getUserData,
