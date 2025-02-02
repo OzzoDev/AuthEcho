@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
-const JWT_APP_TOKEN_KEY = "jwtAppToken";
-// const JWT_APP_SECRET = process.env.JWT_APP_SECRET;
-const JWT_APP_SECRET = "as568bca28c6a25cad29yu0349294e3e72826fae5efgytwfrsh76cf9674ec5f8fed0";
+const JWT_APP_TOKEN_KEY = process.env.JWT_APP_TOKEN_KEY;
+const JWT_APP_SECRET = process.env.JWT_APP_SECRET;
 
 const ensureAuthenticated = (req, res, next) => {
   const jwtToken = req.cookies[JWT_APP_TOKEN_KEY];
@@ -11,7 +10,7 @@ const ensureAuthenticated = (req, res, next) => {
   }
 
   try {
-    jwt.verify(jwtToken, process.env.JWT_APP_SECRET);
+    jwt.verify(jwtToken, JWT_APP_SECRET);
 
     next();
   } catch (error) {
@@ -29,7 +28,7 @@ const ensureIsAdmin = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(jwtToken, process.env.JWT_APP_SECRET);
+    const decoded = jwt.verify(jwtToken, JWT_APP_SECRET);
 
     const isAdmin = decoded.isAdmin;
 

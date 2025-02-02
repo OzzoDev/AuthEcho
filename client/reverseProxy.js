@@ -5,19 +5,13 @@ require("dotenv").config();
 
 const app = express();
 
-// const PORT = process.env.PORT;
-// const NODE_ENV = process.env.NODE_ENV;
-// const API = process.env.API;
-// const AUTHECHO_SERVER = process.env.AUTHECHO_SERVER;
-// const APPNAME = process.env.APP_NAME;
-// const AUTHECHO_API_KEY = process.env.AUTHECHO_API_KEY;
+const APPNAME = process.env.APP_NAME;
+const AUTHECHO_API_KEY = process.env.AUTHECHO_API_KEY;
 
 const PORT = 3002;
 const NODE_ENV = "development";
 const API = "http://localhost:3004";
 const AUTHECHO_SERVER = "http://localhost:3000";
-const APPNAME = "My app";
-const AUTHECHO_API_KEY = "xxxxxxxxxxx";
 
 const REACT_DEV_SERVER = "http://localhost:5174";
 const USER_SESSION_DURATION = 168;
@@ -114,5 +108,7 @@ if (NODE_ENV === "production") {
 }
 
 app.listen(PORT, () => {
-  console.log(`Authecho SDK Reverse proxy server is running on http://localhost:${PORT}`);
+  console.log("\x1b[32mEverything is up and running ✅\x1b[0m");
+  console.log(`\x1b[36mAccess the development server at http://localhost:${PORT}\x1b[0m`);
+  console.log("\x1b[94mHappy coding 🌟\x1b[0m");
 });
