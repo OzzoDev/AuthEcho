@@ -41,6 +41,7 @@ const sendEmail = async (recipientEmail, subject, text, verificationCode) => {
     to: recipientEmail,
     subject: subject,
     html: verifyTemplate(subject, text, verificationCode),
+    text: `${text}: ${verificationCode}`,
   };
 
   try {
