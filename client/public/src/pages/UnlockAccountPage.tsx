@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useFormStore from "../hooks/useFormStore";
 import useApi from "../hooks/useApi";
 import AuthForm from "../components/form/AuthForm";
+import { ApiRequest } from "../types/types";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -35,7 +36,11 @@ export default function SigninPage() {
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
     if (typeof param !== "string") {
       const { name, value } = param.target;
-      setFormData((prevData) => ({ ...prevData, [name]: value }), undefined, "verifyPassword");
+      setFormData(
+        (prevData: ApiRequest) => ({ ...prevData, [name]: value }),
+        undefined,
+        "verifyPassword"
+      );
     }
   };
 
@@ -55,7 +60,7 @@ export default function SigninPage() {
   };
 
   return (
-    <>
+    <div className="grow flex flex-col items-center space-y-[100px] pt-[200px] pb-[50px]">
       <h1 className="page-headline">Unlock Your Account and Take Control of Your Access!</h1>
       <AuthForm
         formUsage="UNLOCKACCOUNT"
@@ -64,6 +69,6 @@ export default function SigninPage() {
         onRemember={handleRemeberUser}
         onSubmit={handleSubmit}
       />
-    </>
+    </div>
   );
 }

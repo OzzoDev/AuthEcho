@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useApi from "../hooks/useApi";
 import AuthForm from "../components/form/AuthForm";
 import useFormStore from "../hooks/useFormStore";
@@ -75,7 +75,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <>
+    <div className="grow flex flex-col items-center space-y-[100px] pt-[200px] pb-[50px]">
       <h1 className="page-headline">
         Join Now for Effortless Account Management in 3 Simple Steps!
       </h1>
@@ -86,6 +86,6 @@ export default function SignUpPage() {
         onRemember={handleRemeberUser}
         onSubmit={handleSubmit}
       />
-    </>
+    </div>
   );
 }

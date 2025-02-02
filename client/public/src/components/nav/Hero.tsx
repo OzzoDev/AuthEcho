@@ -1,8 +1,10 @@
 //@ts-ignore
 import authVideo from "../../assets/videos/authVideo.mp4";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import TimerCounter from "../TimerCounter";
+import PrimaryBtn from "../btn/PrimaryBtn";
+import { MdArrowForward } from "react-icons/md";
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,20 +48,29 @@ export default function Hero() {
   }, [isReversing]);
 
   return (
-    <div className="hero">
-      <div className="hero-intro-wrapper">
-        <h1 className="hero-headline">Welcome to Authecho</h1>
-        <h2 className="hero-subline">
-          Simplifying account management powering over{" "}
-          {<TimerCounter min={0} max={200} delay={1000} />} applications for{" "}
+    <div className="grow w-screen h-screen isolate">
+      <div className="flex flex-col items-center justify-center h-screen w-screen space-y-20 px-8 text-center bg-black bg-opacity-80">
+        <h1 className="text-7xl text-cyan-100">Welcome to Authecho</h1>
+        <h2 className="text-2xl max-w-[1000px] text-sky-200">
+          Simplifying account management powering over&nbsp;
+          {<TimerCounter min={0} max={200} delay={1000} />} applications for&nbsp;
           {<TimerCounter min={100} max={2000} delay={200} />} users and counting. Experience the
           effectiveness of Authecho and join the echo today!
         </h2>
-        <button className="hero-btn btn btn-primary" onClick={() => navigate("/signup")}>
-          Get Started
-        </button>
+        <PrimaryBtn
+          btnText="Get Started"
+          fontSize="2xl"
+          onClick={() => navigate("/signup")}
+          icon={<MdArrowForward size={30} />}
+        />
       </div>
-      <video ref={videoRef} className="hero-video" autoPlay loop muted playsInline>
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 w-[110vw] h-[100vh] opacity-100 object-cover z-[-1]">
         <source src={authVideo} type="video/mp4" />
         Your browser does not support the video tag.
       </video>

@@ -2,7 +2,7 @@
 import "../styles/accountPage.css";
 import { useRef, useState } from "react";
 import { AUTH_KEY, EMAIL_KEY, NAME_KEY } from "../constants/contants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import ReactLoading from "react-loading";
 import useSessionStorage from "../hooks/useSessionStorage";
 import useAuth from "../hooks/useAuth";
@@ -120,7 +120,7 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="accountContainer">
+    <div className="grow flex flex-col items-center space-y-[100px] pt-[200px] pb-[50px]">
       <h1>Your are signed in!</h1>
       <p>Username: {name}</p>
       <p>Email: {email}</p>

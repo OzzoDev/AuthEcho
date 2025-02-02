@@ -35,10 +35,10 @@ export default function ConnectAppPage() {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col max-w-md mx-auto p-6 bg-gray-800 rounded-lg shadow-lg">
+    <div className="grow flex flex-col items-center space-y-[100px] pt-[200px] pb-[50px]">
       <h2 className="text-2xl font-bold mb-6 text-center text-orange-400">Connect Your App</h2>
 
-      <form onSubmit={handleSubmit} className="bg-gray-800 w-full">
+      <form onSubmit={handleSubmit} className="bg-gray-800 w-full max-w-[600px]">
         <label className="block mb-2">
           <span className="text-gray-300">App Name</span>
           <input
