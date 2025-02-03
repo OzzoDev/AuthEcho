@@ -3,12 +3,12 @@
     "version": "1.0.0",
     "description": "AuthEcho is a powerful MERN-stack application designed to provide a seamless and universal account management solution. This app simplifies user authentication across multiple platforms, ensuring a consistent and secure experience for users.",
     "scripts": {
-      "start": "concurrently \"npm run start --prefix client\" \"npm run start --prefix server\"",
-      "install": "npm install --prefix client && npm install --prefix server"
+        "start": "concurrently \"npm run start --prefix client\" \"npm run start --prefix server\"",
+        "install": "npm install --prefix client && npm install --prefix server"
     },
     "devDependencies": {
-      "concurrently": "^9.1.2"
+        "concurrently": "^9.1.2"
     },
     "author": "",
     "license": "ISC"
-  }
+}
