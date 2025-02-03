@@ -25,7 +25,7 @@ export default function PrimaryBtn({
           <>{icon}</>
         </div>
       )}
-      <p className={`text-${fontSize} pb-1`}>{btnText}</p>
+      <p className={`text-${fontSize} pb-1 whitespace-nowrap`}>{btnText}</p>
     </button>
   );
 }

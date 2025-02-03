@@ -2,18 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary-color: #080f0f;
-  --secondary-color: #048ba8;
-  --accent-color: #08992c;
-  --shadow-color: #181b1b;
-  --text-color: #fafffd;
-  --neutral-color: #b8f2e6;
-  --primary-btn-color: #f24c00;
-  --error-color: #ff4242;
-  --success-color: #44af69;
-}
-
 #root {
   min-height: 100dvh;
   display: flex;
@@ -48,48 +36,4 @@
 
 ::-webkit-scrollbar-button {
   display: none;
-}
-
-.page-headline {
-  max-width: 90%;
-  font-size: 2.5rem;
-  text-align: center;
-}
-
-h1,
-h2,
-h3 p {
-  color: var(--text-color);
-}
-
-.error {
-  color: var(--error-color);
-}
-
-.hidden {
-  display: none !important;
-}
-
-.color-neutral {
-  color: var(--neutral-color);
-}
-
-.color-accent {
-  color: var(--accent-color);
-}
-
-.color-orange {
-  color: var(--primary-btn-color);
-}
-
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
