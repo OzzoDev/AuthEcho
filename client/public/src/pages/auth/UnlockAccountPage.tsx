@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormState, setFormData, setFormStep, reset, setFormError } =
+  const { formData, formState, setFormState, setFormData, setFormStep, setFormError } =
     useFormStore(true);
   const { fetchData: checkSuspended } = useApi("POST", "ISSUSPENDED");
   const { fetchData: requestUnlockCode } = useApi("POST", "REQUESTUNLOCKCODE");
