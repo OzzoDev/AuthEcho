@@ -8,6 +8,9 @@ import AccountPage from "../pages/AccountPage";
 import ConnectAppPage from "../pages/ConnectAppPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import UnlockAccountPage from "../pages/UnlockAccountPage";
+import ContactPage from "../pages/ContactPage";
+import AboutPage from "../pages/AboutPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +20,8 @@ const router = createBrowserRouter(
       <Route path="/signin" element={<SigninPage />} />
       <Route path="/resetPassword" element={<ResetPasswordPage />} />
       <Route path="/unlockaccount" element={<UnlockAccountPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/connectapp" element={<ConnectAppPage />} />
       <Route
         path="/account"
@@ -26,6 +31,7 @@ const router = createBrowserRouter(
           </ProtectedRoute>
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Route>
   )
 );

@@ -19,7 +19,7 @@ export default function FormInput({ labelText, name, error, onChange }: Props) {
   }, [error]);
 
   return (
-    <div className="input-container">
+    <div className="relative w-full flex border-b-[1px]">
       <input
         type="text"
         ref={inputRef}
@@ -28,8 +28,11 @@ export default function FormInput({ labelText, name, error, onChange }: Props) {
         onChange={onChange}
         autoComplete="off"
         required
+        className="w-full border-0 outline-none pb-[5px] pt-[8px] bg-transparent z-10"
       />
-      <label>{labelText}</label>
+      <label className="absolute top-0 left-0 text-xl transition-all ease-in-out duration-300">
+        {labelText}
+      </label>
     </div>
   );
 }

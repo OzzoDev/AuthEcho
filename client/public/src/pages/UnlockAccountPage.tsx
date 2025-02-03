@@ -60,8 +60,8 @@ export default function SigninPage() {
   };
 
   return (
-    <div className="grow flex flex-col items-center space-y-[100px] pt-[200px] pb-[50px]">
-      <h1 className="page-headline">Unlock Your Account and Take Control of Your Access!</h1>
+    <div className="grow flex flex-col justify-center items-center space-y-[80px] pt-[100px] pb-[50px]">
+      <h1 className="text-4xl">Unlock Your Account and Take Control of Your Access!</h1>
       <AuthForm
         formUsage="UNLOCKACCOUNT"
         dynamicText={formData.securityQuestion}

@@ -13,7 +13,7 @@ export default function FormPasswordInput({ labelText, name, onChange }: Props) 
   const [inputType, setInputType] = useState<"text" | "password">("password");
 
   return (
-    <div className="input-container">
+    <div className="relative w-full flex border-b-[1px]">
       <input
         type={inputType}
         name={name}
@@ -21,11 +21,15 @@ export default function FormPasswordInput({ labelText, name, onChange }: Props) 
         onChange={onChange}
         autoComplete="off"
         required
+        className="w-full border-0 outline-none pb-[5px] pt-[8px] bg-transparent z-10"
       />
-      <label>{labelText}</label>
+      <label className="absolute top-0 left-0 text-xl transition-all ease-in-out duration-300">
+        {labelText}
+      </label>
       <button
         type="button"
-        className="password-toggle"
+        className="ml-10"
+        title={inputType === "text" ? "Hide" : "Show"}
         onClick={() => (inputType === "text" ? setInputType("password") : setInputType("text"))}>
         {inputType === "text" ? (
           <FiEyeOff size={25} color="#fafffd" />

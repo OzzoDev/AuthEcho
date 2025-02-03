@@ -2,7 +2,7 @@
 import authechoLogo from "../../assets/images/authechoLogo.svg";
 import { useRef, useState } from "react";
 import Link from "./Link";
-import { NavLink } from "react-router";
+import { Link as NavLink } from "react-router";
 import PrimaryBtn from "../btn/PrimaryBtn";
 import { NAV_MENU_ITEMS } from "../../constants/contants";
 import useOutsideClick from "../../hooks/useOutsideClick";
@@ -38,7 +38,7 @@ export default function Navbar() {
         <div className={`navigation-controls ${isExpanded ? "extended" : ""}`}>
           {navLinks}
           <div className="controls">
-            <NavLink to="/signin">
+            <NavLink to="/connectapp">
               <PrimaryBtn btnText="Connect app" icon={<GoPlus size={26} />} fontSize="lg" />
             </NavLink>
           </div>
@@ -55,44 +55,5 @@ export default function Navbar() {
         <span className={`${isExpanded ? "open" : ""}`}></span>
       </div>
     </nav>
-    // <nav>
-    //   <div className="navigation">
-    //     <Link
-    //       linkText=""
-    //       path="/"
-    //       classNames="logo-link"
-    //       children={<img src={authechoLogo} alt="Authehco logo" className="logo" />}
-    //     />
-    //     <div className="navigation-controls" ref={navigationControlsRef}>
-    //       <ul className="navigation-links">
-    //         <li>
-    //           <Link linkText="Create Account" path="/signup" />
-    //         </li>
-    //         <li>
-    //           <Link linkText="My Account" path="/account" />
-    //         </li>
-    //         <li>
-    //           <Link linkText="Reset Password" path="/resetPassword" />
-    //         </li>
-    //         <li>
-    //           <Link linkText="Unlock Account" path="/unlockaccount" />
-    //         </li>
-    //       </ul>
-    //       <div className="controls">
-    //         <Link
-    //           linkText="Connect App"
-    //           path="/connectapp"
-    //           classNames="control-btn btn btn-secondary"
-    //           children={<GoPlus size={26} />}
-    //         />
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="menuToggle icon nav-icon" tabIndex={0} role="button" onClick={toggleMenu}>
-    //     <span></span>
-    //     <span></span>
-    //     <span></span>
-    //   </div>
-    // </nav>
   );
 }

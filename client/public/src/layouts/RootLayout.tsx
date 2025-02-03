@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <>
       <Header />
-      <main className="grow flex flex-col justify-center h-full bg-gradient-to-b from-gray-900 to-gray-600 overflow-hidden">
+      <main className="grow flex flex-col justify-center h-full bg-gradient-to-b from-gray-900 to-gray-600 text-white pt-[65px] overflow-hidden">
         <PageTransition>
           <Outlet />
         </PageTransition>

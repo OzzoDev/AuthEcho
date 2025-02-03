@@ -88,7 +88,7 @@ export default function FormVerify({ formUsage }: Props): JSX.Element {
   };
 
   return (
-    <div className="verify-conatiner">
+    <div className="flex space-x-4 w-fit m-auto">
       {Array.from({ length: numberOfInputs }, (_, index) => (
         <input
           disabled={!!formError}
@@ -96,11 +96,12 @@ export default function FormVerify({ formUsage }: Props): JSX.Element {
           ref={(el) => (inputRefs.current[index] = el)}
           type="text"
           maxLength={1}
+          autoFocus={index === 0 ? true : false}
           value={inputValues[index]}
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}
-          className="verify-input"
+          className=" w-10 h-10 text-center border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent p-2 rounded-lg bg-slate-600 shadow-[inset_0_0px_10px_rgb(255,255,255,0.5)]"
         />
       ))}
     </div>

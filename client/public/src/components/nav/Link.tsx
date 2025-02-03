@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { NavLink } from "react-router";
+import { Link as NavLink } from "react-router";
 
 interface Props {
   linkText: string;
@@ -8,14 +8,12 @@ interface Props {
   children?: ReactNode;
 }
 
-export default function Link({ linkText, path, classNames, children }: Props) {
+export default function Link({ linkText, path, children }: Props) {
   return (
     <NavLink
       to={path}
       onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
-      className={
-        classNames ? classNames : ({ isActive }) => `nav-link${isActive ? "-active" : ""}`
-      }>
+      className="nav-link">
       {linkText}
       {children && children}
     </NavLink>

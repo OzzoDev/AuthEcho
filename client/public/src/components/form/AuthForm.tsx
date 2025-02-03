@@ -8,6 +8,8 @@ import FormVerify from "./FormVerify";
 import Stepper from "../Stepper";
 import { useEffect, useState } from "react";
 import { FormUsage } from "../../types/types";
+import PrimaryBtn from "../btn/PrimaryBtn";
+import ToggleBtn from "../btn/ToggleBtn";
 
 interface Props {
   formUsage: FormUsage;
@@ -26,7 +28,7 @@ export default function AuthForm({
   onRemember,
   onSubmit,
 }: Props) {
-  const { formError, formStatus, formData, formState } = useFormStore();
+  const { formError, formStatus, formState } = useFormStore();
   const [lastestStep, setLastestStep] = useState<number>(0);
 
   const HELPER = AUTH_HELPER[formUsage];
@@ -56,9 +58,11 @@ export default function AuthForm({
         <ReactLoading type="spin" color="#00f" height={50} width={50} />
       ) : (
         <>
-          <form onSubmit={onSubmit}>
-            <h2 className="form-headline">{HEADLINE}</h2>
-            {SUBLINE && <p className="form-subline">{SUBLINE}</p>}
+          <form
+            onSubmit={onSubmit}
+            className="flex flex-col gap-y-12 p-10 rounded-[20px] w-[90%] max-w-[560px] bg-slate-700 shadow-[0_0px_30px_rgb(255,255,255,0.5)]">
+            <h2 className="text-2xl font-semibold text-cyan-400 mb-8">{HEADLINE}</h2>
+            {SUBLINE && <p className="text-lg">{SUBLINE}</p>}
             {DYNAMICLINE && <p className="form-subline form-dynamicText">{dynamicText}</p>}
             {STATE &&
               INPUTS?.map((formInput, index) => {
@@ -90,30 +94,13 @@ export default function AuthForm({
                   }
                 }
               })}
-            <div className="error-container">
-              <p className="error-message">{formError}</p>
+            <div className="flex justify-center items-center w-full h-[60px] my-[-30px]">
+              <p className="font-semibold text-xl text-center text-red-500">{formError}</p>
             </div>
             {RENDERREMEMBERBTN && (
-              <button
-                type="button"
-                onClick={onRemember}
-                onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
-                className={
-                  formData.rememberUser
-                    ? `remeber-btn btn btn-check btn-check-selected`
-                    : `remeber-btn btn btn-check`
-                }>
-                Remember me
-              </button>
+              <ToggleBtn btnText="Remember me" fontSize="lg" onClick={onRemember} />
             )}
-            {BTNTEXT && (
-              <button
-                onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
-                type="submit"
-                className="submit-btn btn btn-primary">
-                {BTNTEXT}
-              </button>
-            )}
+            {BTNTEXT && <PrimaryBtn btnText={BTNTEXT} type="submit" width="w-full" />}
           </form>
           <Stepper steps={maxSteps} selectedIndex={lastestStep} />
         </>

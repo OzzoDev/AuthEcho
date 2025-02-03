@@ -5,9 +5,14 @@ interface Props {
 
 export default function Stepper({ steps, selectedIndex }: Props) {
   return (
-    <div className="stepper-container">
+    <div className="flex space-x-4">
       {Array.from({ length: steps }, (_, index) => (
-        <div key={index} className={`step ${index === selectedIndex ? "active" : ""}`} />
+        <div
+          key={index}
+          className={`w-16 h-2 rounded-lg ${
+            index === selectedIndex ? "bg-green-600" : "bg-zinc-500"
+          }`}
+        />
       ))}
     </div>
   );
