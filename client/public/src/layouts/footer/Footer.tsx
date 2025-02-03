@@ -1,9 +1,23 @@
-import { NavLink } from "react-router";
 //@ts-ignore
-import authechoLogo from "../assets/images/authechoLogo.svg";
+import authechoLogo from "../../assets/images/authechoLogo.svg";
+import { NavLink } from "react-router";
+import { FOOTER_LINKS } from "../../constants/contants";
+import Link from "../header/Link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const footerLinks = (
+    <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+      {FOOTER_LINKS.map((footerLink, index) => {
+        return (
+          <li key={index}>
+            <Link linkText={footerLink.linkText} path={footerLink.path} />
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   return (
     <footer className="bg-white shadow-sm dark:bg-black">
@@ -16,26 +30,7 @@ export default function Footer() {
             </span>
           </NavLink>
           <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
-            <li>
-              <NavLink to="/about" className="hover:underline me-4 md:me-6">
-                About
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="privacypolicy" className="hover:underline me-4 md:me-6">
-                Privacy Policy
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="licensing" className="hover:underline me-4 md:me-6">
-                Licensing
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="contact" className="hover:underline">
-                Contact
-              </NavLink>
-            </li>
+            {footerLinks}
           </ul>
         </div>
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />

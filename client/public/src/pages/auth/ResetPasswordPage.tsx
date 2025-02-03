@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router";
-import useFormStore from "../hooks/useFormStore";
-import useApi from "../hooks/useApi";
-import AuthForm from "../components/form/AuthForm";
-import { ApiRequest } from "../types/types";
+import useFormStore from "../../hooks/useFormStore";
+import useApi from "../../hooks/useApi";
+import AuthForm from "../../components/form/AuthForm";
+import { ApiRequest } from "../../types/types";
+import useAuth from "../../hooks/useAuth";
+import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -10,7 +12,14 @@ export default function SigninPage() {
   const { fetchData: validatePassword } = useApi("POST", "VALIDATEPASSWORD");
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
-  const { fetchData: resetPassword } = useApi("POST", "RESETPASSWORD", () => navigate("/account"));
+  const { fetchData: resetPassword } = useApi("POST", "RESETPASSWORD", true);
+  const { updateIsAuthenticated, updateIsAdmin, updateUsername, updateEmail } = useAuthStore();
+
+  useAuth(
+    undefined,
+    () => navigate("/account"),
+    () => navigate("/admin")
+  );
 
   const handleValidatePassword = async () => {
     const response = await validatePassword(true);
@@ -25,12 +34,27 @@ export default function SigninPage() {
   const handleValidateQuestion = async () => {
     const response = await validateQuestion(true);
     if (response) {
-      await resetPassword(true);
-    }
-  };
+      const result = await resetPassword(true);
+      if (result) {
+        const name = result.data.name;
+        const email = result.data.email;
+        const isAdmin = result.data.isAdmin;
 
-  const handleRemeberUser = () => {
-    setFormData({ rememberUser: !formData.rememberUser }, "rememberUser");
+        if (name) {
+          updateUsername(name);
+        }
+
+        if (email) {
+          updateEmail(email);
+        }
+
+        if (isAdmin) {
+          updateIsAdmin(true);
+        }
+
+        updateIsAuthenticated(true);
+      }
+    }
   };
 
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
@@ -66,7 +90,6 @@ export default function SigninPage() {
         formUsage="RESETPASSWORD"
         dynamicText={formData.securityQuestion}
         onChange={handleFormChange}
-        onRemember={handleRemeberUser}
         onSubmit={handleSubmit}
       />
     </div>

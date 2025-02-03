@@ -2,8 +2,8 @@
 import authVideo from "../../assets/videos/authVideo.mp4";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import TimerCounter from "../TimerCounter";
-import PrimaryBtn from "../btn/PrimaryBtn";
+import TimerCounter from "../utils/TimerCounter";
+import PrimaryBtn from "../../components/btn/PrimaryBtn";
 import { MdArrowForward } from "react-icons/md";
 
 export default function Hero() {

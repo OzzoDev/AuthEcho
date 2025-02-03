@@ -13,27 +13,6 @@ nav {
   background-color: black;
 }
 
-.logo-link:hover,
-.logo-link:focus {
-  outline: 0;
-  border: 0;
-}
-
-.logo {
-  width: 50px;
-  transition: all 0.3s ease-in-out;
-}
-
-.logo:hover,
-.logo:focus {
-  transform: scale(1.07);
-}
-
-.logo:focus {
-  outline: 0;
-  border: 0;
-}
-
 .navigation {
   width: 100%;
   display: flex;
@@ -58,20 +37,6 @@ nav {
   list-style-type: none;
 }
 
-.nav-link {
-  font-size: 1.2rem;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 20px;
-  white-space: nowrap;
-  position: relative;
-  transition: all 0.3s ease-in-out;
-}
-
-.nav-link-active {
-  font-size: 1.2rem;
-}
-
 .nav-link::after {
   content: "";
   position: absolute;
@@ -80,7 +45,7 @@ nav {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  background-color: white;
+  background-color: rgb(177, 177, 177);
   transition: all 0.3s ease-in-out;
 }
 
@@ -168,7 +133,7 @@ nav {
   top: 13px;
 }
 
-@media (max-width: 1440px) {
+@media (max-width: 1024px) {
   nav {
     flex-direction: column;
   }

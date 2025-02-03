@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import useApi from "../hooks/useApi";
-import AuthForm from "../components/form/AuthForm";
-import useFormStore from "../hooks/useFormStore";
+import useApi from "../../hooks/useApi";
+import AuthForm from "../../components/form/AuthForm";
+import useFormStore from "../../hooks/useFormStore";
+import useAuthStore from "../../hooks/useAuthStore";
+import useAuth from "../../hooks/useAuth";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
@@ -12,8 +14,13 @@ export default function SignUpPage() {
   const { fetchData: getSecurityQuestions } = useApi("GET", "SECURITYQUESTIONS");
   const { fetchData: signUp } = useApi("POST", "SIGNUP");
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
-  const { fetchData: setQuestion } = useApi("POST", "SETSECURITYQUESTION", () =>
-    navigate("/account")
+  const { fetchData: setQuestion } = useApi("POST", "SETSECURITYQUESTION", true);
+  const { updateIsAuthenticated, updateIsAdmin, updateUsername, updateEmail } = useAuthStore();
+
+  useAuth(
+    undefined,
+    () => navigate("/account"),
+    () => navigate("/admin")
   );
 
   useEffect(() => {
@@ -42,12 +49,28 @@ export default function SignUpPage() {
       setFormError("Select a security question");
       setFormStatus("error");
     } else {
-      await setQuestion(true);
-    }
-  };
+      const response = await setQuestion(true);
 
-  const handleRemeberUser = () => {
-    setFormData({ rememberUser: !formData.rememberUser }, "rememberUser");
+      if (response) {
+        const name = response.data.name;
+        const email = response.data.email;
+        const isAdmin = response.data.isAdmin;
+
+        if (name) {
+          updateUsername(name);
+        }
+
+        if (email) {
+          updateEmail(email);
+        }
+
+        if (isAdmin) {
+          updateIsAdmin(true);
+        }
+
+        updateIsAuthenticated(true);
+      }
+    }
   };
 
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
@@ -81,7 +104,6 @@ export default function SignUpPage() {
         formUsage="SIGNUP"
         dropDownItems={securityQuestions}
         onChange={handleFormChange}
-        onRemember={handleRemeberUser}
         onSubmit={handleSubmit}
       />
     </div>

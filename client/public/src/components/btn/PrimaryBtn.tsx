@@ -22,7 +22,7 @@ export default function PrimaryBtn({
       type={type}
       onClick={onClick}
       onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
-      className={`flex justify-center items-center ${width} text-white font-semibold py-[10px] px-[25px] bg-cyan-600 rounded-full hover:bg-cyan-700 transition duration-200 cursor-pointer group`}>
+      className={`flex justify-center items-center ${width} h-fit text-white font-semibold py-[10px] px-[25px] bg-cyan-600 rounded-full hover:bg-cyan-700 transition duration-200 cursor-pointer group`}>
       {icon && (
         <div className="text-white mr-2 transition-transform duration-200 group-hover:translate-x-[5px]">
           <>{icon}</>

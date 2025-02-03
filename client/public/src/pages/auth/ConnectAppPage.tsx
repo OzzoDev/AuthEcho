@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import useApi from "../hooks/useApi";
-import useFormStore from "../hooks/useFormStore";
-import useSessionStorage from "../hooks/useSessionStorage";
-import { ConnectRequest } from "../types/types";
-import { NAME_KEY } from "../constants/contants";
+import useApi from "../../hooks/useApi";
+import useFormStore from "../../hooks/useFormStore";
+import useSessionStorage from "../../hooks/useSessionStorage";
+import { ConnectRequest } from "../../types/types";
+import { USERNAME_KEY } from "../../constants/contants";
 
 export default function ConnectAppPage() {
   const { formError } = useFormStore(true);
   const { fetchData: connectApp } = useApi("POST", "JOIN");
-  const { sessionValue: name } = useSessionStorage<string>(NAME_KEY, "");
+  const { sessionValue: name } = useSessionStorage<string>(USERNAME_KEY, "");
   const [connectData, setConnectData] = useState<ConnectRequest>({
     appName: "",
     origin: "http://localhost:3001",

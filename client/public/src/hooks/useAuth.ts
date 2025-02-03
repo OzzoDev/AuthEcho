@@ -1,40 +1,60 @@
 import { useEffect } from "react";
-import useSessionStorage from "./useSessionStorage";
 import useApi from "./useApi";
-import { AUTH_KEY, EMAIL_KEY, NAME_KEY } from "../constants/contants";
+import useAuthStore from "./useAuthStore";
 
-const useAuth = (callback?: () => void) => {
+const useAuth = (fallback?: () => void, toAccount?: () => void, toAdmin?: () => void) => {
   const { fetchData: verifyAuthentication } = useApi("GET", "VERIFYAUTHENTICATION");
-  const { sessionValue: auth, setSessionValue: setAuth } = useSessionStorage<boolean>(
-    AUTH_KEY,
-    false
-  );
-  const { setSessionValue: setName } = useSessionStorage<string>(NAME_KEY, "");
-  const { setSessionValue: setEmail } = useSessionStorage<string>(EMAIL_KEY, "");
+  const {
+    isAuthenticated,
+    isAdmin,
+    updateIsAuthenticated,
+    updateIsAdmin,
+    updateUsername,
+    updateEmail,
+    clearAuth,
+  } = useAuthStore();
 
   useEffect(() => {
     const authenticate = async () => {
       const response = await verifyAuthentication();
 
       if (response) {
-        setAuth(true);
-        const nameResponse = response.data.name;
-        const emailResponse = response.data.email;
+        const name = response.data.name;
+        const email = response.data.email;
+        const isAdmin = response.data.isAdmin;
 
-        if (nameResponse && emailResponse) {
-          setName(nameResponse);
-          setEmail(emailResponse);
+        if (name) {
+          updateUsername(name);
         }
-      } else if (callback) {
-        setAuth(false);
-        callback();
+
+        if (email) {
+          updateEmail(email);
+        }
+
+        if (isAdmin) {
+          updateIsAdmin(true);
+        }
+
+        updateIsAuthenticated(true);
+      } else if (fallback) {
+        clearAuth();
+        fallback();
       }
     };
 
-    if (!auth) {
+    if (!isAuthenticated) {
       authenticate();
     }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      toAccount && toAccount();
+      if (isAdmin) {
+        toAdmin && toAdmin();
+      }
+    }
+  }, [isAuthenticated]);
 };
 
 export default useAuth;

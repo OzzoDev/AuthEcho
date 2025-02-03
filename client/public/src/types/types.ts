@@ -3,6 +3,7 @@ export type ApiResponse = {
   success: boolean;
   name?: string;
   email?: string;
+  isAdmin?: boolean;
   question?: string;
   questions?: string[];
   appKey?: string;

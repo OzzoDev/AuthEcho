@@ -1,9 +1,9 @@
-import { MdLock, MdOutlineAccountTree, MdOutlineArrowUpward, MdOutlineSync } from "react-icons/md";
-import InformationCard from "../components/InformationCard";
-import ServiceOverview from "../components/ServiceOverview";
 //@ts-ignore
-import authVideo from "../assets/videos/authVideo.mp4";
-import Hero from "../components/nav/Hero";
+import authVideo from "../../assets/videos/authVideo.mp4";
+import { MdLock, MdOutlineAccountTree, MdOutlineArrowUpward, MdOutlineSync } from "react-icons/md";
+import InformationCard from "../../components/general/InformationCard";
+import ServiceOverview from "../../components/general/ServiceOverview";
+import Hero from "../../components/general/Hero";
 
 export default function StartPage() {
   return (

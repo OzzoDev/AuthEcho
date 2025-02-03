@@ -10,7 +10,7 @@ export default function Stepper({ steps, selectedIndex }: Props) {
         <div
           key={index}
           className={`w-16 h-2 rounded-lg ${
-            index === selectedIndex ? "bg-green-600" : "bg-zinc-500"
+            index === selectedIndex ? "bg-green-700" : "bg-zinc-500"
           }`}
         />
       ))}

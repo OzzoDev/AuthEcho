@@ -1,12 +1,12 @@
 // @ts-ignore
 import authechoLogo from "../../assets/images/authechoLogo.svg";
 import { useRef, useState } from "react";
-import Link from "./Link";
 import { Link as NavLink } from "react-router";
-import PrimaryBtn from "../btn/PrimaryBtn";
-import { NAV_MENU_ITEMS } from "../../constants/contants";
+import PrimaryBtn from "../../components/btn/PrimaryBtn";
+import { NAV_LINKS } from "../../constants/contants";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import { GoPlus } from "react-icons/go";
+import Link from "./Link";
 
 export default function Navbar() {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -16,10 +16,10 @@ export default function Navbar() {
 
   const navLinks = (
     <ul className="navigation-links">
-      {NAV_MENU_ITEMS.map((navItem, index) => {
+      {NAV_LINKS.map((navLink, index) => {
         return (
           <li key={index}>
-            <Link linkText={navItem.linkText} path={navItem.path} />
+            <Link linkText={navLink.linkText} path={navLink.path} fontSize="lg" />
           </li>
         );
       })}
@@ -29,12 +29,13 @@ export default function Navbar() {
   return (
     <nav className="bg-gray-950">
       <div className="navigation">
-        <Link
-          linkText=""
-          path="/"
-          classNames="logo-link"
-          children={<img src={authechoLogo} alt="Authehco logo" className="logo" />}
-        />
+        <NavLink to="/">
+          <img
+            src={authechoLogo}
+            alt="Authehco logo"
+            className="w-[50px] transition duration-300 ease hover:scale-[1.04]"
+          />
+        </NavLink>
         <div className={`navigation-controls ${isExpanded ? "extended" : ""}`}>
           {navLinks}
           <div className="controls">

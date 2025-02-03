@@ -1,15 +1,24 @@
 import { useNavigate } from "react-router";
-import useFormStore from "../hooks/useFormStore";
-import useApi from "../hooks/useApi";
-import AuthForm from "../components/form/AuthForm";
-import { ApiRequest } from "../types/types";
+import useFormStore from "../../hooks/useFormStore";
+import useApi from "../../hooks/useApi";
+import AuthForm from "../../components/form/AuthForm";
+import { ApiRequest } from "../../types/types";
+import useAuth from "../../hooks/useAuth";
+import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
   const { formData, formState, setFormState, setFormData } = useFormStore(true);
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
-  const { fetchData: signIn } = useApi("POST", "SIGNIN", () => navigate("/account"));
+  const { fetchData: signIn } = useApi("POST", "SIGNIN", true);
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
+  const { updateIsAuthenticated, updateIsAdmin, updateUsername, updateEmail } = useAuthStore();
+
+  useAuth(
+    undefined,
+    () => navigate("/account"),
+    () => navigate("/admin")
+  );
 
   const handleRequestVerificationCode = async () => {
     const response = await requestVerificationCode(true);
@@ -25,8 +34,27 @@ export default function SigninPage() {
     }
   };
 
-  const handleRemeberUser = () => {
-    setFormData({ rememberUser: !formData.rememberUser }, "rememberUser");
+  const handleSignIn = async () => {
+    const response = await signIn(true);
+    if (response) {
+      const name = response.data.name;
+      const email = response.data.email;
+      const isAdmin = response.data.isAdmin;
+
+      if (name) {
+        updateUsername(name);
+      }
+
+      if (email) {
+        updateEmail(email);
+      }
+
+      if (isAdmin) {
+        updateIsAdmin(true);
+      }
+
+      updateIsAuthenticated(true);
+    }
   };
 
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
@@ -54,7 +82,7 @@ export default function SigninPage() {
         await handleValidateQuestion();
         break;
       case "password":
-        await signIn(true);
+        await handleSignIn();
         break;
     }
   };
@@ -66,7 +94,6 @@ export default function SigninPage() {
         formUsage="SIGNIN"
         dynamicText={formData.securityQuestion}
         onChange={handleFormChange}
-        onRemember={handleRemeberUser}
         onSubmit={handleSubmit}
       />
     </div>

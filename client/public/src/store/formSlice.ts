@@ -11,7 +11,7 @@ interface FormSliceState {
 const initialState: FormSliceState = {
   status: "idle",
   error: "",
-  formData: {},
+  formData: { rememberUser: true },
   formState: "default",
 };
 
@@ -35,7 +35,7 @@ const formSlice = createSlice({
     resetForm(state) {
       state.status = "idle";
       state.error = "";
-      state.formData = {};
+      state.formData = { rememberUser: true };
       state.formState = "default";
     },
   },

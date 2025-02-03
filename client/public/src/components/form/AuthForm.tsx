@@ -5,7 +5,7 @@ import Dropdown from "./Dropdown";
 import FormInput from "./FormInput";
 import FormPasswordInput from "./FormPasswordInput";
 import FormVerify from "./FormVerify";
-import Stepper from "../Stepper";
+import Stepper from "../utils/Stepper";
 import { useEffect, useState } from "react";
 import { FormUsage } from "../../types/types";
 import PrimaryBtn from "../btn/PrimaryBtn";
@@ -16,7 +16,6 @@ interface Props {
   dropDownItems?: string[];
   dynamicText?: string;
   onChange: (params: React.ChangeEvent<HTMLInputElement> | string) => void;
-  onRemember?: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
@@ -25,10 +24,9 @@ export default function AuthForm({
   dropDownItems,
   dynamicText,
   onChange,
-  onRemember,
   onSubmit,
 }: Props) {
-  const { formError, formStatus, formState } = useFormStore();
+  const { formData, formError, formStatus, formState, setFormData } = useFormStore();
   const [lastestStep, setLastestStep] = useState<number>(0);
 
   const HELPER = AUTH_HELPER[formUsage];
@@ -39,7 +37,7 @@ export default function AuthForm({
   const SUBLINE = STATE?.subline;
   const DYNAMICLINE = STATE?.dynamicLine;
   const BTNTEXT = STATE?.btnText;
-  const RENDERREMEMBERBTN = STATE?.renderRememberUser && onRemember;
+  const RENDERREMEMBERBTN = STATE?.renderRememberUser;
 
   const excludedSteps = STATES.filter((state) => state?.excludeStep).length;
   const availableSteps = STATES.filter((state) => !state?.excludeStep);
@@ -52,6 +50,10 @@ export default function AuthForm({
     }
   }, [currentStep]);
 
+  const handleRemeberUser = () => {
+    setFormData({ rememberUser: !formData.rememberUser }, "rememberUser");
+  };
+
   return (
     <>
       {formStatus === "loading" ? (
@@ -63,7 +65,7 @@ export default function AuthForm({
             className="flex flex-col gap-y-12 p-10 rounded-[20px] w-[90%] max-w-[560px] bg-slate-700 shadow-[0_0px_30px_rgb(255,255,255,0.5)]">
             <h2 className="text-2xl font-semibold text-cyan-400 mb-8">{HEADLINE}</h2>
             {SUBLINE && <p className="text-lg">{SUBLINE}</p>}
-            {DYNAMICLINE && <p className="form-subline form-dynamicText">{dynamicText}</p>}
+            {DYNAMICLINE && <p className="font-semibold">{dynamicText}</p>}
             {STATE &&
               INPUTS?.map((formInput, index) => {
                 const type = formInput.type;
@@ -98,7 +100,12 @@ export default function AuthForm({
               <p className="font-semibold text-xl text-center text-red-500">{formError}</p>
             </div>
             {RENDERREMEMBERBTN && (
-              <ToggleBtn btnText="Remember me" fontSize="lg" onClick={onRemember} />
+              <ToggleBtn
+                btnText="Remember me"
+                fontSize="lg"
+                onClick={handleRemeberUser}
+                selected={formData.rememberUser}
+              />
             )}
             {BTNTEXT && <PrimaryBtn btnText={BTNTEXT} type="submit" width="w-full" />}
           </form>

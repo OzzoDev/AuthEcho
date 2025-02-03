@@ -1,6 +1,6 @@
-import PrimaryBtn from "../components/btn/PrimaryBtn";
 import { useNavigate } from "react-router";
 import { CiHome } from "react-icons/ci";
+import PrimaryBtn from "../../components/btn/PrimaryBtn";
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
