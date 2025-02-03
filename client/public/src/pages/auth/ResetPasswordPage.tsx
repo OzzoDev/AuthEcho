@@ -8,7 +8,7 @@ import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormState, setFormData } = useFormStore(true);
+  const { formData, formState, setFormState, setFormData, setFormStep } = useFormStore(true);
   const { fetchData: validatePassword } = useApi("POST", "VALIDATEPASSWORD");
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
@@ -27,6 +27,7 @@ export default function SigninPage() {
       const allowverify = await requestVerificationCode(true);
       if (allowverify) {
         setFormState("verify");
+        setFormStep(2);
       }
     }
   };
@@ -34,25 +35,31 @@ export default function SigninPage() {
   const handleValidateQuestion = async () => {
     const response = await validateQuestion(true);
     if (response) {
-      const result = await resetPassword(true);
-      if (result) {
-        const name = result.data.name;
-        const email = result.data.email;
-        const isAdmin = result.data.isAdmin;
+      const isBlocked = response.data.isBlocked;
 
-        if (name) {
-          updateUsername(name);
+      if (isBlocked) {
+        setFormState("verify");
+      } else {
+        const result = await resetPassword(true);
+        if (result) {
+          const name = result.data.name;
+          const email = result.data.email;
+          const isAdmin = result.data.isAdmin;
+
+          if (name) {
+            updateUsername(name);
+          }
+
+          if (email) {
+            updateEmail(email);
+          }
+
+          if (isAdmin) {
+            updateIsAdmin(true);
+          }
+
+          updateIsAuthenticated(true);
         }
-
-        if (email) {
-          updateEmail(email);
-        }
-
-        if (isAdmin) {
-          updateIsAdmin(true);
-        }
-
-        updateIsAuthenticated(true);
       }
     }
   };

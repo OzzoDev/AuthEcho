@@ -6,6 +6,7 @@ interface FormSliceState {
   error: string;
   formData: ApiRequest;
   formState: FormState;
+  currentStep: number;
 }
 
 const initialState: FormSliceState = {
@@ -13,6 +14,7 @@ const initialState: FormSliceState = {
   error: "",
   formData: { rememberUser: true },
   formState: "default",
+  currentStep: 1,
 };
 
 const formSlice = createSlice({
@@ -32,15 +34,20 @@ const formSlice = createSlice({
       state.error = "";
       state.formState = action.payload;
     },
+    setCurrentStep(state, action: PayloadAction<number>) {
+      state.currentStep = action.payload;
+    },
     resetForm(state) {
       state.status = "idle";
       state.error = "";
       state.formData = { rememberUser: true };
       state.formState = "default";
+      state.currentStep = 1;
     },
   },
 });
 
-export const { setStatus, setError, setData, setState, resetForm } = formSlice.actions;
+export const { setStatus, setError, setData, setState, setCurrentStep, resetForm } =
+  formSlice.actions;
 
 export default formSlice.reducer;

@@ -8,7 +8,7 @@ import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormState, setFormData } = useFormStore(true);
+  const { formData, formState, setFormState, setFormData, setFormStep } = useFormStore(true);
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: signIn } = useApi("POST", "SIGNIN", true);
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
@@ -24,6 +24,7 @@ export default function SigninPage() {
     const response = await requestVerificationCode(true);
     if (response) {
       setFormState("verify");
+      setFormStep(2);
     }
   };
 
@@ -31,6 +32,7 @@ export default function SigninPage() {
     const response = await validateQuestion(true);
     if (response) {
       setFormState("verify");
+      setFormStep(2);
     }
   };
 
@@ -74,9 +76,6 @@ export default function SigninPage() {
     switch (formState) {
       case "default":
         await handleRequestVerificationCode();
-        break;
-      case "verify":
-        await requestVerificationCode(true);
         break;
       case "question":
         await handleValidateQuestion();

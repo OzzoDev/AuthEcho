@@ -25,6 +25,34 @@ const ensureVerificationCode = async (req, res, next) => {
   }
 };
 
+const ensureSecurityQuestion = async (req, res, next) => {
+  const { userData, email, name, securityQuestionAnswer } = req.body;
+
+  try {
+    const user = await UserModel.findOne({
+      $or: [{ email: userData }, { name: userData }, { email: email }, { name: name }],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const rightAnswer = await bcrypt.compare(
+      securityQuestionAnswer.toLowerCase(),
+      user.securityQuestionAnswer
+    );
+
+    if (!rightAnswer) {
+      return res.status(403).json({ message: "Wrong answer", success: false });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
 const newAccountValidation = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
@@ -139,6 +167,7 @@ const passwordResetValidation = async (req, res, next) => {
 
 module.exports = {
   ensureVerificationCode,
+  ensureSecurityQuestion,
   newAccountValidation,
   validateNewPassword,
   emailValidation,

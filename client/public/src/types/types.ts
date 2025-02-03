@@ -7,6 +7,7 @@ export type ApiResponse = {
   question?: string;
   questions?: string[];
   appKey?: string;
+  isBlocked?: boolean;
 };
 
 export type ApiRequest = {

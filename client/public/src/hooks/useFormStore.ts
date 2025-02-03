@@ -1,9 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useEffect } from "react";
-import { resetForm, setError, setStatus, setData, setState } from "../store/formSlice";
-import { ApiRequest, ApiUseCase, FetchStatus, VerifyAction } from "../types/apiTypes";
-import { FormState } from "../types/types";
+import {
+  resetForm,
+  setError,
+  setStatus,
+  setData,
+  setState,
+  setCurrentStep,
+} from "../store/formSlice";
+import { ApiRequest, ApiUseCase, FetchStatus, FormState, VerifyAction } from "../types/types";
 
 const useFormStore = (shouldReset?: boolean) => {
   const dispatch = useDispatch();
@@ -17,6 +23,10 @@ const useFormStore = (shouldReset?: boolean) => {
 
   const reset = () => {
     dispatch(resetForm());
+  };
+
+  const setFormStep = (currentStep: number) => {
+    dispatch(setCurrentStep(currentStep));
   };
 
   const setFormStatus = (status: FetchStatus) => {
@@ -62,7 +72,9 @@ const useFormStore = (shouldReset?: boolean) => {
     formStatus: formState.status,
     formData: formState.formData,
     formState: formState.formState,
+    formStep: formState.currentStep,
     reset,
+    setFormStep,
     setFormStatus,
     setFormError,
     setFormData,

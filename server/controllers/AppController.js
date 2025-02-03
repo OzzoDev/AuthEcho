@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { hex8BitKey } = require("../utils/crypto");

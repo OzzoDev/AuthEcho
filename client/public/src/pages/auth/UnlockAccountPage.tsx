@@ -8,7 +8,7 @@ import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormState, setFormData } = useFormStore(true);
+  const { formData, formState, setFormState, setFormData, setFormStep } = useFormStore(true);
   const { fetchData: checkSuspended } = useApi("POST", "ISSUSPENDED");
   const { fetchData: requestUnlockCode } = useApi("POST", "REQUESTUNLOCKCODE");
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
@@ -27,6 +27,7 @@ export default function SigninPage() {
       const response = await requestUnlockCode(true);
       if (response) {
         setFormState("verify");
+        setFormStep(2);
       }
     }
   };

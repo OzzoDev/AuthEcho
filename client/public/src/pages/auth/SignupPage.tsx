@@ -8,8 +8,15 @@ import useAuth from "../../hooks/useAuth";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormStatus, setFormError, setFormState, setFormData } =
-    useFormStore(true);
+  const {
+    formData,
+    formState,
+    setFormStatus,
+    setFormError,
+    setFormState,
+    setFormData,
+    setFormStep,
+  } = useFormStore(true);
   const [securityQuestions, setSecurityQuestions] = useState<string[]>([]);
   const { fetchData: getSecurityQuestions } = useApi("GET", "SECURITYQUESTIONS");
   const { fetchData: signUp } = useApi("POST", "SIGNUP");
@@ -41,6 +48,7 @@ export default function SignUpPage() {
 
     if (response) {
       setFormState("verify");
+      setFormStep(2);
     }
   };
 

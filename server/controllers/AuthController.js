@@ -49,7 +49,7 @@ const signup = async (req, res) => {
 };
 
 const verifyAccount = async (req, res) => {
-  const { userData, email, name, verificationCode, useCase } = req.body;
+  const { userData, email, name, verificationCode } = req.body;
 
   try {
     const user = await UserModel.findOne({
@@ -67,13 +67,12 @@ const verifyAccount = async (req, res) => {
     await user.save();
 
     if (verificationCode !== userVerificationCode) {
-      if (useCase === "SIGNIN") {
-        user.blocked = true;
-        await user.save();
-      }
+      user.blocked = true;
+      await user.save();
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
+    user.blocked = false;
     user.verified = true;
     await user.save();
 
@@ -492,27 +491,6 @@ const isSuspended = async (req, res) => {
   }
 };
 
-const getUserData = async (req, res) => {
-  const { userData } = req.body;
-
-  try {
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    res.status(200).json({
-      message: "User found",
-      success: true,
-      userData: { name: user.name, email: user.email },
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
-    console.error(error);
-  }
-};
-
 const getSecurityQuestions = async (_, res) => {
   const questions = securityQuestions.map((ques) => ques.question);
   res.status(200).json({ message: "Success", success: true, questions });
@@ -570,7 +548,12 @@ const getUserSecurityQuestion = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Security question successfully fetched", success: true, question });
+      .json({
+        message: "Security question successfully fetched",
+        success: true,
+        question,
+        isBlocked: user.blocked,
+      });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -578,7 +561,7 @@ const getUserSecurityQuestion = async (req, res) => {
 };
 
 const validateSecurityQuestion = async (req, res) => {
-  const { userData, securityQuestionAnswer, useCase } = req.body;
+  const { userData, securityQuestionAnswer, verificationCode } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
@@ -592,12 +575,20 @@ const validateSecurityQuestion = async (req, res) => {
       return res.status(403).json({ message: "Wrong answer", success: false });
     }
 
-    if (useCase === "SIGNIN") {
-      user.blocked = false;
-      await user.save();
+    if (verificationCode !== user.verificationCode) {
+      const verificationCodeSent = await sendEmail(
+        user.email,
+        "Authecho",
+        `${getEmailText("verifyAccess", user.name)}`,
+        user.verificationCode
+      );
+
+      if (!verificationCodeSent) {
+        return res.status(500).json({ message: `Verification code error`, success: false });
+      }
     }
 
-    res.status(200).json({ message: `Right answer`, success: true });
+    res.status(200).json({ message: `Right answer`, success: true, isBlocked: user.blocked });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -618,7 +609,6 @@ module.exports = {
   updatePassword,
   unlockAccount,
   isSuspended,
-  getUserData,
   getSecurityQuestions,
   setSecurityQuestion,
   getUserSecurityQuestion,

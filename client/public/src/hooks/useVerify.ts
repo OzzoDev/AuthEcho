@@ -4,7 +4,7 @@ import useFormStore from "./useFormStore";
 import { FormUsage } from "../types/types";
 
 const useVerify = (formUsage: FormUsage, code: string) => {
-  const { setFormState, setFormData } = useFormStore();
+  const { setFormState, setFormData, setFormStep } = useFormStore();
   const { fetchData: verifyAccount } = useApi("POST", "VERIFYACCOUNT");
   const { fetchData: userSecurityQuestion } = useApi("POST", "GETUSERSECURITYQUESTION");
 
@@ -12,36 +12,42 @@ const useVerify = (formUsage: FormUsage, code: string) => {
     const shouldVerify = code.length === 8;
     const verifyCode = async () => {
       if (shouldVerify) {
-        let response;
+        let ensureAuth;
 
         switch (formUsage) {
           case "SIGNUP":
-            response = await verifyAccount(true);
-            if (response) {
+            ensureAuth = await verifyAccount(true);
+            if (ensureAuth) {
               setFormState("question");
+              setFormStep(3);
             }
             break;
           case "SIGNIN":
-            response = await verifyAccount(true);
-            if (response) {
+            ensureAuth = await verifyAccount(true);
+            if (ensureAuth) {
               setFormState("password");
+              setFormStep(3);
             } else {
               const question = await userSecurityQuestion(true);
               if (question) {
                 setFormData({ securityQuestion: question.data.question }, "securityQuestion");
                 setFormState("question");
+                setFormStep(2);
               }
             }
             break;
           case "RESETPASSWORD":
           case "UNLOCKACCOUNT":
-            const ensureAuth = await verifyAccount(true);
-            if (ensureAuth) {
-              response = await userSecurityQuestion(true);
-              if (response) {
-                setFormData({ securityQuestion: response.data.question }, "securityQuestion");
-                setFormState("question");
+            ensureAuth = await verifyAccount(true);
+            const question = await userSecurityQuestion(true);
+            if (question) {
+              setFormData({ securityQuestion: question.data.question }, "securityQuestion");
+              if (question.data.isBlocked) {
+                setFormStep(2);
+              } else {
+                setFormStep(3);
               }
+              setFormState("question");
             }
             break;
         }
