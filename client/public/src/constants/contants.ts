@@ -25,14 +25,6 @@ export const NAV_LINKS: Link[] = [
     linkText: "Unlock account",
     path: "/unlockaccount",
   },
-  {
-    linkText: "Contact",
-    path: "/contact",
-  },
-  {
-    linkText: "About",
-    path: "/about",
-  },
 ];
 
 export const FOOTER_LINKS: Link[] = [

@@ -38,7 +38,7 @@ export default function Dropdown({ items, onSelect }: Props) {
   });
 
   return (
-    <div className="dropdown" ref={dropdownRef}>
+    <div className="dropdown bg-slate-800" ref={dropdownRef}>
       <button type="button" onClick={toggleDropdown} className="dropdown-toggle">
         {isOpen ? (
           <FaChevronUp size={25} color="#fafffd" />
@@ -47,7 +47,7 @@ export default function Dropdown({ items, onSelect }: Props) {
         )}
       </button>
       {isOpen ? (
-        <div className="dropdown-list-wrapper">
+        <div className="dropdown-list-wrapper bg-slate-800">
           <ul role="listbox" onClick={(e) => e.stopPropagation()} className="drop-down-list">
             <List height={300} itemCount={items.length} itemSize={70} width="100%">
               {renderRow}

@@ -58,7 +58,7 @@ export type ApiUseCase =
   | "ISSUSPENDED"
   | "JOIN";
 
-export type FormState = "default" | "verify" | "question" | "password";
+export type FormState = "default" | "verify" | "resendCode" | "question" | "password";
 
 export type FetchStatus = "idle" | "loading" | "error" | "success";
 

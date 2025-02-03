@@ -14,6 +14,8 @@ const useApi = (method: ApiMethod, useCase: ApiUseCase, shouldNavigate?: boolean
     apiParams?: ConnectRequest | ApiRequest
   ): Promise<AxiosResponse<ApiResponse> | null> => {
     try {
+      console.log("Sending data...", formData);
+
       if (trackState) {
         setFormStatus("loading");
         setFormError("");

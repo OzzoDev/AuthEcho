@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useFormStore from "../../hooks/useFormStore";
 
@@ -11,15 +11,27 @@ interface Props {
 export default function FormPasswordInput({ labelText, name, onChange }: Props) {
   const { formData } = useFormStore();
   const [inputType, setInputType] = useState<"text" | "password">("password");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const allInputs = document.querySelectorAll("input");
+    if (allInputs.length > 0 && allInputs[0] === inputRef.current) {
+      console.log("Focusing first input...");
+      inputRef.current?.focus();
+    }
+  }, []);
 
   return (
     <div className="relative w-full flex border-b-[1px]">
       <input
+        ref={inputRef}
         type={inputType}
         name={name}
         value={(formData[name] as string) || ""}
+        placeholder=" "
         onChange={onChange}
         autoComplete="off"
+        minLength={8}
         required
         className="w-full border-0 outline-none pb-[5px] pt-[8px] bg-transparent z-10"
       />

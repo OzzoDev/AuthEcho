@@ -4,27 +4,30 @@ import useFormStore from "../../hooks/useFormStore";
 interface Props {
   labelText: string;
   name: string;
-  error?: string;
+  type?: "text" | "email";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function FormInput({ labelText, name, error, onChange }: Props) {
+export default function FormInput({ labelText, name, type = "text", onChange }: Props) {
   const { formData } = useFormStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (error) {
+    const allInputs = document.querySelectorAll("input");
+    if (allInputs.length > 0 && allInputs[0] === inputRef.current) {
+      console.log("Focusing first input...");
       inputRef.current?.focus();
     }
-  }, [error]);
+  }, []);
 
   return (
     <div className="relative w-full flex border-b-[1px]">
       <input
-        type="text"
+        type={type}
         ref={inputRef}
         name={name}
         value={(formData[name] as string) || ""}
+        placeholder=" "
         onChange={onChange}
         autoComplete="off"
         required

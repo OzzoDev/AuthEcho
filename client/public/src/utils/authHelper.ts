@@ -3,7 +3,7 @@ import { FormState, FormUsage } from "../types/types";
 interface FormInput {
   labelText?: string;
   name?: string;
-  type?: "text" | "password" | "code" | "select";
+  type?: "text" | "email" | "password" | "code" | "select";
 }
 
 interface State {
@@ -31,7 +31,7 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         btnText: "Sign up",
         inputs: [
           { labelText: "Username", name: "name" },
-          { labelText: "Email", name: "email" },
+          { labelText: "Email", name: "email", type: "email" },
           { labelText: "Password", name: "password", type: "password" },
           { labelText: "Confirm password", name: "confirmPassword", type: "password" },
         ],
@@ -40,8 +40,7 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         state: "verify",
         headline: "Verify Email!",
         subline:
-          "Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If the incorrect code is entered, you will need to answer your security question to proceed with the process.",
-        btnText: "Regenerate Code",
+          "Please check your inbox for an 8-character verification code and enter it below. For your security, this code is valid for only one attempt. If the incorrect code is entered, a new code will automatically be sent to your email.",
         regenerateCode: true,
         inputs: [{ type: "code" }],
       },
@@ -75,10 +74,8 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         inputs: [{ type: "code" }],
       },
       {
-        state: "question",
+        state: "resendCode",
         headline: "Verify authenticity!",
-        subline:
-          "To verify your identity, please respond to your security question, as the verification code provided was incorrect. Enter the answer to your security question below to proceed.",
         btnText: "Continue",
         dynamicLine: true,
         excludeStep: true,
@@ -119,8 +116,22 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         inputs: [{ type: "code" }],
       },
       {
-        state: "question",
+        state: "resendCode",
         headline: "Verify authenticity!",
+        btnText: "Continue",
+        dynamicLine: true,
+        excludeStep: true,
+        inputs: [
+          {
+            labelText: "Security question answer",
+            name: "securityQuestionAnswer",
+            type: "password",
+          },
+        ],
+      },
+      {
+        state: "question",
+        headline: "Final step!",
         subline: "Enter the answer of your security question below",
         btnText: "Verify",
         dynamicLine: true,
@@ -151,8 +162,22 @@ export const AUTH_HELPER: Record<FormUsage, AuthHelper> = {
         inputs: [{ type: "code" }],
       },
       {
-        state: "question",
+        state: "resendCode",
         headline: "Verify authenticity!",
+        btnText: "Continue",
+        dynamicLine: true,
+        excludeStep: true,
+        inputs: [
+          {
+            labelText: "Security question answer",
+            name: "securityQuestionAnswer",
+            type: "password",
+          },
+        ],
+      },
+      {
+        state: "question",
+        headline: "Final step!",
         subline: "Enter the answer of your security question below",
         btnText: "Verify",
         dynamicLine: true,

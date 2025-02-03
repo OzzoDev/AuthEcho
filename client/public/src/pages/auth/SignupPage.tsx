@@ -82,6 +82,7 @@ export default function SignUpPage() {
   };
 
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
+    setFormError("");
     if (typeof param === "string") {
       setFormData({ securityQuestion: param }, "securityQuestion");
     } else {
@@ -106,8 +107,10 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="grow flex flex-col justify-center items-center space-y-[80px] pb-[50px]">
-      <h1 className="text-4xl">Join Now for Effortless Account Management in 3 Simple Steps!</h1>
+    <div className="grow flex flex-col justify-center items-center space-y-[100px] pt-[40px] pb-[50px]">
+      <h1 className="text-4xl text-center max-w-[90%]">
+        Join Now for Effortless Account Management in 3 Simple Steps!
+      </h1>
       <AuthForm
         formUsage="SIGNUP"
         dropDownItems={securityQuestions}

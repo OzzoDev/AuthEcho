@@ -1,5 +1,5 @@
 input:focus ~ label,
-input:valid ~ label {
+input:not(:placeholder-shown) ~ label {
   top: -1rem;
   font-size: 1rem;
   opacity: 0.4;
@@ -15,8 +15,6 @@ input:valid ~ label {
   height: 70px;
   padding: 30px;
   border-radius: 20px;
-  color: var(--text-color);
-  background-color: var(--shadow-color);
   position: relative;
 }
 
@@ -46,11 +44,10 @@ input:valid ~ label {
   z-index: 100;
   overflow-y: auto;
   border-radius: 20px;
-  background-color: var(--shadow-color);
 }
 
 .drop-down-list {
-  width: 90%;
+  width: 100%;
   padding: 0;
   margin: 0;
   font-size: 1rem;
@@ -64,7 +61,7 @@ input:valid ~ label {
 
 .drop-down-list-item:hover,
 .drop-down-list-item:focus {
-  color: var(--neutral-color);
+  color: cyan;
 }
 
 @media (max-width: 475px) {

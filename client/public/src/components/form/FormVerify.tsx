@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function FormVerify({ formUsage }: Props): JSX.Element {
-  const { formError, setFormData } = useFormStore();
+  const { setFormData } = useFormStore();
   const [code, setCode] = useState<string>("");
 
   const numberOfInputs = 8;
@@ -91,7 +91,6 @@ export default function FormVerify({ formUsage }: Props): JSX.Element {
     <div className="flex space-x-4 w-fit m-auto">
       {Array.from({ length: numberOfInputs }, (_, index) => (
         <input
-          disabled={!!formError}
           key={index}
           ref={(el) => (inputRefs.current[index] = el)}
           type="text"

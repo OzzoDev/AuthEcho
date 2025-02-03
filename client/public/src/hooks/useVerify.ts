@@ -31,23 +31,31 @@ const useVerify = (formUsage: FormUsage, code: string) => {
               const question = await userSecurityQuestion(true);
               if (question) {
                 setFormData({ securityQuestion: question.data.question }, "securityQuestion");
-                setFormState("question");
+                setFormState("resendCode");
                 setFormStep(2);
               }
+              setFormData({ verificationCode: "" }, "verificationCode");
             }
             break;
           case "RESETPASSWORD":
           case "UNLOCKACCOUNT":
             ensureAuth = await verifyAccount(true);
+
+            if (!ensureAuth) {
+              setFormData({ verificationCode: "" }, "verificationCode");
+            }
+
             const question = await userSecurityQuestion(true);
             if (question) {
               setFormData({ securityQuestion: question.data.question }, "securityQuestion");
+
               if (question.data.isBlocked) {
                 setFormStep(2);
+                setFormState("resendCode");
               } else {
                 setFormStep(3);
+                setFormState("question");
               }
-              setFormState("question");
             }
             break;
         }

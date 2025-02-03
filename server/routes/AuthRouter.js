@@ -50,13 +50,7 @@ router.post(
   resetPassword,
   setCookies
 );
-router.post(
-  "/unlockaccount",
-  ensureVerificationCode,
-  ensureSecurityQuestion,
-  unlockAccount,
-  setCookies
-);
+router.post("/unlockaccount", ensureVerificationCode, ensureSecurityQuestion, unlockAccount);
 router.post("/issuspended", isSuspended);
 router.get("/securityquestions", getSecurityQuestions);
 router.post(

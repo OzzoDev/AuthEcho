@@ -8,7 +8,8 @@ import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormState, setFormData, setFormStep } = useFormStore(true);
+  const { formData, formState, setFormState, setFormData, setFormStep, setFormError } =
+    useFormStore(true);
   const { fetchData: validatePassword } = useApi("POST", "VALIDATEPASSWORD");
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
@@ -65,6 +66,7 @@ export default function SigninPage() {
   };
 
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
+    setFormError("");
     if (typeof param !== "string") {
       const { name, value } = param.target;
       setFormData(
@@ -85,14 +87,17 @@ export default function SigninPage() {
         await requestVerificationCode(true);
         break;
       case "question":
+      case "resendCode":
         await handleValidateQuestion();
         break;
     }
   };
 
   return (
-    <div className="grow flex flex-col justify-center items-center space-y-[80px] pt-[100px] pb-[50px]">
-      <h1 className="text-4xl">Quickly Reset Your Password and Secure Your Account!</h1>
+    <div className="grow flex flex-col justify-center items-center space-y-[100px] pt-[40px] pb-[50px]">
+      <h1 className="text-4xl text-center max-w-[90%]">
+        Quickly Reset Your Password and Secure Your Account!
+      </h1>
       <AuthForm
         formUsage="RESETPASSWORD"
         dynamicText={formData.securityQuestion}

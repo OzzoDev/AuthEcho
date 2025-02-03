@@ -60,20 +60,56 @@ const verifyAccount = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    const userVerificationCode = user.verificationCode;
+    const compairson = verificationCode === user.verificationCode;
 
-    user.verificationCode = hex8BitKey();
+    const newVerificationCode = hex8BitKey();
+
+    user.verificationCode = newVerificationCode;
     user.prevVerificationCode = verificationCode;
     await user.save();
 
-    if (verificationCode !== userVerificationCode) {
-      user.blocked = true;
-      await user.save();
+    if (!compairson) {
+      if (!user.verified) {
+        const verificationCodeSent = await sendEmail(
+          email,
+          "Authecho",
+          `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code during the sign up process. Return to the sign up page and enter the code and you are all set!`,
+          newVerificationCode
+        );
+
+        if (!verificationCodeSent) {
+          return res.status(500).json({ message: "Email error", success: false });
+        }
+      } else {
+        user.blocked = true;
+        await user.save();
+      }
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
 
+    // if (!user.verified) {
+    //   if (!compairson) {
+    //     const verificationCodeSent = await sendEmail(
+    //       email,
+    //       "Authecho",
+    //       `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code during the sign up process. Return to the sign up page and enter the code and you are all set!`,
+    //       newVerificationCode
+    //     );
+
+    //     if (!verificationCodeSent) {
+    //       return res.status(500).json({ message: "Email error", success: false });
+    //     }
+    //     return res.status(400).json({ message: "Verification code is wrong", success: false });
+    //   }
+    // } else {
+    //   if (!compairson) {
+    //     user.blocked = true;
+    //     await user.save();
+    //     return res.status(400).json({ message: "Verification code is wrong", success: false });
+    //   }
+    // }
+
     user.blocked = false;
-    user.verified = true;
     await user.save();
 
     res.status(200).json({ message: "Verification successfully", success: true });
@@ -445,7 +481,7 @@ const updatePassword = async (req, res, next) => {
   }
 };
 
-const unlockAccount = async (req, res, next) => {
+const unlockAccount = async (req, res) => {
   const { userData } = req.body;
 
   try {
@@ -459,11 +495,10 @@ const unlockAccount = async (req, res, next) => {
     user.failedLoginAttempts = 0;
     await user.save();
 
-    req.body.user = user;
-    req.body.statusCode = 200;
-    req.body.message = "Account successfully unlocked";
+    const email = user.email;
+    const name = user.name;
 
-    next();
+    res.status(200).json({ message: "Account unlocked successfully", success: true, email, name });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -519,6 +554,7 @@ const setSecurityQuestion = async (req, res, next) => {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
     }
 
+    user.verified = true;
     user.securityQuestion = securityQuestion;
     user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer.toLowerCase(), 10);
     await user.save();
@@ -546,14 +582,12 @@ const getUserSecurityQuestion = async (req, res) => {
 
     const question = user.securityQuestion;
 
-    res
-      .status(200)
-      .json({
-        message: "Security question successfully fetched",
-        success: true,
-        question,
-        isBlocked: user.blocked,
-      });
+    res.status(200).json({
+      message: "Security question successfully fetched",
+      success: true,
+      question,
+      isBlocked: user.blocked,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);

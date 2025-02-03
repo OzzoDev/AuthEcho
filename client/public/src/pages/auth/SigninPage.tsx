@@ -8,7 +8,8 @@ import useAuthStore from "../../hooks/useAuthStore";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const { formData, formState, setFormState, setFormData, setFormStep } = useFormStore(true);
+  const { formData, formState, setFormState, setFormData, setFormStep, setFormError } =
+    useFormStore(true);
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: signIn } = useApi("POST", "SIGNIN", true);
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
@@ -60,6 +61,7 @@ export default function SigninPage() {
   };
 
   const handleFormChange = (param: React.ChangeEvent<HTMLInputElement> | string) => {
+    setFormError("");
     if (typeof param !== "string") {
       const { name, value } = param.target;
       setFormData(
@@ -77,7 +79,7 @@ export default function SigninPage() {
       case "default":
         await handleRequestVerificationCode();
         break;
-      case "question":
+      case "resendCode":
         await handleValidateQuestion();
         break;
       case "password":
@@ -87,8 +89,10 @@ export default function SigninPage() {
   };
 
   return (
-    <div className="grow flex flex-col justify-center items-center space-y-[80px] pt-[100px] pb-[50px]">
-      <h1 className="text-4xl">Step Inside: Your Account Management Hub Awaits! </h1>
+    <div className="grow flex flex-col justify-center items-center space-y-[100px] pt-[40px] pb-[50px]">
+      <h1 className="text-4xl text-center max-w-[90%]">
+        Step Inside: Your Account Management Hub Awaits!{" "}
+      </h1>
       <AuthForm
         formUsage="SIGNIN"
         dynamicText={formData.securityQuestion}
