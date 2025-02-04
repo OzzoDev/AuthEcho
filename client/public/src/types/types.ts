@@ -29,7 +29,7 @@ export type ConnectRequest = {
   appName: string;
   origin: string;
   admin: string;
-  appDescription?: string;
+  appDescription: string;
 };
 
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";

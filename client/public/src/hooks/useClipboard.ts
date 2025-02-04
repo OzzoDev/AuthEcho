@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useClipboard = (setClip: (clip: string) => void) => {
+const useClipboard = (setClip?: (clip: string) => void) => {
   const [lastClipboard, setLastClipboard] = useState<string>("");
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const useClipboard = (setClip: (clip: string) => void) => {
           const trimedLastClipboard = lastClipboard.trim();
           const trimedClipboardText = clipboardText.trim();
 
-          if (trimedLastClipboard !== trimedClipboardText) {
+          if (trimedLastClipboard !== trimedClipboardText && setClip) {
             setLastClipboard(trimedClipboardText);
             const clip = trimedClipboardText;
             setClip(clip);
@@ -34,8 +34,17 @@ const useClipboard = (setClip: (clip: string) => void) => {
     return () => clearInterval(intervalId);
   }, [lastClipboard]);
 
+  const copyToClipboard = async (value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
+
   return {
     lastClipboard,
+    copyToClipboard,
   };
 };
 
