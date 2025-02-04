@@ -10,7 +10,7 @@ export default function StartPage() {
     <div className="mb-[100px]">
       <Hero />
       <ServiceOverview />
-      <ul className="flex flex-col px-4 space-y-10">
+      <ul className="flex flex-col px-4 gap-y-[100px]">
         <li>
           <InformationCard
             headline="Why Authecho?"

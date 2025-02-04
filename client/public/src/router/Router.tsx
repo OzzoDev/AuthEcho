@@ -13,16 +13,45 @@ import StartPage from "../pages/general/StartPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import PrivacyPolicyPage from "../pages/general/PrivacyPolicyPage";
 import LicensingPage from "../pages/general/LicensingPage";
+import AccessRedirect from "../components/auth/AccessRedirect";
 
 const router = (isAuthenticated: boolean) => {
   return createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route path="/" element={<StartPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/signin" element={<SigninPage />} />
-        <Route path="/resetPassword" element={<ResetPasswordPage />} />
-        <Route path="/unlockaccount" element={<UnlockAccountPage />} />
+        <Route
+          path="/signup"
+          element={
+            <AccessRedirect>
+              <SignupPage />
+            </AccessRedirect>
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <AccessRedirect>
+              <SigninPage />
+            </AccessRedirect>
+          }
+        />
+        <Route
+          path="/resetPassword"
+          element={
+            <AccessRedirect>
+              <ResetPasswordPage />
+            </AccessRedirect>
+          }
+        />
+        <Route
+          path="/unlockaccount"
+          element={
+            <AccessRedirect>
+              <UnlockAccountPage />
+            </AccessRedirect>
+          }
+        />
         <Route path="/connectapp" element={<ConnectAppPage />} />
         <Route
           path="/account"
