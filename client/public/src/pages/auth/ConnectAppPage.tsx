@@ -50,7 +50,7 @@ export default function ConnectAppPage() {
   }, [keyIsCopied]);
 
   return (
-    <div className="grow flex flex-col items-center space-y-[100px] pt-[100px] pb-[50px] text-white">
+    <div className="grow flex flex-col items-center gap-y-[100px] pt-[100px] pb-[50px] text-white">
       <h1 className="text-4xl text-center max-w-[90%] text-sky-200">
         Connect your app to Authecho!
       </h1>

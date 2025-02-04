@@ -15,7 +15,7 @@ interface Props {
 }
 
 function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
-  const { username } = useAuthStore();
+  const { username, isAuthenticated } = useAuthStore();
   const { formError, formStatus } = useFormStore(true);
   const { fetchData: connectApp } = useApi("POST", "JOIN");
 
@@ -51,62 +51,59 @@ function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
     }
   };
 
+  if (!isAuthenticated) {
+    return <h2 className="text-4xl text-red-400 my-[200px]">Sign in to connect your app!</h2>;
+  }
+
+  if (formStatus === "loading") {
+    return <HashLoader size={50} color="white" className="my-[200px]" />;
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 w-[90%] max-w-[600px]">
-      {formStatus === "loading" ? (
-        <HashLoader size={50} color="white" />
-      ) : (
-        <>
-          <DescriptiveInput
-            labelText="Name"
-            name="appName"
-            value={connectData.appName}
-            placeholder="My app"
-            maxLength={100}
-            onChange={handleChange}>
-            <p>
-              Enter the name of your application.
-              <span className="text-red-400"> Maximum 100 characters</span>.
-            </p>
-          </DescriptiveInput>
-          <DescriptiveInput
-            labelText="Origin"
-            type="url"
-            name="origin"
-            value={connectData.origin}
-            maxLength={100}
-            onChange={handleChange}>
-            <p>
-              Specify the production domain or development URL (e.g. example.com,
-              http://localhost:3001).
-            </p>
-          </DescriptiveInput>
-          <DescriptiveInput
-            labelText="Name"
-            type="textarea"
-            name="appDescription"
-            value={connectData.appDescription}
-            maxLength={300}
-            isRequired={false}
-            onChange={handleChange}>
-            <p>
-              You may optionally provide a description for your application
-              <span className="text-red-400"> of maximum 300 characters</span>. This description may
-              be publicly accessible and serves to clarify the purpose and functionality of your
-              app, thereby assisting users in understanding its features and benefits.
-            </p>
-          </DescriptiveInput>
-          {formError && <p className="text-center text-lg text-red-500 mb-[-30px]">{formError}</p>}
-          <div className="mt-10">
-            <PrimaryBtn
-              btnText="Connect"
-              type="submit"
-              width="w-full"
-              icon={<CiGlobe size={24} />}
-            />
-          </div>
-        </>
-      )}
+      <DescriptiveInput
+        labelText="Name"
+        name="appName"
+        value={connectData.appName}
+        placeholder="My app"
+        maxLength={100}
+        onChange={handleChange}>
+        <p>
+          Enter the name of your application.
+          <span className="text-red-400"> Maximum 100 characters</span>.
+        </p>
+      </DescriptiveInput>
+      <DescriptiveInput
+        labelText="Origin"
+        type="url"
+        name="origin"
+        value={connectData.origin}
+        maxLength={100}
+        onChange={handleChange}>
+        <p>
+          Specify the production domain or development URL (e.g. example.com,
+          http://localhost:3001).
+        </p>
+      </DescriptiveInput>
+      <DescriptiveInput
+        labelText="Name"
+        type="textarea"
+        name="appDescription"
+        value={connectData.appDescription}
+        maxLength={300}
+        isRequired={false}
+        onChange={handleChange}>
+        <p>
+          You may optionally provide a description for your application
+          <span className="text-red-400"> of maximum 300 characters</span>. This description may be
+          publicly accessible and serves to clarify the purpose and functionality of your app,
+          thereby assisting users in understanding its features and benefits.
+        </p>
+      </DescriptiveInput>
+      {formError && <p className="text-center text-lg text-red-500 mb-[-30px]">{formError}</p>}
+      <div className="mt-10">
+        <PrimaryBtn btnText="Connect" type="submit" width="w-full" icon={<CiGlobe size={24} />} />
+      </div>
     </form>
   );
 }
