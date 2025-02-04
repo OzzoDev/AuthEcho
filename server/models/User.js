@@ -55,6 +55,18 @@ const UserSchema = new Schema({
     type: String,
     default: getDate(),
   },
+  createdApps: {
+    type: [String],
+    default: [],
+  },
+  adminApps: {
+    type: [String],
+    default: [],
+  },
+  appConnections: {
+    type: [String],
+    default: [],
+  },
 });
 
 UserSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });

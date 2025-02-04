@@ -29,15 +29,6 @@ function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
     setConnectData(updatedConnectData);
   };
 
-  const resetForm = () => {
-    setConnectData({
-      appName: "",
-      origin: "http://localhost:3001",
-      admin: username || "",
-      appDescription: "",
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const response = await connectApp(true, connectData);
@@ -46,7 +37,6 @@ function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
       const appKeyReceived = response.data.appKey;
       if (appKeyReceived) {
         setAppKey(appKeyReceived);
-        resetForm();
       }
     }
   };

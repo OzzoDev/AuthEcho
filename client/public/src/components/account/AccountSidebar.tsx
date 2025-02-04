@@ -1,13 +1,14 @@
-import { AccountTab, AccountTabName } from "../../types/types";
+import useAccountStore from "../../hooks/useAccountStore";
+import { AccountTab } from "../../types/types";
 import AccountSidebarTab from "./AccountSidebarTab";
 
 interface Props {
   tabs: AccountTab[];
-  currentTab: AccountTabName;
-  setCurrentTab: (currentTab: AccountTabName) => void;
 }
 
-export default function AccountSidebar({ tabs, currentTab, setCurrentTab }: Props) {
+export default function AccountSidebar({ tabs }: Props) {
+  const { currentTab, updateCurrentTab } = useAccountStore();
+
   return (
     <div className="h-fit lg:h-auto w-screen lg:w-full lg:max-w-[280px] bg-slate-800">
       <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-hidden">
@@ -18,7 +19,7 @@ export default function AccountSidebar({ tabs, currentTab, setCurrentTab }: Prop
                 tabName={tab.tabName}
                 currentTab={currentTab}
                 icon={tab.icon}
-                onClick={() => setCurrentTab(tab.tabName)}
+                onClick={() => updateCurrentTab(tab.tabName)}
               />
             </li>
           );

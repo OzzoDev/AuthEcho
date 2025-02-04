@@ -31,7 +31,6 @@ export default function FormPasswordInput({ labelText, name, onChange }: Props) 
         placeholder=" "
         onChange={onChange}
         autoComplete="off"
-        minLength={8}
         required
         className="w-full border-0 outline-none pb-[5px] pt-[8px] bg-transparent z-10"
       />

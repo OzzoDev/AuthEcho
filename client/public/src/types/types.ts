@@ -95,6 +95,10 @@ export type AccountResponse = {
   success: boolean;
   createdAt?: string;
   lastLogin?: string;
+  isRemembered?: string;
+  createdApps?: string[];
+  adminApps?: string[];
+  appConnections?: string[];
 };
 
 export type AccountApiUseCase = "ACCOUNTOVERVIEW";

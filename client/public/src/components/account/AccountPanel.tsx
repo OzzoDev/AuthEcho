@@ -1,13 +1,14 @@
-import { AccountTabName, FetchStatus } from "../../types/types";
-import { HashLoader } from "react-spinners";
+import { useEffect } from "react";
+import useAccountStore from "../../hooks/useAccountStore";
 import OverviewPanel from "./overview/OverviewPanel";
 
-interface Props {
-  currentTab: AccountTabName;
-  apiStatus: FetchStatus;
-}
+export default function AccountPanel() {
+  const { currentTab } = useAccountStore();
 
-export default function AccountPanel({ currentTab, apiStatus }: Props) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentTab]);
+
   switch (currentTab) {
     case "Overview":
       return <OverviewPanel />;

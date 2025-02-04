@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
 const AppModel = require("../models/App");
 const { hex32BitKey } = require("../utils/crypto");
+const { addCreatedApp } = require("../services/userService");
 
 const join = async (req, res) => {
   const { appName, origin, admin, appDescription } = req.body;
+  const user = req.user;
 
   if (!appName) {
     return res.status(400).json({ message: "App name is not provided", success: false });
@@ -39,6 +41,8 @@ const join = async (req, res) => {
 
     appModel.key = await bcrypt.hash(key, 10);
     await appModel.save();
+
+    await addCreatedApp(user.name, appName);
 
     res.status(201).json({ message: "Successfully joined app", success: true, appKey: key });
   } catch (error) {

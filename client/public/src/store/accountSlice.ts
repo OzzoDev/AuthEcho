@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AccountRequest, AccountResponse, FetchStatus } from "../types/types";
+import { AccountRequest, AccountResponse, AccountTabName, FetchStatus } from "../types/types";
 
 interface AccountState {
   status: FetchStatus;
   error: string;
   requestData: AccountRequest;
   responseData: AccountResponse;
+  currentTab: AccountTabName;
 }
 
 const initialState: AccountState = {
@@ -13,6 +14,7 @@ const initialState: AccountState = {
   error: "",
   requestData: {},
   responseData: { message: "", success: false },
+  currentTab: "Overview",
 };
 
 const formSlice = createSlice({
@@ -31,15 +33,20 @@ const formSlice = createSlice({
     setResponseData(state, action: PayloadAction<AccountResponse>) {
       state.responseData = action.payload;
     },
+    setCurrentTab(state, action: PayloadAction<AccountTabName>) {
+      state.currentTab = action.payload;
+    },
     reset(state) {
       state.status = "idle";
       state.error = "";
       state.requestData = {};
       state.responseData = { message: "", success: false };
+      state.currentTab = "Overview";
     },
   },
 });
 
-export const { setStatus, setError, setRequestData, setResponseData, reset } = formSlice.actions;
+export const { setStatus, setError, setRequestData, setResponseData, setCurrentTab, reset } =
+  formSlice.actions;
 
 export default formSlice.reducer;
