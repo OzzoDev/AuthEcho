@@ -4,6 +4,7 @@ import useApi from "../../hooks/useApi";
 import useAuthStore from "../../hooks/useAuthStore";
 import PrimaryBtn from "../../components/btn/PrimaryBtn";
 import { HiMiniArrowLeftStartOnRectangle } from "react-icons/hi2";
+import AccountHeader from "../../components/account/AccountHeader";
 
 export default function AccountPage() {
   const navigate = useNavigate();
@@ -19,15 +20,8 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="grow flex flex-col items-center space-y-[100px] pt-[200px] pb-[50px]">
-      <h1>Your are signed in!</h1>
-      <p>Username: {username}</p>
-      <p>Email: {email}</p>
-      <PrimaryBtn
-        btnText="Sign out"
-        onClick={handleSignOut}
-        icon={<HiMiniArrowLeftStartOnRectangle size={24} />}
-      />
+    <div className="grow flex flex-col items-center space-y-[100px] pb-[50px]">
+      <AccountHeader />
     </div>
   );
 }

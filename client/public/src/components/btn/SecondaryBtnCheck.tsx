@@ -10,7 +10,7 @@ interface Props {
   onClick?: () => void;
 }
 
-export default function SecondaryBtn({
+export default function SecondaryBtnChecked({
   btnText,
   fontSize = "base",
   width = "w-fit",
