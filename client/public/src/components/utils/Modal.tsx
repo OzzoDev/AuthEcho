@@ -30,7 +30,7 @@ export default function Modal({ show, closeDependency, onClose, children }: Prop
 
   if (isModalVisible) {
     return (
-      <div className="flex flex-col absolute top-[-35px] right-0 gap-6 m-auto bg-gray-900 p-8 pt-12 rounded-lg">
+      <div className="flex flex-col absolute top-[65px] right-0 gap-6 m-auto bg-gray-900 p-8 pt-12 rounded-lg">
         <button onClick={closeModal} className="absolute top-4 right-4">
           <IoMdClose size={28} color="red" />
         </button>

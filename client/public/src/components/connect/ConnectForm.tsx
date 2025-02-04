@@ -60,7 +60,7 @@ function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 w-[90%] max-w-[600px]">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 w-[90%] max-w-[600px] mb-[50px]">
       <DescriptiveInput
         labelText="Name"
         name="appName"
