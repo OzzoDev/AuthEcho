@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export type ApiResponse = {
   message: string;
   success: boolean;
@@ -64,6 +66,35 @@ export type FetchStatus = "idle" | "loading" | "error" | "success";
 
 export type FormUsage = "SIGNUP" | "SIGNIN" | "RESETPASSWORD" | "UNLOCKACCOUNT";
 
-export type ProtectedRouteProps = {
-  children: React.ReactNode;
+export type AccountTabName =
+  | "Overview"
+  | "Settings"
+  | "Apps"
+  | "Users"
+  | "My apps"
+  | "Administered apps"
+  | "Active Connections"
+  | "Invoices"
+  | "Reported issues";
+
+export type AccountTab = {
+  tabName: AccountTabName;
+  icon: ReactNode;
 };
+
+export type AccountRequest = {
+  name?: string;
+  email?: string;
+  securityQuestion?: string;
+  password?: string;
+  confirmPassword?: string;
+};
+
+export type AccountResponse = {
+  message: string;
+  success: boolean;
+  createdAt?: string;
+  lastLogin?: string;
+};
+
+export type AccountApiUseCase = "ACCOUNTOVERVIEW";

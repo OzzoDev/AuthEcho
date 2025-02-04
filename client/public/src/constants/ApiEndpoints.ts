@@ -22,3 +22,7 @@ export const ENDPOINTS = {
   VALIDATESECURITYQUESTION: `${API_BASE_URL}/api/auth/validatesecurityquestion`,
   JOIN: `${API_BASE_URL}/api/connect/join`,
 };
+
+export const ACCOUNT_ENDPOINTS = {
+  ACCOUNTOVERVIEW: `${API_BASE_URL}/api/account/accountoverview`,
+};

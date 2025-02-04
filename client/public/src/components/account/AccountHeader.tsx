@@ -21,8 +21,8 @@ export default function AccountHeader() {
   const role = isAdmin ? "Admin" : "User";
 
   return (
-    <div className="flex justify-between items-center w-full p-4 pt-8 bg-gray-900">
-      <div className="space-y-1">
+    <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 w-full p-4 pt-8 bg-gray-900">
+      <div className="flex flex-col items-center md:items-start space-y-1">
         <p className="text-xl text-cyan-200">Welcome {username}!</p>
         <p className="text-cyan-400">{email}</p>
         <p className="text-cyan-600">{role}</p>

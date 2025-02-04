@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
@@ -86,28 +85,6 @@ const verifyAccount = async (req, res) => {
       }
       return res.status(400).json({ message: "Verification code is wrong", success: false });
     }
-
-    // if (!user.verified) {
-    //   if (!compairson) {
-    //     const verificationCodeSent = await sendEmail(
-    //       email,
-    //       "Authecho",
-    //       `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code during the sign up process. Return to the sign up page and enter the code and you are all set!`,
-    //       newVerificationCode
-    //     );
-
-    //     if (!verificationCodeSent) {
-    //       return res.status(500).json({ message: "Email error", success: false });
-    //     }
-    //     return res.status(400).json({ message: "Verification code is wrong", success: false });
-    //   }
-    // } else {
-    //   if (!compairson) {
-    //     user.blocked = true;
-    //     await user.save();
-    //     return res.status(400).json({ message: "Verification code is wrong", success: false });
-    //   }
-    // }
 
     user.blocked = false;
     await user.save();

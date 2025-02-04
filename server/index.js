@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const AuthRouter = require("./routes/AuthRouter");
+const AccountRouter = require("./routes/AccountRouter");
 const ConnectRouter = require("./routes/ConnectRouter");
 const AppRouter = require("./routes/AppRouter");
 const cookieParser = require("cookie-parser");
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use("/auth", restrictedCors, ensureApiKey, AuthRouter);
+app.use("/account", restrictedCors, ensureAuthenticated, AccountRouter);
 app.use("/connect", restrictedCors, ensureApiKey, ensureAuthenticated, ConnectRouter);
 app.use("/app", openCors, verifyAppCredentials, AppRouter);
 
