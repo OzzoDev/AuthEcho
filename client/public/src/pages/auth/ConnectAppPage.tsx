@@ -7,6 +7,14 @@ import Modal from "../../components/utils/Modal";
 import SecretText from "../../components/utils/SecretText";
 import SecondaryBtnCheck from "../../components/btn/SecondaryBtnCheck";
 import useClipboard from "../../hooks/useClipboard";
+import ConnectCommand from "../../components/connect/ConnectCommand";
+
+const INSTALLATION_COMMANDS = [
+  "npm install authecho-sdk",
+  "authecho-sdk",
+  "npm run install:all",
+  "npm start",
+];
 
 export default function ConnectAppPage() {
   const { copyToClipboard } = useClipboard();
@@ -25,6 +33,10 @@ export default function ConnectAppPage() {
       copyToClipboard(appKey);
     }
     setKeyIsCopied((prev) => !prev);
+  };
+
+  const handleCopyAllCommands = () => {
+    copyToClipboard(INSTALLATION_COMMANDS.join(" "));
   };
 
   useEffect(() => {
@@ -68,6 +80,19 @@ export default function ConnectAppPage() {
         />
         {keyIsCopied && <p className="text-green-400 text-center">APi key copied to clipboard </p>}
       </Modal>
+      <section className="w-full flex flex-col items-center gap-y-[50px]">
+        <h2 className="text-4xl text-center max-w-[90%] text-sky-200">Installation guide</h2>
+        <SecondaryBtnCheck
+          btnText="Copy all"
+          onClick={handleCopyAllCommands}
+          checkedIcon={<IoMdCheckmark size={24} />}
+        />
+        <ul className="flex flex-col items-center gap-y-10 w-full">
+          {INSTALLATION_COMMANDS.map((command, index) => {
+            return <ConnectCommand key={index} text={command} order={index + 1} />;
+          })}
+        </ul>
+      </section>
     </div>
   );
 }
