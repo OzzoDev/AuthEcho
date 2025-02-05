@@ -12,9 +12,10 @@ interface Props {
   connectData: ConnectRequest;
   setConnectData: (connectData: ConnectRequest) => void;
   setAppKey: (key: string) => void;
+  setAppName: (appName: string) => void;
 }
 
-function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
+function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Props) {
   const { username, isAuthenticated } = useAuthStore();
   const { formError, formStatus } = useFormStore(true);
   const { fetchData: connectApp } = useApi("POST", "JOIN");
@@ -29,15 +30,31 @@ function ConnectForm({ connectData, setConnectData, setAppKey }: Props) {
     setConnectData(updatedConnectData);
   };
 
+  const resetForm = () => {
+    setConnectData({
+      appName: "",
+      origin: "http://localhost:3001",
+      admin: username || "",
+      appDescription: "",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const response = await connectApp(true, connectData);
 
     if (response) {
       const appKeyReceived = response.data.appKey;
+      const appNameReceived = response.data.appName;
       if (appKeyReceived) {
         setAppKey(appKeyReceived);
       }
+
+      if (appNameReceived) {
+        setAppName(appNameReceived);
+      }
+
+      resetForm();
     }
   };
 

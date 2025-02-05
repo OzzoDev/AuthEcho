@@ -11,7 +11,7 @@ import { PiUserCheck } from "react-icons/pi";
 import OutlineBtn from "../../btn/OutlineBtn";
 
 export default function OverviewPanel() {
-  const { status, responseData, updateCurrentTab } = useAccountStore();
+  const { status, responseData, updateCurrentTab } = useAccountStore(true);
   useAccountApi("GET", "ACCOUNTOVERVIEW", true);
 
   if (status === "loading") {
@@ -59,11 +59,13 @@ export default function OverviewPanel() {
           integrated with the Authecho SDK. These applications are under your full control, allowing
           for customization as needed with the SDK.
         </p>
-        <OutlineBtn
-          btnText="See more"
-          onClick={() => updateCurrentTab("My apps")}
-          icon={<GoArrowRight size={24} />}
-        />
+        <div className="mt-auto">
+          <OutlineBtn
+            btnText="See more"
+            onClick={() => updateCurrentTab("My apps")}
+            icon={<GoArrowRight size={24} />}
+          />
+        </div>
       </DataCard>
       <DataCard data={adminApps} label="Managed Applications" icon={<GrUserAdmin size={24} />}>
         <p className="text-gray-300">
@@ -71,11 +73,13 @@ export default function OverviewPanel() {
           these applications, you are granted admin permissions, enabling you to manage content,
           oversee products, and view traffic reports associated with the application.
         </p>
-        <OutlineBtn
-          btnText="See more"
-          onClick={() => updateCurrentTab("Administered apps")}
-          icon={<GoArrowRight size={24} />}
-        />
+        <div className="mt-auto">
+          <OutlineBtn
+            btnText="See more"
+            onClick={() => updateCurrentTab("Administered apps")}
+            icon={<GoArrowRight size={24} />}
+          />
+        </div>
       </DataCard>
       <DataCard
         data={appConnections}
@@ -86,11 +90,13 @@ export default function OverviewPanel() {
           account. It includes both newly signed-in applications and those you have created and
           connected to Authecho, as well as applications where you have been granted admin access.
         </p>
-        <OutlineBtn
-          btnText="See more"
-          onClick={() => updateCurrentTab("Active Connections")}
-          icon={<GoArrowRight size={24} />}
-        />
+        <div className="mt-auto">
+          <OutlineBtn
+            btnText="See more"
+            onClick={() => updateCurrentTab("Active Connections")}
+            icon={<GoArrowRight size={24} />}
+          />
+        </div>
       </DataCard>
       <DataCard data={rememberMessage} label="Am I Remembered?" icon={<PiUserCheck size={30} />}>
         <p className="text-gray-300">

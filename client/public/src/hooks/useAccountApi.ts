@@ -33,7 +33,9 @@ const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase, callOnRend
         updateStatus("success");
       }
 
-      updateResponseData(response.data);
+      if (method === "GET") {
+        updateResponseData(response.data);
+      }
 
       return response;
     } catch (error: unknown) {

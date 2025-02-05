@@ -15,23 +15,23 @@ const accountOverview = async (req, res) => {
 
     const lastLogin = user.lastLogin;
     const createdAt = user.createdAt;
+    const securityQuestion = user.securityQuestion;
     const isRemembered = rememberUser ? true : false;
     const createdApps = user.createdApps;
     const adminApps = user.adminApps;
     const appConnections = user.appConnections;
 
-    res
-      .status(200)
-      .json({
-        message: "Success",
-        success: true,
-        createdAt,
-        lastLogin,
-        isRemembered,
-        createdApps,
-        adminApps,
-        appConnections,
-      });
+    res.status(200).json({
+      message: "Success",
+      success: true,
+      securityQuestion,
+      createdAt,
+      lastLogin,
+      isRemembered,
+      createdApps,
+      adminApps,
+      appConnections,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);

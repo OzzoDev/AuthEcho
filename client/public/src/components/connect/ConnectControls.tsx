@@ -26,6 +26,7 @@ export default function ConnectControls() {
     appDescription: "",
   });
   const [appKey, setAppKey] = useState<string>("");
+  const [appName, setAppName] = useState<string>("");
   const [keyIsCopied, setKeyIsCopied] = useState<boolean>(false);
 
   const handleCopyKey = () => {
@@ -58,10 +59,11 @@ export default function ConnectControls() {
         connectData={connectData}
         setConnectData={setConnectData}
         setAppKey={setAppKey}
+        setAppName={setAppName}
       />
       <Modal show={!!appKey} onClose={() => setAppKey("")}>
         <h2 className="text-xl">
-          App <span className="text-gray-400">{connectData.appName}</span> connected successfully
+          App <span className="text-gray-400">{appName}</span> connected successfully
         </h2>
         <p className="text-green-500">Your API key</p>
         <div className="flex space-x-4">

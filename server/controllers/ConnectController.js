@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const AppModel = require("../models/App");
 const { hex32BitKey } = require("../utils/crypto");
-const { addCreatedApp } = require("../services/userService");
+const { addCreatedApp, addAdminApp, addAppConnection } = require("../services/userService");
 
 const join = async (req, res) => {
   const { appName, origin, admin, appDescription } = req.body;
@@ -43,8 +43,12 @@ const join = async (req, res) => {
     await appModel.save();
 
     await addCreatedApp(user.name, appName);
+    await addAdminApp(user.name, appName);
+    await addAppConnection(user.name, appName);
 
-    res.status(201).json({ message: "Successfully joined app", success: true, appKey: key });
+    res
+      .status(201)
+      .json({ message: "Successfully joined app", success: true, appKey: key, appName });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);

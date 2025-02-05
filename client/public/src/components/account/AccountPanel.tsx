@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useAccountStore from "../../hooks/useAccountStore";
 import OverviewPanel from "./overview/OverviewPanel";
+import SettingsPanel from "./settings/SettingsPanel";
 
 export default function AccountPanel() {
   const { currentTab } = useAccountStore();
@@ -13,7 +14,7 @@ export default function AccountPanel() {
     case "Overview":
       return <OverviewPanel />;
     case "Settings":
-      return <h1>Settings tab</h1>;
+      return <SettingsPanel />;
     case "Apps":
       return <h1>Apps tab</h1>;
     case "Users":

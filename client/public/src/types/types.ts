@@ -9,6 +9,7 @@ export type ApiResponse = {
   question?: string;
   questions?: string[];
   appKey?: string;
+  appName?: string;
   isBlocked?: boolean;
 };
 
@@ -95,6 +96,7 @@ export type AccountResponse = {
   success: boolean;
   createdAt?: string;
   lastLogin?: string;
+  securityQuestion?: string;
   isRemembered?: string;
   createdApps?: string[];
   adminApps?: string[];
@@ -102,3 +104,8 @@ export type AccountResponse = {
 };
 
 export type AccountApiUseCase = "ACCOUNTOVERVIEW";
+
+export type SecretUserData = {
+  password: string;
+  securityQuestion: string;
+};

@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { AccountRequest, AccountResponse, AccountTabName, FetchStatus } from "../types/types";
 import {
   reset,
@@ -11,10 +11,15 @@ import {
   setStatus,
 } from "../store/accountSlice";
 
-const useAccountStore = () => {
+const useAccountStore = (shouldReset?: boolean) => {
   const dispatch = useDispatch();
-
   const accountState = useSelector((state: RootState) => state.account);
+
+  useEffect(() => {
+    if (shouldReset) {
+      dispatch(reset());
+    }
+  }, [shouldReset, dispatch]);
 
   const updateStatus = useCallback(
     (status: FetchStatus) => {

@@ -41,7 +41,6 @@ const formSlice = createSlice({
       state.error = "";
       state.requestData = {};
       state.responseData = { message: "", success: false };
-      state.currentTab = "Overview";
     },
   },
 });
