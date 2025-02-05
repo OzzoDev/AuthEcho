@@ -7,7 +7,9 @@ function getEmailText(action, name) {
     case "verifyPassword":
       return `Hello ${name}! Here is the verification code to reset your password`;
     case "unlockAccount":
-      return `Hello ${name}! Here is the verification code to unlock your account `;
+      return `Hello ${name}! Here is the verification code to unlock your account`;
+    case "newEmail":
+      return `Hello ${name}! Here is the verification code to verify your new email`;
     default:
       break;
   }

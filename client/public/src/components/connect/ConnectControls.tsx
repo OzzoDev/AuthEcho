@@ -61,27 +61,31 @@ export default function ConnectControls() {
         setAppKey={setAppKey}
         setAppName={setAppName}
       />
-      <Modal show={!!appKey} onClose={() => setAppKey("")}>
-        <h2 className="text-xl">
-          App <span className="text-gray-400">{appName}</span> connected successfully
-        </h2>
-        <p className="text-green-500">Your API key</p>
-        <div className="flex space-x-4">
-          <SecretText text={appKey} />
-        </div>
-        <p className="text-gray-400 max-w-[250px]">
-          This key is displayed only once for your security. Please ensure that you store it in a
-          secure location for future reference.
-        </p>
-        <SecondaryBtnCheck
-          btnText="Copy API key"
-          fontSize="sm"
-          width="w-full"
-          checkedIcon={<IoMdCheckmark size={20} />}
-          onClick={handleCopyKey}
-        />
-        {keyIsCopied && <p className="text-green-400 text-center">APi key copied to clipboard </p>}
-      </Modal>
+      {!!appKey && (
+        <Modal onClose={() => setAppKey("")}>
+          <h2 className="text-xl">
+            App <span className="text-gray-400">{appName}</span> connected successfully
+          </h2>
+          <p className="text-green-500">Your API key</p>
+          <div className="flex space-x-4">
+            <SecretText text={appKey} />
+          </div>
+          <p className="text-gray-400 max-w-[250px]">
+            This key is displayed only once for your security. Please ensure that you store it in a
+            secure location for future reference.
+          </p>
+          <SecondaryBtnCheck
+            btnText="Copy API key"
+            fontSize="sm"
+            width="w-full"
+            checkedIcon={<IoMdCheckmark size={20} />}
+            onClick={handleCopyKey}
+          />
+          {keyIsCopied && (
+            <p className="text-green-400 text-center">APi key copied to clipboard </p>
+          )}
+        </Modal>
+      )}
       <section className="w-full flex flex-col items-center gap-y-[50px]">
         <h2 className="text-4xl text-center max-w-[90%] text-sky-200">Installation guide</h2>
         <h3 className="w-[90%] max-w-[600px] text-gray-300">

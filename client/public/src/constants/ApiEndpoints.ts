@@ -25,4 +25,11 @@ export const ENDPOINTS = {
 
 export const ACCOUNT_ENDPOINTS = {
   ACCOUNTOVERVIEW: `${API_BASE_URL}/api/account/accountoverview`,
+  REQUESTEMAILCODE: `${API_BASE_URL}/api/account/requestemailcode`,
+  UPDATENAME: `${API_BASE_URL}/api/account/updatename`,
+  UPDATEEMAIL: `${API_BASE_URL}/api/account/updateemail`,
+  UPDATEPASSWORD: `${API_BASE_URL}/api/account/updatepassword`,
+  UPDATESECURITYQUESTION: `${API_BASE_URL}/api/account/updatesecurityquestion`,
+  UPDATESECURITYQUESTIONANSWER: `${API_BASE_URL}/api/account/updatesecurityquestionanswer`,
+  SECURITYQUESTIONS: `${API_BASE_URL}/api/auth/securityquestions`,
 };

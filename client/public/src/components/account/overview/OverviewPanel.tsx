@@ -9,29 +9,42 @@ import { GoArrowRight, GoInbox } from "react-icons/go";
 import { IoIosGitNetwork } from "react-icons/io";
 import { PiUserCheck } from "react-icons/pi";
 import OutlineBtn from "../../btn/OutlineBtn";
+import { useEffect, useState } from "react";
+import { AccountResponse } from "../../../types/types";
 
 export default function OverviewPanel() {
-  const { status, responseData, updateCurrentTab } = useAccountStore(true);
-  useAccountApi("GET", "ACCOUNTOVERVIEW", true);
+  const { status, updateCurrentTab } = useAccountStore(true);
+  const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
+  const [accountOverview, setAccountOverview] = useState<AccountResponse>();
+
+  useEffect(() => {
+    const getAccountOverview = async () => {
+      const response = await fetchAccountOverview();
+      if (response) {
+        setAccountOverview(response.data);
+      }
+    };
+    getAccountOverview();
+  }, []);
 
   if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 
-  const rememberMessage = responseData.isRemembered
+  const rememberMessage = accountOverview?.isRemembered
     ? "Your are remembered"
     : "Your are not remembered";
 
-  const adminApps = String(responseData.adminApps ? responseData.adminApps.length : 0);
-  const createdApps = String(responseData.createdApps ? responseData.createdApps.length : 0);
+  const adminApps = String(accountOverview?.adminApps ? accountOverview.adminApps.length : 0);
+  const createdApps = String(accountOverview?.createdApps ? accountOverview.createdApps.length : 0);
   const appConnections = String(
-    responseData.appConnections ? responseData.appConnections.length : 0
+    accountOverview?.appConnections ? accountOverview.appConnections.length : 0
   );
 
   return (
     <div className="flex flex-wrap justify-center p-20 gap-20  w-full">
       <DataCard
-        data={responseData.createdAt || ""}
+        data={accountOverview?.createdAt || ""}
         label="Date of Account Creation"
         icon={<IoCalendarOutline size={24} />}>
         <p className="text-gray-300">
@@ -41,7 +54,7 @@ export default function OverviewPanel() {
         </p>
       </DataCard>
       <DataCard
-        data={responseData.lastLogin || ""}
+        data={accountOverview?.lastLogin || ""}
         label="Most Recent Login"
         icon={<FaRegClock size={24} />}>
         <p className="text-gray-300">

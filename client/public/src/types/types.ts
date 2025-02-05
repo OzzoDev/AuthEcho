@@ -87,8 +87,10 @@ export type AccountRequest = {
   name?: string;
   email?: string;
   securityQuestion?: string;
+  securityQuestionAnswer?: string;
   password?: string;
   confirmPassword?: string;
+  verificationCode?: string;
 };
 
 export type AccountResponse = {
@@ -101,11 +103,21 @@ export type AccountResponse = {
   createdApps?: string[];
   adminApps?: string[];
   appConnections?: string[];
+  questions?: string[];
 };
 
-export type AccountApiUseCase = "ACCOUNTOVERVIEW";
+export type AccountApiUseCase =
+  | "ACCOUNTOVERVIEW"
+  | "REQUESTEMAILCODE"
+  | "UPDATENAME"
+  | "UPDATEEMAIL"
+  | "UPDATEPASSWORD"
+  | "UPDATESECURITYQUESTION"
+  | "UPDATESECURITYQUESTIONANSWER"
+  | "SECURITYQUESTIONS";
 
 export type SecretUserData = {
   password: string;
   securityQuestion: string;
+  securityQuestionAnswer: string;
 };

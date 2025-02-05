@@ -6,7 +6,9 @@ interface Props {
   type?: "text" | "email" | "password";
   name: string;
   value: string;
+  placeholder?: string;
   label: string;
+  btnText?: string;
   children?: ReactNode;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void | Promise<void>;
@@ -16,7 +18,9 @@ export default function UpdateDataForm({
   type = "text",
   name,
   value,
+  placeholder = "",
   label,
+  btnText = "Update",
   children,
   onChange,
   onSubmit,
@@ -29,13 +33,14 @@ export default function UpdateDataForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col md:flex-row items-center md:items-end gap-y-4 md:gap-y-0 w-[90%] max-w-[400px]">
-      <div className="flex flex-col gap-y-6 w-full px-6 py-2">
+      className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-y-0 w-[90%] max-w-[600px]">
+      <div className="flex flex-col gap-y-6 w-full py-2">
         <label className="text-xl">{label}</label>
         <input
           type={type}
           name={name}
           value={value}
+          placeholder={placeholder}
           autoComplete="off"
           autoCorrect="off"
           spellCheck="false"
@@ -45,7 +50,7 @@ export default function UpdateDataForm({
         />
         {children && <>{children}</>}
       </div>
-      <PrimaryBtn btnText="Update" type="submit" icon={<IoMdCheckmark />} />
+      <PrimaryBtn btnText={btnText} type="submit" icon={<IoMdCheckmark size={24} />} />
     </form>
   );
 }

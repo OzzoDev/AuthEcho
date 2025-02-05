@@ -5,7 +5,7 @@ import useOutsideClick from "../../hooks/useOutsideClick";
 
 interface Props {
   items: string[];
-  onSelect: (question: string) => void;
+  onSelect: (question: string) => void | Promise<void>;
 }
 
 export default function Dropdown({ items, onSelect }: Props) {
@@ -28,7 +28,7 @@ export default function Dropdown({ items, onSelect }: Props) {
       style={style}
       onClick={() => handleQuestionClick(items[index])}
       role="option"
-      className="drop-down-list-item">
+      className="transition-all duration-300 ease-in-out cursor-pointer hover:text-cyan-400 focus:text-cyan-400">
       {items[index]}
     </li>
   );
@@ -38,8 +38,10 @@ export default function Dropdown({ items, onSelect }: Props) {
   });
 
   return (
-    <div className="dropdown bg-slate-800" ref={dropdownRef}>
-      <button type="button" onClick={toggleDropdown} className="dropdown-toggle">
+    <div
+      className="relative isolate flex flex-row-reverse justify-between items-center w-full py-[10px] px-[20px] rounded-[20px] bg-slate-800"
+      ref={dropdownRef}>
+      <button type="button" onClick={toggleDropdown} className="">
         {isOpen ? (
           <FaChevronUp size={25} color="#fafffd" />
         ) : (
@@ -47,8 +49,8 @@ export default function Dropdown({ items, onSelect }: Props) {
         )}
       </button>
       {isOpen ? (
-        <div className="dropdown-list-wrapper bg-slate-800">
-          <ul role="listbox" onClick={(e) => e.stopPropagation()} className="drop-down-list">
+        <div className="absolute z-1 w-full min-h-[300px] px-[20px] py-[20px] pr-[10px] rounded-[20px] top-0 left-0 overflow-y-auto bg-slate-800">
+          <ul role="listbox" onClick={(e) => e.stopPropagation()} className="w-full">
             <List height={300} itemCount={items.length} itemSize={70} width="100%">
               {renderRow}
             </List>

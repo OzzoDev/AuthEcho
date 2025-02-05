@@ -2,7 +2,7 @@ import ConnectControls from "../../components/connect/ConnectControls";
 
 export default function ConnectAppPage() {
   return (
-    <div className="grid grid-cols-[1fr] xl:grid-rows-[auto_auto_auto] xl:grid-cols-[20%_60%_20%]">
+    <div className="relative grid grid-cols-[1fr] xl:grid-rows-[auto_auto_auto] xl:grid-cols-[20%_60%_20%]">
       <section className="row-start-2 xl:row-auto space-y-10 p-10 xl:p-4 xl:border-r-[1px]">
         <h2 className="text-xl text-sky-300 font-semibold">
           Benefits of Developing with Authecho's SDK

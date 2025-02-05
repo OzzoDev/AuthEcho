@@ -13,7 +13,7 @@ export default function DataCard({ data, label, icon, children }: Props) {
       <div className="flex justify-between">
         <div className="flex flex-col gap-y-4">
           <p className="text-cyan-200 text-lg">{label}</p>
-          <p className="text-green-400">{data}</p>
+          <p className="text-green-400 bg-slate-800 w-fit px-2 py-1 rounded-full">{data}</p>
         </div>
         {icon}
       </div>

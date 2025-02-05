@@ -3,10 +3,11 @@ import { ACCOUNT_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
 import { AccountApiUseCase, AccountResponse, ApiMethod, ApiResponse } from "../types/types";
 import useAccountStore from "./useAccountStore";
-import { useEffect } from "react";
+import useAuthStore from "./useAuthStore";
 
-const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase, callOnRender?: boolean) => {
-  const { requestData, updateStatus, updateError, updateResponseData } = useAccountStore();
+const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase) => {
+  const { username } = useAuthStore();
+  const { requestData, updateStatus, updateError } = useAccountStore();
 
   const url = ACCOUNT_ENDPOINTS[useCase];
 
@@ -23,7 +24,7 @@ const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase, callOnRend
         headers: {
           "Content-Type": "application/json",
         },
-        ...(method !== "GET" && { data: requestData }),
+        ...(method !== "GET" && { data: { ...requestData, user: username } }),
         withCredentials: true,
       };
 
@@ -31,10 +32,6 @@ const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase, callOnRend
 
       if (trackState) {
         updateStatus("success");
-      }
-
-      if (method === "GET") {
-        updateResponseData(response.data);
       }
 
       return response;
@@ -45,15 +42,6 @@ const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase, callOnRend
       return null;
     }
   };
-
-  useEffect(() => {
-    const triggerCallApi = async () => {
-      await callApi();
-    };
-    if (callOnRender) {
-      triggerCallApi();
-    }
-  }, []);
 
   return { callApi };
 };
