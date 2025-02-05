@@ -35,6 +35,7 @@ const join = async (req, res) => {
       name: appName,
       origin,
       description: appDescription ? appDescription : "",
+      creator: admin,
       admins: [admin],
       key,
     });

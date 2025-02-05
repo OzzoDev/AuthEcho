@@ -28,6 +28,21 @@ export default function ConnectControls() {
   const [appKey, setAppKey] = useState<string>("");
   const [appName, setAppName] = useState<string>("");
   const [keyIsCopied, setKeyIsCopied] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (showModal) {
+      setShowModal(false);
+    }
+  }, [connectData]);
+
+  useEffect(() => {
+    if (appKey) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
+    }
+  }, [appKey]);
 
   const handleCopyKey = () => {
     if (!keyIsCopied) {
@@ -61,7 +76,7 @@ export default function ConnectControls() {
         setAppKey={setAppKey}
         setAppName={setAppName}
       />
-      {!!appKey && (
+      {showModal && (
         <Modal onClose={() => setAppKey("")}>
           <h2 className="text-xl">
             App <span className="text-gray-400">{appName}</span> connected successfully

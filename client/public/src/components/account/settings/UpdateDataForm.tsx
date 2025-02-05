@@ -2,7 +2,6 @@ import React, { ReactNode, useEffect, useState } from "react";
 import PrimaryBtn from "../../btn/PrimaryBtn";
 import { IoMdCheckmark } from "react-icons/io";
 import { FiEyeOff, FiEye } from "react-icons/fi";
-import DeleteBtn from "../../btn/DangerBtn";
 import DangerBtn from "../../btn/DangerBtn";
 import { IoTrashOutline } from "react-icons/io5";
 

@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const AppModel = require("../models/App");
 
 const findUser = async (identifier) => {
   return await User.findOne({
@@ -79,6 +80,27 @@ const addAppConnection = async (identifier, app) => {
   }
 };
 
+const getAppsByNames = async (namesArray) => {
+  try {
+    const promises = namesArray.map(async (name) => {
+      const apps = await AppModel.findOne({ name: name });
+      return apps;
+    });
+
+    const results = await Promise.all(promises);
+    const foundApps = results.map((app) => ({
+      name: app.name,
+      origin: app.origin,
+      description: app.description,
+      creator: app.creator,
+      admins: app.admins,
+    }));
+    return foundApps;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   changeName,
   changeEmail,
@@ -88,4 +110,5 @@ module.exports = {
   addCreatedApp,
   addAdminApp,
   addAppConnection,
+  getAppsByNames,
 };

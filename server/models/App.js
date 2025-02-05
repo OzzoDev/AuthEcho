@@ -10,6 +10,10 @@ const AppSchema = new Schema({
     type: String,
     required: true,
   },
+  creator: {
+    type: String,
+    required: true,
+  },
   admins: {
     type: [String],
     required: true,

@@ -93,7 +93,7 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
         </p>
       </DescriptiveInput>
       <DescriptiveInput
-        labelText="Name"
+        labelText="Description"
         type="textarea"
         name="appDescription"
         value={connectData.appDescription}

@@ -101,9 +101,9 @@ export type AccountResponse = {
   lastLogin?: string;
   securityQuestion?: string;
   isRemembered?: string;
-  createdApps?: string[];
-  adminApps?: string[];
-  appConnections?: string[];
+  createdApps?: AuthechoApp[];
+  adminApps?: AuthechoApp[];
+  appConnections?: AuthechoApp[];
   questions?: string[];
 };
 
@@ -119,8 +119,10 @@ export type AccountApiUseCase =
   | "SECURITYQUESTIONS"
   | "DELETEACCOUNT";
 
-export type SecretUserData = {
-  password: string;
-  securityQuestion: string;
-  securityQuestionAnswer: string;
+export type AuthechoApp = {
+  name: string;
+  origin: string;
+  creator: string;
+  admins: string[];
+  description: string;
 };

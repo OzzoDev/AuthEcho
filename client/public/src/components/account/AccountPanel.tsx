@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useAccountStore from "../../hooks/useAccountStore";
 import OverviewPanel from "./overview/OverviewPanel";
 import SettingsPanel from "./settings/SettingsPanel";
+import CreatedAppsPanel from "./createdApps/CreatedAppsPanel";
 
 export default function AccountPanel() {
   const { currentTab } = useAccountStore();
@@ -24,7 +25,7 @@ export default function AccountPanel() {
     case "Reported issues":
       return <h1>Reported issues tab</h1>;
     case "My apps":
-      return <h1>My apps tab</h1>;
+      return <CreatedAppsPanel />;
     case "Administered apps":
       return <h1>Administered apps tab</h1>;
     case "Active Connections":

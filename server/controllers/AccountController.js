@@ -7,6 +7,7 @@ const {
   changePassword,
   changeSecurityQuestionAnswer,
   changeSecurityQuestion,
+  getAppsByNames,
 } = require("../services/userService");
 
 const REMEMBER_USER_KEY = "rememberUser";
@@ -29,9 +30,9 @@ const accountOverview = async (req, res) => {
     const createdAt = user.createdAt;
     const securityQuestion = user.securityQuestion;
     const isRemembered = rememberUser ? true : false;
-    const createdApps = user.createdApps;
-    const adminApps = user.adminApps;
-    const appConnections = user.appConnections;
+    const createdApps = await getAppsByNames(user.createdApps);
+    const adminApps = await getAppsByNames(user.adminApps);
+    const appConnections = await getAppsByNames(user.appConnections);
 
     res.status(200).json({
       message: "Success",
