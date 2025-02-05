@@ -33,9 +33,9 @@ export default function UpdateDataForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-y-0 w-[90%] max-w-[600px]">
-      <div className="flex flex-col gap-y-6 w-full py-2">
-        <label className="text-xl">{label}</label>
+      className="flex flex-col items-center md:items-start gap-4 md:gap-y-0 w-[90%] max-w-[600px]">
+      <label className="text-xl">{label}</label>
+      <div className="flex flex-col md:flex-row items-center gap-6 w-full py-2">
         <input
           type={type}
           name={name}
@@ -48,9 +48,9 @@ export default function UpdateDataForm({
           onChange={onChange}
           className="w-full border-0 outline-0 border-b-[1px] border-cyan-300 bg-transparent text-sky-300"
         />
-        {children && <>{children}</>}
+        <PrimaryBtn btnText={btnText} type="submit" icon={<IoMdCheckmark size={24} />} />
       </div>
-      <PrimaryBtn btnText={btnText} type="submit" icon={<IoMdCheckmark size={24} />} />
+      {children && <>{children}</>}
     </form>
   );
 }

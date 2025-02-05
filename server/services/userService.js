@@ -12,6 +12,7 @@ const changeName = async (identifier, name) => {
   if (user) {
     user.name = name;
     await user.save();
+    return user;
   }
 };
 
@@ -20,6 +21,7 @@ const changeEmail = async (identifier, email) => {
   if (user) {
     user.email = email;
     await user.save();
+    return user;
   }
 };
 
@@ -28,6 +30,7 @@ const changePassword = async (identifier, password) => {
   if (user) {
     user.password = await bcrypt.hash(password, 10);
     await user.save();
+    return user;
   }
 };
 
@@ -36,6 +39,7 @@ const changeSecurityQuestion = async (identifier, securityQuestion) => {
   if (user) {
     user.securityQuestion = securityQuestion;
     await user.save();
+    return user;
   }
 };
 
@@ -44,6 +48,7 @@ const changeSecurityQuestionAnswer = async (identifier, securityQuestionAnswer) 
   if (user) {
     user.securityQuestionAnswer = await bcrypt.hash(securityQuestionAnswer, 10);
     await user.save();
+    return user;
   }
 };
 
@@ -52,6 +57,7 @@ const addCreatedApp = async (identifier, app) => {
   if (user) {
     user.createdApps.addToSet(app);
     await user.save();
+    return user;
   }
 };
 
@@ -60,6 +66,7 @@ const addAdminApp = async (identifier, app) => {
   if (user) {
     user.adminApps.addToSet(app);
     await user.save();
+    return user;
   }
 };
 
@@ -68,6 +75,7 @@ const addAppConnection = async (identifier, app) => {
   if (user) {
     user.appConnections.addToSet(app);
     await user.save();
+    return user;
   }
 };
 

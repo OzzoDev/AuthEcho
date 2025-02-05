@@ -15,7 +15,6 @@ export default function FormInput({ labelText, name, type = "text", onChange }: 
   useEffect(() => {
     const allInputs = document.querySelectorAll("input");
     if (allInputs.length > 0 && allInputs[0] === inputRef.current) {
-      console.log("Focusing first input...");
       inputRef.current?.focus();
     }
   }, []);

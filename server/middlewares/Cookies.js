@@ -8,8 +8,6 @@ const REMEMBER_USER_KEY = "rememberUser";
 const setCookies = (req, res) => {
   const { user, rememberUser, statusCode, message } = req.body;
 
-  console.log("Shold be remembered?: ", rememberUser);
-
   const sessionDuration = req.headers["user-session-duration"];
 
   const tokenExpiration = rememberUser ? (sessionDuration ? `${sessionDuration}h` : "1y") : "1h";

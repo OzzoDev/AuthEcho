@@ -105,15 +105,15 @@ const validateNewPassword = async (password, confirmpassword, currentPassword) =
 };
 
 const emailValidation = (req, res, next) => {
-  const { newEmail } = req.body;
+  const { email } = req.body;
   const schema = Joi.object({
-    newEmail: Joi.string().email().required(),
+    email: Joi.string().email().required(),
   });
 
-  const { error } = schema.validate({ newEmail });
+  const { error } = schema.validate({ email });
 
   if (error) {
-    return res.status(400).json({ message: "New email is invalid", error });
+    return res.status(400).json({ message: "Email is invalid", error });
   }
 
   next();

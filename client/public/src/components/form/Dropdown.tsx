@@ -43,9 +43,9 @@ export default function Dropdown({ items, onSelect }: Props) {
       ref={dropdownRef}>
       <button type="button" onClick={toggleDropdown} className="">
         {isOpen ? (
-          <FaChevronUp size={25} color="#fafffd" />
+          <FaChevronUp size={22} color="#fafffd" />
         ) : (
-          <FaChevronDown size={25} color="#fafffd" />
+          <FaChevronDown size={22} color="#fafffd" />
         )}
       </button>
       {isOpen ? (

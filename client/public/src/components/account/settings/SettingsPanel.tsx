@@ -2,26 +2,22 @@ import { HashLoader } from "react-spinners";
 import useAccountApi from "../../../hooks/useAccountApi";
 import useAccountStore from "../../../hooks/useAccountStore";
 import useAuthStore from "../../../hooks/useAuthStore";
-import UpdateInput from "./UpdateDataForm";
 import { useEffect, useState } from "react";
-import { AccountRequest, SecretUserData } from "../../../types/types";
 import UpdateDataDropDown from "./UpdateDataDropDown";
 import Modal from "../../utils/Modal";
 import UpdateDataForm from "./UpdateDataForm";
 
 export default function SettingsPanel() {
   const { username, email, updateUsername, updateEmail } = useAuthStore();
-  const { requestData, status, error, updateRequestData, updateError } = useAccountStore(true);
+  const { requestData, status, error, updateRequestData, updateError } = useAccountStore();
   const { callApi: fetchSecurityQuestions } = useAccountApi("GET", "SECURITYQUESTIONS");
-  const { callApi: updateName } = useAccountApi("PUT", "UPDATENAME");
-  //   const [secretUserData, setSecretUserData] = useState<SecretUserData>({
-  //     password: "",
-  //     securityQuestion: "",
-  //     securityQuestionAnswer: "",
-  //   });
+  const { callApi: requestEmailCode } = useAccountApi("POST", "REQUESTEMAILCODE");
+  const { callApi: renewName } = useAccountApi("PUT", "UPDATENAME");
+  const { callApi: renewEmail } = useAccountApi("PUT", "UPDATEEMAIL");
   const [securityQuestions, setSecurityQuestions] = useState<string[]>([]);
   const [latestUpdatedValue, setLatestUpdatedValue] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
 
   useEffect(() => {
     const getSecurityQuestions = async () => {
@@ -36,8 +32,6 @@ export default function SettingsPanel() {
   }, []);
 
   useEffect(() => {
-    console.log(latestUpdatedValue);
-
     if (latestUpdatedValue || error) {
       setShowModal(true);
     }
@@ -51,40 +45,40 @@ export default function SettingsPanel() {
 
   const handleUpdateUserData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    updateRequestData(name as keyof AccountRequest, value);
+    updateRequestData({ [name]: value });
     closeModal();
-    // switch (name) {
-    //   case "name":
-    //     updateUsername(value);
-    //     updateRequestData("name", value);
-    //     break;
-    //   case "email":
-    //     updateEmail(value);
-    //     break;
-    //   case "password":
-    //   case "securityQuestionAnswer":
-    //     const updatedSecretData = { ...secretUserData, [name]: value };
-    //     setSecretUserData(updatedSecretData);
-    //     break;
-    // }
   };
 
   const handleUpdateSecurityQuestion = (question: string) => {
-    updateRequestData("securityQuestion", question);
+    updateRequestData({ securityQuestion: question });
     closeModal();
   };
 
   const changeUsername = async () => {
-    const response = await updateName(true);
+    const response = await renewName(true);
     setLatestUpdatedValue("Username");
     if (response) {
       requestData.name && updateUsername(requestData.name);
-      updateRequestData("name", "");
+      updateRequestData({ name: "" });
     }
   };
 
-  const changeEmail = async () => {};
+  const getEmailCode = async () => {
+    const response = await requestEmailCode(true);
+    if (response) {
+      setVerifyEmail(true);
+    }
+  };
+
+  const changeEmail = async () => {
+    const response = await renewEmail(true);
+    setLatestUpdatedValue("Email");
+    if (response) {
+      requestData.email && updateEmail(requestData.email);
+      updateRequestData({ email: "", verificationCode: "" });
+      setVerifyEmail(false);
+    }
+  };
 
   const changePassword = async () => {};
 
@@ -107,14 +101,37 @@ export default function SettingsPanel() {
           onChange={handleUpdateUserData}
           onSubmit={changeUsername}
         />
-        <UpdateDataForm
-          label="Update email"
-          name="email"
-          value={requestData.email || ""}
-          placeholder={email}
-          onChange={handleUpdateUserData}
-          onSubmit={changeEmail}
-        />
+
+        {verifyEmail ? (
+          <UpdateDataForm
+            type="password"
+            label="Verify email"
+            name="verificationCode"
+            value={requestData.verificationCode || ""}
+            btnText="Verify"
+            onChange={handleUpdateUserData}
+            onSubmit={changeEmail}>
+            <p className="text-gray-300">
+              Please check the inbox of your new email address, {requestData.email}, for a
+              verification code.
+            </p>
+          </UpdateDataForm>
+        ) : (
+          <UpdateDataForm
+            type="email"
+            label="Update email"
+            name="email"
+            value={requestData.email || ""}
+            placeholder={email}
+            onChange={handleUpdateUserData}
+            onSubmit={getEmailCode}>
+            <p>
+              {Object.values(requestData).map((obj) => (
+                <p>{obj}</p>
+              ))}
+            </p>
+          </UpdateDataForm>
+        )}
         <UpdateDataForm
           label="Update password"
           name="password"

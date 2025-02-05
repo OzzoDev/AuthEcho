@@ -35,13 +35,10 @@ const useAccountStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
-  const updateRequestData = useCallback(
-    (name: keyof AccountRequest, value: string) => {
-      const updatedRequestData = { ...accountState.requestData, [name]: value };
-      dispatch(setRequestData(updatedRequestData));
-    },
-    [dispatch]
-  );
+  const updateRequestData = (subObj: AccountRequest) => {
+    const updatedRequestData = { ...accountState.requestData, ...subObj };
+    dispatch(setRequestData(updatedRequestData));
+  };
 
   const updateResponseData = useCallback(
     (responseData: AccountResponse) => {
