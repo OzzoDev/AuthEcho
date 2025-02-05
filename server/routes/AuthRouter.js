@@ -26,12 +26,11 @@ const {
   ensureVerificationCode,
   ensureSecurityQuestion,
 } = require("../middlewares/AuthValidation");
-const { setCookies, removeCookies, verifyAuthentication } = require("../middlewares/Cookies");
+const { setCookies, verifyAuthentication } = require("../middlewares/Cookies");
 
 const router = require("express").Router();
 
 router.get("/verifyauthentication", verifyAuthentication);
-router.get("/signout", removeCookies);
 router.post("/signup", newAccountValidation, signup);
 router.post("/signin", ensureVerificationCode, signin, setCookies);
 router.post("/verifyaccount", verifyAccount);

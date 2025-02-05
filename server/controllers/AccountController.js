@@ -236,6 +236,32 @@ const updateSecurityQuestion = async (req, res, next) => {
   }
 };
 
+const deleteAccount = async (req, res, next) => {
+  const { deleteCommand } = req.body;
+  const name = req.user.name;
+
+  try {
+    const isDeleteConfirmed = deleteCommand.toLowerCase() === `delete ${name.toLowerCase()}`;
+
+    if (!isDeleteConfirmed) {
+      return res
+        .status(400)
+        .json({ message: "Deletion failed due to the absence of confirmation", success: false });
+    }
+
+    const deleteResult = await UserModel.deleteOne({ name });
+
+    if (deleteResult.deletedCount === 0) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+    console.error(error);
+  }
+};
+
 module.exports = {
   accountOverview,
   requestEmailCode,
@@ -244,4 +270,5 @@ module.exports = {
   updatePassword,
   updateSecurityQuestionAnswer,
   updateSecurityQuestion,
+  deleteAccount,
 };

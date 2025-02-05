@@ -3,7 +3,6 @@ export const API_BASE_URL = "http://localhost:3001";
 export const ENDPOINTS = {
   SIGNUP: `${API_BASE_URL}/api/auth/signup`,
   SIGNIN: `${API_BASE_URL}/api/auth/signin`,
-  SIGNOUT: `${API_BASE_URL}/api/auth/signout`,
   VERIFYACCOUNT: `${API_BASE_URL}/api/auth/verifyaccount`,
   UPDATEEMAIL: `${API_BASE_URL}/api/auth/updateemail`,
   UPDATEUSERNAME: `${API_BASE_URL}/api/auth/updateusername`,
@@ -25,6 +24,7 @@ export const ENDPOINTS = {
 
 export const ACCOUNT_ENDPOINTS = {
   ACCOUNTOVERVIEW: `${API_BASE_URL}/api/account/accountoverview`,
+  SIGNOUT: `${API_BASE_URL}/api/account/signout`,
   REQUESTEMAILCODE: `${API_BASE_URL}/api/account/requestemailcode`,
   UPDATENAME: `${API_BASE_URL}/api/account/updatename`,
   UPDATEEMAIL: `${API_BASE_URL}/api/account/updateemail`,
@@ -32,4 +32,5 @@ export const ACCOUNT_ENDPOINTS = {
   UPDATESECURITYQUESTION: `${API_BASE_URL}/api/account/updatesecurityquestion`,
   UPDATESECURITYQUESTIONANSWER: `${API_BASE_URL}/api/account/updatesecurityquestionanswer`,
   SECURITYQUESTIONS: `${API_BASE_URL}/api/auth/securityquestions`,
+  DELETEACCOUNT: `${API_BASE_URL}/api/account/deleteaccount`,
 };

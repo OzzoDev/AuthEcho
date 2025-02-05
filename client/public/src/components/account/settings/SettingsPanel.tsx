@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 import UpdateDataDropDown from "./UpdateDataDropDown";
 import Modal from "../../utils/Modal";
 import UpdateDataForm from "./UpdateDataForm";
+import { useNavigate } from "react-router";
 
 export default function SettingsPanel() {
-  const { username, email, updateUsername, updateEmail } = useAuthStore();
+  const navigate = useNavigate();
+  const { username, email, updateUsername, updateEmail, clearAuth } = useAuthStore();
   const { requestData, status, error, updateRequestData, updateError } = useAccountStore();
   const { callApi: fetchSecurityQuestions } = useAccountApi("GET", "SECURITYQUESTIONS");
   const { callApi: fetchSecurityQuestion } = useAccountApi("GET", "ACCOUNTOVERVIEW");
@@ -21,6 +23,7 @@ export default function SettingsPanel() {
     "UPDATESECURITYQUESTIONANSWER"
   );
   const { callApi: renewSecurityQuestion } = useAccountApi("PUT", "UPDATESECURITYQUESTION");
+  const { callApi: deleteAccount } = useAccountApi("DELETE", "DELETEACCOUNT");
   const [securityQuestion, setSecurityQuestion] = useState<string>("");
   const [securityQuestions, setSecurityQuestions] = useState<string[]>([]);
   const [latestUpdatedValue, setLatestUpdatedValue] = useState<string>("");
@@ -30,14 +33,13 @@ export default function SettingsPanel() {
   useEffect(() => {
     const getAccountOverview = async () => {
       const response = await fetchSecurityQuestion();
-      console.log(response);
 
       if (response && response.data.securityQuestion) {
         setSecurityQuestion(response.data.securityQuestion);
       }
     };
     getAccountOverview();
-  }, [requestData]);
+  }, [requestData.securityQuestion]);
 
   useEffect(() => {
     const getSecurityQuestions = async () => {
@@ -124,13 +126,29 @@ export default function SettingsPanel() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const isComandValid =
+      requestData.deleteCommand?.toLowerCase() === `delete ${username.toLowerCase()}`;
+
+    if (isComandValid) {
+      const response = await deleteAccount(true);
+
+      if (response) {
+        clearAuth();
+        navigate("/signin");
+      }
+    } else {
+      updateError("Please provide the right delete command");
+    }
+  };
+
   if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 
   return (
-    <div className="relative w-full py-[100px]">
-      <div className="flex flex-col items-center gap-y-20">
+    <div className="relative flex flex-col items-center w-full py-[100px]">
+      <div className="flex flex-col items-center gap-y-20 w-full">
         <UpdateDataForm
           label="Update username"
           name="name"
@@ -188,6 +206,30 @@ export default function SettingsPanel() {
           onSubmit={changeSecurityQuestion}
         />
       </div>
+
+      <section className="flex flex-col items-center w-full mt-[80px]">
+        <fieldset className="mb-10 w-full border-t-2 border-red-700">
+          <legend className="text-xl font-semibold ml-10 py-1 px-4 rounded-full border-2 border-red-700">
+            Danger zone
+          </legend>
+        </fieldset>
+        <UpdateDataForm
+          label="Delete account"
+          name="deleteCommand"
+          value={requestData.deleteCommand || ""}
+          placeholder={`delete ${username}`}
+          isDangerous={true}
+          btnText="Delete"
+          onChange={handleUpdateUserData}
+          onSubmit={handleDeleteAccount}>
+          <p className="mt-4">
+            Please proceed with caution. If you choose to delete your account, there will be no way
+            to restore it. To delete your account, please type
+            <span className="text-red-400"> delete {username}</span> and then click the delete
+            button.
+          </p>
+        </UpdateDataForm>
+      </section>
 
       {showModal && (
         <Modal onClose={closeModal}>

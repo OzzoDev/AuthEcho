@@ -2,6 +2,9 @@ import React, { ReactNode, useEffect, useState } from "react";
 import PrimaryBtn from "../../btn/PrimaryBtn";
 import { IoMdCheckmark } from "react-icons/io";
 import { FiEyeOff, FiEye } from "react-icons/fi";
+import DeleteBtn from "../../btn/DangerBtn";
+import DangerBtn from "../../btn/DangerBtn";
+import { IoTrashOutline } from "react-icons/io5";
 
 type typeofInput = "text" | "email" | "password";
 
@@ -12,6 +15,7 @@ interface Props {
   placeholder?: string;
   label: string;
   btnText?: string;
+  isDangerous?: boolean;
   children?: ReactNode;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void | Promise<void>;
@@ -24,6 +28,7 @@ export default function UpdateDataForm({
   placeholder = "",
   label,
   btnText = "Update",
+  isDangerous = false,
   children,
   onChange,
   onSubmit,
@@ -45,7 +50,8 @@ export default function UpdateDataForm({
       className="flex flex-col items-center md:items-start gap-4 md:gap-y-0 w-[90%] max-w-[600px]">
       <label className="text-xl">{label}</label>
       <div className="flex flex-col md:flex-row items-center gap-6 w-full py-2">
-        <div className="flex w-full border-b-[1px] border-cyan-300">
+        <div
+          className={`flex w-full border-b-[1px] border-${isDangerous ? "red-600" : "cyan-300"}`}>
           <input
             type={inputType}
             name={name}
@@ -56,7 +62,9 @@ export default function UpdateDataForm({
             spellCheck="false"
             required
             onChange={onChange}
-            className="w-full border-0 outline-0 bg-transparent text-sky-300"
+            className={`w-full border-0 outline-0 bg-transparent text-${
+              isDangerous ? "red-400" : "sky-300"
+            }`}
           />
           {type === "password" && (
             <button
@@ -74,7 +82,11 @@ export default function UpdateDataForm({
             </button>
           )}
         </div>
-        <PrimaryBtn btnText={btnText} type="submit" icon={<IoMdCheckmark size={24} />} />
+        {isDangerous ? (
+          <DangerBtn btnText={btnText} type="submit" icon={<IoTrashOutline size={24} />} />
+        ) : (
+          <PrimaryBtn btnText={btnText} type="submit" icon={<IoMdCheckmark size={24} />} />
+        )}
       </div>
       {children && <>{children}</>}
     </form>

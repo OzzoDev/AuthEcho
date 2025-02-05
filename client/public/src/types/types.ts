@@ -91,6 +91,7 @@ export type AccountRequest = {
   password?: string;
   confirmPassword?: string;
   verificationCode?: string;
+  deleteCommand?: string;
 };
 
 export type AccountResponse = {
@@ -108,13 +109,15 @@ export type AccountResponse = {
 
 export type AccountApiUseCase =
   | "ACCOUNTOVERVIEW"
+  | "SIGNOUT"
   | "REQUESTEMAILCODE"
   | "UPDATENAME"
   | "UPDATEEMAIL"
   | "UPDATEPASSWORD"
   | "UPDATESECURITYQUESTION"
   | "UPDATESECURITYQUESTIONANSWER"
-  | "SECURITYQUESTIONS";
+  | "SECURITYQUESTIONS"
+  | "DELETEACCOUNT";
 
 export type SecretUserData = {
   password: string;

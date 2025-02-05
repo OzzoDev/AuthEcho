@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router";
-import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 import useAuthStore from "../../hooks/useAuthStore";
 import SecondaryBtn from "../btn/SecondaryBtn";
 import { HiMiniArrowLeftStartOnRectangle } from "react-icons/hi2";
+import useAccountApi from "../../hooks/useAccountApi";
 
 export default function AccountHeader() {
   const navigate = useNavigate();
   const { username, email, isAdmin, clearAuth } = useAuthStore();
-  const { fetchData: signOut } = useApi("GET", "SIGNOUT");
+  const { callApi: signOut } = useAccountApi("GET", "SIGNOUT");
 
   useAuth(() => navigate("/signin"));
 
   const handleSignOut = async () => {
-    await signOut();
+    await signOut(true);
     clearAuth();
     navigate("/signin");
   };

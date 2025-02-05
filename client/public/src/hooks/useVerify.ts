@@ -29,8 +29,6 @@ const useVerify = (formUsage: FormUsage, code: string) => {
               setFormStep(3);
             } else {
               const question = await userSecurityQuestion(true);
-              console.log("Question: ", question);
-
               if (question) {
                 setFormData({ securityQuestion: question.data.question }, "securityQuestion");
                 setFormState("resendCode");

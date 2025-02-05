@@ -95,7 +95,7 @@ const removeCookies = (_, res) => {
   res.cookie(JWT_TOKEN_KEY, "", cookieOptions);
   res.cookie(REMEMBER_USER_KEY, "", cookieOptions);
 
-  res.status(204).json({ message: "Signed out successfully", success: true });
+  res.status(204).json({ message: "Access lost successfully", success: true });
 };
 
 const removeAppCookies = (_, res) => {
