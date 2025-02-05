@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const UserModel = require("../models/User");
 const { sendEmailCode } = require("../services/emailService");
 const {
@@ -74,7 +75,7 @@ const updateName = async (req, res, next) => {
     if (name.toLowerCase() === user.name.toLowerCase()) {
       return res
         .status(409)
-        .json({ message: "New username must be different form current username", success: false });
+        .json({ message: "New username must be different from current username", success: false });
     }
 
     const doesNameExists = await UserModel.findOne({ name }).collation({
@@ -112,7 +113,7 @@ const updateEmail = async (req, res, next) => {
     if (email.toLowerCase() === user.email.toLowerCase()) {
       return res
         .status(409)
-        .json({ message: "New email must be different form current email", success: false });
+        .json({ message: "New email must be different from current email", success: false });
     }
 
     const doesEmailExists = await UserModel.findOne({ email }).collation({
@@ -152,9 +153,17 @@ const updatePassword = async (req, res, next) => {
       $or: [{ email: userData }, { name: userData }],
     }).collation({ locale: "en", strength: 1 });
 
-    await changePassword(user.name, password);
+    const isPasswordSameAsOld = await bcrypt.compare(password, user.password);
 
-    req.body.user = user;
+    if (isPasswordSameAsOld) {
+      return res
+        .status(409)
+        .json({ message: "New password must be different from current password", success: false });
+    }
+
+    const updatedUser = await changePassword(user.name, password);
+
+    req.body.user = updatedUser;
     req.body.statusCode = 200;
     req.body.message = "Password updated successfully";
     req.body.rememberUser = rememberUser;
@@ -175,9 +184,24 @@ const updateSecurityQuestionAnswer = async (req, res, next) => {
       $or: [{ email: userData }, { name: userData }],
     }).collation({ locale: "en", strength: 1 });
 
-    await changeSecurityQuestionAnswer(user.name, securityQuestionAnswer);
+    const isAnswerSameAsOld = await bcrypt.compare(
+      securityQuestionAnswer,
+      user.securityQuestionAnswer
+    );
 
-    req.body.user = user;
+    if (isAnswerSameAsOld) {
+      return res.status(409).json({
+        message: "New answer to security question must be different from current answer",
+        success: false,
+      });
+    }
+
+    const updatedUser = await changeSecurityQuestionAnswer(
+      user.name,
+      securityQuestionAnswer.toLowerCase()
+    );
+
+    req.body.user = updatedUser;
     req.body.statusCode = 200;
     req.body.message = "Answer to security question updated successfully";
     req.body.rememberUser = rememberUser;
@@ -198,9 +222,9 @@ const updateSecurityQuestion = async (req, res, next) => {
       $or: [{ email: userData }, { name: userData }],
     }).collation({ locale: "en", strength: 1 });
 
-    await changeSecurityQuestion(user.name, securityQuestion);
+    const updatedUser = await changeSecurityQuestion(user.name, securityQuestion);
 
-    req.body.user = user;
+    req.body.user = updatedUser;
     req.body.statusCode = 200;
     req.body.message = "Security question updated successfully";
     req.body.rememberUser = rememberUser;

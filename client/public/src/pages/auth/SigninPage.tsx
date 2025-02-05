@@ -5,6 +5,7 @@ import AuthForm from "../../components/form/AuthForm";
 import { ApiRequest } from "../../types/types";
 import useAuth from "../../hooks/useAuth";
 import useAuthStore from "../../hooks/useAuthStore";
+import { useEffect } from "react";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function SigninPage() {
       setFormState("verify");
       setFormStep(2);
     }
+    setFormData({ verificationCode: "" }, "verificationCode");
   };
 
   const handleSignIn = async () => {

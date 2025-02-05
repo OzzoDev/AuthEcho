@@ -16,7 +16,6 @@ export default function FormPasswordInput({ labelText, name, onChange }: Props) 
   useEffect(() => {
     const allInputs = document.querySelectorAll("input");
     if (allInputs.length > 0 && allInputs[0] === inputRef.current) {
-      console.log("Focusing first input...");
       inputRef.current?.focus();
     }
   }, []);

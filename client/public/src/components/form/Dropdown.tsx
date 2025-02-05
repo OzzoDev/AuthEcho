@@ -1,17 +1,22 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FixedSizeList as List } from "react-window";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import useOutsideClick from "../../hooks/useOutsideClick";
 
 interface Props {
+  initialValue?: string;
   items: string[];
   onSelect: (question: string) => void | Promise<void>;
 }
 
-export default function Dropdown({ items, onSelect }: Props) {
+export default function Dropdown({ initialValue = "Select question", items, onSelect }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [displayText, setDisplayText] = useState<string>("Select question");
+  const [displayText, setDisplayText] = useState<string>(initialValue);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setDisplayText(initialValue);
+  }, [initialValue]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -39,7 +44,7 @@ export default function Dropdown({ items, onSelect }: Props) {
 
   return (
     <div
-      className="relative isolate flex flex-row-reverse justify-between items-center w-full py-[10px] px-[20px] rounded-[20px] bg-slate-800"
+      className="relative z-[1000] min-h-[45px] flex flex-row-reverse justify-between items-center w-full py-[10px] px-[20px] rounded-[30px] bg-slate-800"
       ref={dropdownRef}>
       <button type="button" onClick={toggleDropdown} className="">
         {isOpen ? (
@@ -49,7 +54,7 @@ export default function Dropdown({ items, onSelect }: Props) {
         )}
       </button>
       {isOpen ? (
-        <div className="absolute z-1 w-full min-h-[300px] px-[20px] py-[20px] pr-[10px] rounded-[20px] top-0 left-0 overflow-y-auto bg-slate-800">
+        <div className="absolute w-full min-h-[300px] px-[20px] py-[20px] pr-[10px] rounded-[30px] top-0 left-0 overflow-y-auto bg-slate-800">
           <ul role="listbox" onClick={(e) => e.stopPropagation()} className="w-full">
             <List height={300} itemCount={items.length} itemSize={70} width="100%">
               {renderRow}

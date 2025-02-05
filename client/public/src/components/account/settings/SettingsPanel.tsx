@@ -11,13 +11,33 @@ export default function SettingsPanel() {
   const { username, email, updateUsername, updateEmail } = useAuthStore();
   const { requestData, status, error, updateRequestData, updateError } = useAccountStore();
   const { callApi: fetchSecurityQuestions } = useAccountApi("GET", "SECURITYQUESTIONS");
+  const { callApi: fetchSecurityQuestion } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const { callApi: requestEmailCode } = useAccountApi("POST", "REQUESTEMAILCODE");
   const { callApi: renewName } = useAccountApi("PUT", "UPDATENAME");
   const { callApi: renewEmail } = useAccountApi("PUT", "UPDATEEMAIL");
+  const { callApi: renewPassword } = useAccountApi("PUT", "UPDATEPASSWORD");
+  const { callApi: renewSecurityquestionAnswer } = useAccountApi(
+    "PUT",
+    "UPDATESECURITYQUESTIONANSWER"
+  );
+  const { callApi: renewSecurityQuestion } = useAccountApi("PUT", "UPDATESECURITYQUESTION");
+  const [securityQuestion, setSecurityQuestion] = useState<string>("");
   const [securityQuestions, setSecurityQuestions] = useState<string[]>([]);
   const [latestUpdatedValue, setLatestUpdatedValue] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
+
+  useEffect(() => {
+    const getAccountOverview = async () => {
+      const response = await fetchSecurityQuestion();
+      console.log(response);
+
+      if (response && response.data.securityQuestion) {
+        setSecurityQuestion(response.data.securityQuestion);
+      }
+    };
+    getAccountOverview();
+  }, [requestData]);
 
   useEffect(() => {
     const getSecurityQuestions = async () => {
@@ -80,11 +100,29 @@ export default function SettingsPanel() {
     }
   };
 
-  const changePassword = async () => {};
+  const changePassword = async () => {
+    const response = await renewPassword(true);
+    setLatestUpdatedValue("Password");
+    if (response) {
+      updateRequestData({ password: "" });
+    }
+  };
 
-  const changeSecurityQuestionAnswer = async () => {};
+  const changeSecurityQuestionAnswer = async () => {
+    const response = await renewSecurityquestionAnswer(true);
+    setLatestUpdatedValue("Answer to security question");
+    if (response) {
+      updateRequestData({ securityQuestionAnswer: "" });
+    }
+  };
 
-  const changeSecurityQuestion = async () => {};
+  const changeSecurityQuestion = async () => {
+    const response = await renewSecurityQuestion(true);
+    setLatestUpdatedValue("Security question");
+    if (response) {
+      updateRequestData({ securityQuestion: "" });
+    }
+  };
 
   if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
@@ -124,15 +162,10 @@ export default function SettingsPanel() {
             value={requestData.email || ""}
             placeholder={email}
             onChange={handleUpdateUserData}
-            onSubmit={getEmailCode}>
-            <p>
-              {Object.values(requestData).map((obj) => (
-                <p>{obj}</p>
-              ))}
-            </p>
-          </UpdateDataForm>
+            onSubmit={getEmailCode}></UpdateDataForm>
         )}
         <UpdateDataForm
+          type="password"
           label="Update password"
           name="password"
           value={requestData.password || ""}
@@ -140,8 +173,9 @@ export default function SettingsPanel() {
           onSubmit={changePassword}
         />
         <UpdateDataForm
+          type="password"
           label="Update answser to security question"
-          name="securityQuestion"
+          name="securityQuestionAnswer"
           value={requestData.securityQuestionAnswer || ""}
           onChange={handleUpdateUserData}
           onSubmit={changeSecurityQuestionAnswer}
@@ -149,6 +183,7 @@ export default function SettingsPanel() {
         <UpdateDataDropDown
           label="Update security question"
           items={securityQuestions}
+          initialValue={securityQuestion}
           onSelect={handleUpdateSecurityQuestion}
           onSubmit={changeSecurityQuestion}
         />
