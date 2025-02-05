@@ -27,7 +27,9 @@ export default function UpdateDataForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-end w-[90%] max-w-[400px]">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col md:flex-row items-center md:items-end gap-y-4 md:gap-y-0 w-[90%] max-w-[400px]">
       <div className="flex flex-col gap-y-6 w-full px-6 py-2">
         <label className="text-xl">{label}</label>
         <input

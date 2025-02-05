@@ -8,7 +8,7 @@ import { SecretUserData } from "../../../types/types";
 
 export default function SettingsPanel() {
   const { username, email, updateUsername, updateEmail } = useAuthStore();
-  const { status, responseData } = useAccountStore(true);
+  const { status } = useAccountStore(true);
   const [secretUserData, setSecretUserData] = useState<SecretUserData>({
     password: "",
     securityQuestion: "",
@@ -47,7 +47,7 @@ export default function SettingsPanel() {
   }
 
   return (
-    <div className="w-full pt-[200px]">
+    <div className="w-full pt-[100px]">
       <div className="flex flex-col items-center gap-y-20">
         <UpdateInput
           label="Update username"
