@@ -11,6 +11,18 @@ const { securityQuestions } = require("../utils/security");
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
+  if (!name) {
+    return res.status(400).json({ message: "Provide an username", success: false });
+  }
+
+  if (!email) {
+    return res.status(400).json({ message: "Provide an email", success: false });
+  }
+
+  if (!password) {
+    return res.status(400).json({ message: "Provide a password", success: false });
+  }
+
   try {
     const userEmail = await UserModel.findOne({ email }).collation({ locale: "en", strength: 1 });
     const userName = await UserModel.findOne({ name }).collation({ locale: "en", strength: 1 });
@@ -511,6 +523,16 @@ const getSecurityQuestions = async (_, res) => {
 const setSecurityQuestion = async (req, res, next) => {
   const { name, email, password, securityQuestion, securityQuestionAnswer } = req.body;
 
+  if (!securityQuestion) {
+    return res.status(400).json({ message: "Select a security question", success: false });
+  }
+
+  if (!securityQuestionAnswer) {
+    return res
+      .status(400)
+      .json({ message: "Provide an answer to your security question", success: false });
+  }
+
   try {
     const user = await UserModel.findOne({ name });
 
@@ -518,17 +540,6 @@ const setSecurityQuestion = async (req, res, next) => {
 
     if (!isPasswordEqual) {
       return res.status(403).json({ message: "Wrong password", success: false });
-    }
-
-    const verificationCodeSent = await sendEmail(
-      email,
-      "Authecho",
-      `Welcome to Authecho ${name}! To successfully sign up you need to verify your email by entering this verification code during the sign up process. Return to the sign up page and enter the code and you are all set!`,
-      user.verificationCode
-    );
-
-    if (!verificationCodeSent) {
-      return res.status(500).json({ message: `Email error ${userName}`, success: false });
     }
 
     user.verified = true;

@@ -7,6 +7,7 @@ import UpdateDataDropDown from "./UpdateDataDropDown";
 import Modal from "../../utils/Modal";
 import UpdateDataForm from "./UpdateDataForm";
 import { useNavigate } from "react-router";
+import Accordion from "../../utils/Accordion";
 
 export default function SettingsPanel() {
   const navigate = useNavigate();
@@ -135,11 +136,13 @@ export default function SettingsPanel() {
 
       if (response) {
         clearAuth();
-        navigate("/signin");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        navigate("/signup");
       }
     } else {
       updateError("Please provide the right delete command");
     }
+    updateRequestData({ deleteCommand: "" });
   };
 
   if (status === "loading") {
@@ -147,8 +150,24 @@ export default function SettingsPanel() {
   }
 
   return (
-    <div className="relative flex flex-col items-center w-full py-[100px]">
-      <div className="flex flex-col items-center gap-y-20 w-full">
+    <div className="relative flex flex-col items-center w-full pb-[100px]">
+      <Accordion heading="How to mange my account?">
+        <p className="p-8 leading-[1.5rem]">
+          Within your account settings, you possess complete control over your account. Here, you
+          can update all available properties, including your username, email address, password,
+          security question, and the corresponding answer. By enabling you to modify all properties,
+          the likelihood of becoming locked out of your account is significantly reduced. For
+          instance, should you wish to update your security question, this can be accomplished with
+          just a few clicks, thereby facilitating easier recall of the credentials necessary for
+          accessing your account. Furthermore, you need not feel that your Authecho account is tied
+          to a specific email address, as you can easily change the email associated with your
+          account. This flexibility allows you to manage access controls as desired. Additionally,
+          you have the option to delete your account if you wish; however, this action is not
+          recommended, as it is irreversible.
+        </p>
+      </Accordion>
+
+      <div className="flex flex-col items-center gap-y-20 mt-[100px] w-full">
         <UpdateDataForm
           label="Update username"
           name="name"
@@ -236,7 +255,17 @@ export default function SettingsPanel() {
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            <p className="text-green-500">{latestUpdatedValue} upated successfully</p>
+            <p className="text-green-500">
+              {latestUpdatedValue} upated successfully
+              {latestUpdatedValue === "Security question" ? (
+                <span className="text-green-300">
+                  &nbsp; Please remember to update the answer to your security question if you have
+                  not already done so.
+                </span>
+              ) : (
+                ""
+              )}
+            </p>
           )}
         </Modal>
       )}
