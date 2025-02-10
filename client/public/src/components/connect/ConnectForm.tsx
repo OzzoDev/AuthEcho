@@ -8,6 +8,7 @@ import { ConnectRequest, ConnectResource } from "../../types/types";
 import React from "react";
 import useAuthStore from "../../hooks/useAuthStore";
 import ResourceManager from "./ResourceManager";
+import AdminManager from "./AdminManager";
 
 interface Props {
   connectData: ConnectRequest;
@@ -34,7 +35,16 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
   const handleAddResources = (resources: ConnectResource[]) => {
     const updatedConnectData: ConnectRequest = {
       ...connectData,
-      resources: resources,
+      resources,
+    };
+
+    setConnectData(updatedConnectData);
+  };
+
+  const handleAddAdmins = (admins: string[]) => {
+    const updatedConnectData: ConnectRequest = {
+      ...connectData,
+      admins,
     };
 
     setConnectData(updatedConnectData);
@@ -120,6 +130,7 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
         </p>
       </DescriptiveInput>
       <ResourceManager handleAddResources={handleAddResources} />
+      <AdminManager handleAddAdmins={handleAddAdmins} />
       {formError && <p className="text-center text-lg text-red-500 mb-[-30px]">{formError}</p>}
       <div className="mt-10">
         <PrimaryBtn btnText="Connect" type="submit" width="w-full" icon={<CiGlobe size={24} />} />
