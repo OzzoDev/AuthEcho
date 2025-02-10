@@ -13,7 +13,7 @@ export default function ConnectCommand({ text, order }: Props) {
   useOutsideClick(buttonRef, () => setIsCopied(false));
 
   return (
-    <li className="flex flex-col gap-y-6 w-[90%] max-w-[700px] px-6 py-4 rounded-lg bg-slate-600 bg-opacity-80">
+    <li className="flex flex-col gap-y-6 w-[90%] max-w-[700px] px-6 py-4 rounded-lg bg-gray-900">
       <div className="flex justify-between">
         <p className="text-cyan-300 text-lg">{order}.</p>
         <button

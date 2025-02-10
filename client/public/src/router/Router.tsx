@@ -1,7 +1,6 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router";
 import RootLayout from "../layouts/RootLayout";
 import AccountPage from "../pages/auth/AccountPage";
-import ConnectAppPage from "../pages/auth/ConnectAppPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 import SigninPage from "../pages/auth/SigninPage";
 import SignupPage from "../pages/auth/SignupPage";
@@ -14,6 +13,10 @@ import ProtectedRoute from "../components/auth/ProtectedRoute";
 import PrivacyPolicyPage from "../pages/general/PrivacyPolicyPage";
 import LicensingPage from "../pages/general/LicensingPage";
 import AccessRedirect from "../components/auth/AccessRedirect";
+import ConnectInstallPage from "../pages/auth/connect/ConnectInstallPage";
+import ConnectDocsPage from "../pages/auth/connect/ConnectDocsPage";
+import ConnectPage from "../pages/auth/connect/ConnectPage";
+import ConnectLayout from "../layouts/ConnectLayout";
 
 const router = (isAuthenticated: boolean) => {
   return createBrowserRouter(
@@ -52,7 +55,11 @@ const router = (isAuthenticated: boolean) => {
             </AccessRedirect>
           }
         />
-        <Route path="/connectapp" element={<ConnectAppPage />} />
+        <Route path="/connectapp" element={<ConnectLayout />}>
+          <Route index element={<ConnectPage />} />
+          <Route path="install" element={<ConnectInstallPage />} />
+          <Route path="docs" element={<ConnectDocsPage />} />
+        </Route>
         <Route
           path="/account"
           element={
