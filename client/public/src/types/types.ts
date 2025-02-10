@@ -31,8 +31,17 @@ export type ApiRequest = {
 export type ConnectRequest = {
   appName: string;
   origin: string;
-  admin: string;
+  creator: string;
+  admins: string[];
+  resources: ConnectResource[];
   appDescription: string;
+};
+
+export type ConnectResource = {
+  id: number;
+  name: string;
+  resource: string;
+  visibility: "private" | "public";
 };
 
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";

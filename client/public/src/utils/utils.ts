@@ -25,3 +25,11 @@ export function handleError(
     setError(errorMessage);
   }
 }
+
+export function generateID(array: number[]): number {
+  if (array.length === 0) {
+    return 1;
+  } else {
+    return Math.max(...array.map((item) => item)) + 1;
+  }
+}

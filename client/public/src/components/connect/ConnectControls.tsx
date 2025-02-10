@@ -14,7 +14,9 @@ export default function ConnectControls() {
   const [connectData, setConnectData] = useState<ConnectRequest>({
     appName: "",
     origin: "http://localhost:3001",
-    admin: username || "",
+    creator: username || "",
+    admins: [],
+    resources: [],
     appDescription: "",
   });
   const [appKey, setAppKey] = useState<string>("");

@@ -4,9 +4,10 @@ import PrimaryBtn from "../btn/PrimaryBtn";
 import DescriptiveInput from "../utils/DescriptiveInput";
 import useApi from "../../hooks/useApi";
 import useFormStore from "../../hooks/useFormStore";
-import { ConnectRequest } from "../../types/types";
+import { ConnectRequest, ConnectResource } from "../../types/types";
 import React from "react";
 import useAuthStore from "../../hooks/useAuthStore";
+import ResourceManager from "./ResourceManager";
 
 interface Props {
   connectData: ConnectRequest;
@@ -24,7 +25,16 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
     const { name, value } = e.target;
     const updatedConnectData: ConnectRequest = {
       ...connectData,
-      [name as keyof ConnectRequest]: value,
+      [name]: value,
+    };
+
+    setConnectData(updatedConnectData);
+  };
+
+  const handleAddResources = (resources: ConnectResource[]) => {
+    const updatedConnectData: ConnectRequest = {
+      ...connectData,
+      resources: resources,
     };
 
     setConnectData(updatedConnectData);
@@ -34,7 +44,9 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
     setConnectData({
       appName: "",
       origin: "http://localhost:3001",
-      admin: username || "",
+      creator: username || "",
+      admins: [],
+      resources: [],
       appDescription: "",
     });
   };
@@ -67,7 +79,7 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 w-[90%] max-w-[600px] mb-[50px]">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 w-[90%] max-w-[800px] mb-[50px]">
       <DescriptiveInput
         labelText="Name"
         name="appName"
@@ -107,6 +119,7 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
           thereby assisting users in understanding its features and benefits.
         </p>
       </DescriptiveInput>
+      <ResourceManager handleAddResources={handleAddResources} />
       {formError && <p className="text-center text-lg text-red-500 mb-[-30px]">{formError}</p>}
       <div className="mt-10">
         <PrimaryBtn btnText="Connect" type="submit" width="w-full" icon={<CiGlobe size={24} />} />

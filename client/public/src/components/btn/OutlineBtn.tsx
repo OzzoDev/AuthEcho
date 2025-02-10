@@ -22,7 +22,7 @@ export default function OutlineBtn({
       type={type}
       onClick={onClick}
       onMouseLeave={(e) => (e.target as HTMLButtonElement).blur()}
-      className={`flex justify-center items-center ${width} h-fit text-white font-semibold py-[10px] px-[25px] rounded-full border-2 border-white transition-opacity duration-500 cursor-pointer group hover:opacity-60 bg-transparent`}>
+      className={`flex justify-center items-center ${width} h-fit text-white font-semibold py-[10px] px-[25px] rounded-full border-[1px] border-white transition-opacity duration-500 cursor-pointer group hover:opacity-60 bg-transparent`}>
       {icon && (
         <div className="text-white mr-2 transition-transform duration-300 group-hover:translate-x-[5px]">
           {icon}

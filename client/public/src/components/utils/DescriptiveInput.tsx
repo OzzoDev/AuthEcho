@@ -26,7 +26,7 @@ export default function DescriptiveInput({
   onChange,
 }: Props) {
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 w-full">
       <label className="text-cyan-200">{labelText}</label>
       {type === "textarea" ? (
         <textarea
@@ -53,7 +53,7 @@ export default function DescriptiveInput({
           spellCheck="false"
           maxLength={maxLength}
           required={isRequired}
-          className="p-2 rounded-md bg-transparent border-[1px] border-white outline-none"
+          className="p-2 rounded-md bg-transparent border-[1px] border-white outline-none w-full"
         />
       )}
       {children && <div className="text-gray-400">{children}</div>}
