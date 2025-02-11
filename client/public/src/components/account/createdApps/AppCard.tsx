@@ -6,6 +6,7 @@ import { joinWithAnd, removeAllWhitespaces } from "../../../utils/utils";
 import { useNavigate } from "react-router";
 import AppCardData from "./AppCardData";
 import { APP_STATUS_MAP } from "../../../constants/contants";
+import { PiUsersThree } from "react-icons/pi";
 
 interface Props {
   app: AuthechoApp;
@@ -54,13 +55,19 @@ export default function AppCard({ app }: Props) {
           })}
         </ul>
       </div>
-      <div className="flex flex-col-reverse md:flex-row lg:flex-col justify-between items-center md:items-end gap-y-4 md:gap-y-0 mb-8 lg:mb-0 w-full lg:w-auto">
-        <div className="relative">
-          <div
-            style={{ backgroundColor: appStatus.color }}
-            className="absolute top-[-5px] right-[-10px] w-[8px] h-[8px] rounded-full"
-          />
-          <AppCardData desciption="Status" data={`${appStatus.icon} ${app.status}`} />
+      <div className="flex flex-col-reverse md:flex-row lg:flex-col justify-between items-center gap-y-4 md:gap-y-0 mb-8 lg:mb-0 w-full lg:w-auto">
+        <div className="flex flex-col items-center md:items-start lg:items-end gap-y-2">
+          <div className="relative">
+            <div
+              style={{ backgroundColor: appStatus.color }}
+              className="absolute top-[-5px] right-[-10px] w-[8px] h-[8px] rounded-full"
+            />
+            <AppCardData desciption="Status" data={`${appStatus.icon} ${app.status}`} noWrap />
+          </div>
+          <span className="flex gap-x-2">
+            {app.users}
+            <PiUsersThree size={26} />
+          </span>
         </div>
         <SecondaryBtn
           btnText="Mange app"

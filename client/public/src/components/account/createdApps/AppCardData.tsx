@@ -2,9 +2,10 @@ interface Props {
   desciption: string;
   data: string;
   isLink?: boolean;
+  noWrap?: boolean;
 }
 
-export default function AppCardData({ desciption, data, isLink = false }: Props) {
+export default function AppCardData({ desciption, data, isLink = false, noWrap = false }: Props) {
   return (
     <div className="flex gap-x-2">
       <p className="text-gray-300">{desciption}</p>
@@ -15,7 +16,9 @@ export default function AppCardData({ desciption, data, isLink = false }: Props)
           {data}
         </a>
       ) : (
-        <p className="font-semibold">{data}</p>
+        <p style={{ whiteSpace: noWrap ? "nowrap" : "normal" }} className="font-semibold">
+          {data}
+        </p>
       )}
     </div>
   );
