@@ -6,6 +6,8 @@ interface Props {
 }
 
 export default function AppCardData({ desciption, data, isLink = false, noWrap = false }: Props) {
+  if (!data) return;
+
   return (
     <div className="flex gap-x-2">
       <p className="text-gray-300">{desciption}</p>

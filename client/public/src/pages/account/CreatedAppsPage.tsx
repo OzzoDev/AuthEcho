@@ -4,8 +4,10 @@ import useAccountApi from "../../hooks/useAccountApi";
 import { AuthechoApp, FetchStatus } from "../../types/types";
 import { Outlet, useParams } from "react-router";
 import { HashLoader } from "react-spinners";
+import useMangeAppStore from "../../hooks/useManageAppStore";
 
 export default function CreatedAppsPage() {
+  const { updateApps } = useMangeAppStore();
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const [createdApps, setCreatedApps] = useState<AuthechoApp[]>([]);
   const { appname } = useParams();
@@ -21,6 +23,7 @@ export default function CreatedAppsPage() {
 
       if (receviedCreatedApps) {
         setCreatedApps(receviedCreatedApps);
+        updateApps(receviedCreatedApps);
         setApiStatus("success");
       } else {
         setApiStatus("error");
@@ -42,7 +45,7 @@ export default function CreatedAppsPage() {
       <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
         Your created apps
       </h2>
-      <ul className="flex flex-col gap-y-6">
+      <ul className="flex flex-col gap-y-[100px]">
         {createdApps.map((app, index) => {
           return (
             <li key={index}>

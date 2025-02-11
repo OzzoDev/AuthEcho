@@ -23,12 +23,10 @@ const join = async (req, res) => {
   }
 
   if (appDescription && appDescription.length > 300) {
-    return res
-      .status(400)
-      .json({
-        message: "The application description exceeds the maximum allowed length of 300 characters",
-        success: false,
-      });
+    return res.status(400).json({
+      message: "The application description exceeds the maximum allowed length of 300 characters",
+      success: false,
+    });
   }
 
   try {
@@ -38,6 +36,17 @@ const join = async (req, res) => {
     });
 
     if (appNameExists) {
+      return res.status(409).json({ message: "App name already exists", success: false });
+    }
+
+    const appNames = await AppModel.find();
+
+    const normalizedAppNameCheck = appNames.some(
+      (app) =>
+        removeAllWhitespaces(app.name.toLowerCase()) === removeAllWhitespaces(appName.toLowerCase())
+    );
+
+    if (normalizedAppNameCheck) {
       return res.status(409).json({ message: "App name already exists", success: false });
     }
 

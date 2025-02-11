@@ -43,7 +43,7 @@ export default function AppCard({ app }: Props) {
                       ? "This resource is publicly accessible."
                       : "This resource is restricted to application administrators and the creator."
                   }>
-                  {resource.visibility === "public" ? "🌐" : "🛑"} {resource.name}
+                  {resource.visibility === "public" ? "🔓" : "🔒"} {resource.name}
                 </p>
                 <a
                   href={resource.resource}
