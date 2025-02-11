@@ -11,13 +11,13 @@ export default function CreatedAppsPage() {
   const { appname } = useParams();
   const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
 
-  console.log(appname);
-
   useEffect(() => {
     const getAccountOverview = async () => {
       setApiStatus("loading");
       const response = await fetchAccountOverview(true);
       const receviedCreatedApps = response?.data.createdApps;
+
+      console.log("Apps: ", receviedCreatedApps);
 
       if (receviedCreatedApps) {
         setCreatedApps(receviedCreatedApps);

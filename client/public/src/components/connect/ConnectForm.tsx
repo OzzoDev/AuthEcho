@@ -5,7 +5,7 @@ import DescriptiveInput from "../utils/DescriptiveInput";
 import useApi from "../../hooks/useApi";
 import useFormStore from "../../hooks/useFormStore";
 import { ConnectRequest, ConnectResource } from "../../types/types";
-import React, { useEffect } from "react";
+import React from "react";
 import useAuthStore from "../../hooks/useAuthStore";
 import ResourceManager from "./ResourceManager";
 import AdminManager from "./AdminManager";
@@ -49,10 +49,6 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
 
     setConnectData(updatedConnectData);
   };
-
-  useEffect(() => {
-    console.log(connectData);
-  }, [connectData.admins]);
 
   const resetForm = () => {
     setConnectData({

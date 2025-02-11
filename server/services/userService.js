@@ -80,7 +80,7 @@ const addAppConnection = async (identifier, app) => {
   }
 };
 
-const getAppsByNames = async (namesArray) => {
+const getAppsByNames = async (namesArray, username) => {
   try {
     const promises = namesArray.map(async (name) => {
       const apps = await AppModel.findOne({ name: name });
@@ -91,15 +91,22 @@ const getAppsByNames = async (namesArray) => {
 
     const foundApps = results
       .filter((res) => res)
-      .map((app) => ({
-        name: app.name,
-        origin: app.origin,
-        creator: app.creator,
-        admins: app.admins,
-        resources: app.resources,
-        status: app.status,
-        description: app.description,
-      }));
+      .map((app) => {
+        const resources =
+          username === app.creator
+            ? app.resources
+            : app.resources.map((resource) => resource.visibility === "public");
+        return {
+          name: app.name,
+          origin: app.origin,
+          creator: app.creator,
+          admins: app.admins,
+          resources,
+          status: app.status,
+          description: app.description,
+          users: app.users,
+        };
+      });
     return foundApps;
   } catch (error) {
     throw error;

@@ -51,31 +51,31 @@ export const FOOTER_LINKS: Link[] = [
 export const APP_STATUS_MAP: Record<AppStatus, AppStatusData> = {
   development: {
     status: "development",
-    color: "blue-400",
+    color: "#21c0ff",
     icon: "💪",
     sortValue: 0,
   },
   maintenance: {
     status: "maintenance",
-    color: "zinc-600",
+    color: "#505859",
     icon: "🔧",
     sortValue: 0,
   },
   testing: {
     status: "testing",
-    color: "slate-600",
+    color: "#c363f7",
     icon: "🚀",
     sortValue: 0,
   },
   "pre-production": {
-    status: "development",
-    color: "cyan-500",
+    status: "pre-production",
+    color: "#fa760a",
     icon: "📢",
     sortValue: 0,
   },
   production: {
-    status: "development",
-    color: "green-400",
+    status: "production",
+    color: "#0afa6e",
     icon: "🎉",
     sortValue: 0,
   },

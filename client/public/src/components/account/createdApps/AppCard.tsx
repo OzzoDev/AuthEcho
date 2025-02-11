@@ -4,6 +4,8 @@ import SecondaryBtn from "../../btn/SecondaryBtn";
 import useAuthStore from "../../../hooks/useAuthStore";
 import { joinWithAnd, removeAllWhitespaces } from "../../../utils/utils";
 import { useNavigate } from "react-router";
+import AppCardData from "./AppCardData";
+import { APP_STATUS_MAP } from "../../../constants/contants";
 
 interface Props {
   app: AuthechoApp;
@@ -18,38 +20,53 @@ export default function AppCard({ app }: Props) {
     navigate(`/account/myapps/${removeAllWhitespaces(app.name.toLowerCase())}`);
   };
 
+  const appStatus = APP_STATUS_MAP[app.status];
+
   return (
-    <div className="flex flex-col gap-y-10 p-4 bg-black bg-opacity-20">
-      <div className="flex gap-x-10">
-        <div className="flex gap-x-2">
-          <p className="text-gray-300">App name</p>
-          <p className="font-semibold">{app.name}</p>
+    <div className="flex flex-col-reverse lg:flex-row justify-between gap-x-10 py-4 px-8">
+      <div className="flex flex-col gap-y-8">
+        <div className="flex flex-col gap-y-2 w-full">
+          <AppCardData desciption="Name" data={app.name} />
+          <AppCardData desciption="Origin" data={app.origin} isLink />
+          <AppCardData desciption="Admins" data={admins} />
+          <AppCardData desciption="Description" data={app.description} />
         </div>
-        <div className="flex gap-x-2">
-          <p className="text-gray-300">App origin</p>
-          <p className="font-semibold">{app.origin}</p>
-        </div>
-        <div className="flex gap-x-2">
-          <p className="text-gray-300">App admins</p>
-          <p className="font-semibold">{admins}</p>
-        </div>
+        <ul className="flex flex-col gap-y-2 w-full">
+          {app.resources.map((resource) => {
+            return (
+              <li key={resource.id} className="flex flex-col md:flex-row gap-x-6">
+                <p
+                  className="text-sky-300 whitespace-nowrap"
+                  title={
+                    resource.visibility === "public"
+                      ? "This resource is publicly accessible."
+                      : "This resource is restricted to application administrators and the creator."
+                  }>
+                  {resource.visibility === "public" ? "🌐" : "🛑"} {resource.name}
+                </p>
+                <a
+                  href={resource.resource}
+                  className="text-sky-200 transition-all duration-300 hover:text-sky-500 underline break-all">
+                  {resource.resource}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </div>
-      <div className="flex justify-between">
-        <p>{app.description}</p>
-        <div className="flex gap-x-4">
-          <SecondaryBtn
-            btnText="Mange app"
-            onClick={redirectToAppDetailsPage}
-            icon={<IoSettingsOutline size={24} />}
+      <div className="flex flex-col-reverse md:flex-row lg:flex-col justify-between items-center md:items-end gap-y-4 md:gap-y-0 mb-8 lg:mb-0 w-full lg:w-auto">
+        <div className="relative">
+          <div
+            style={{ backgroundColor: appStatus.color }}
+            className="absolute top-[-5px] right-[-10px] w-[8px] h-[8px] rounded-full"
           />
-          {/* <PrimaryBtn
-            btnText="See traffic"
-            onClick={() => {}}
-            icon={<MdOutlineShowChart size={24} />}
-          />
-          <SecondaryBtn btnText="Edit" onClick={() => {}} icon={<FaRegEdit size={24} />} />
-          <DangerBtn btnText="Delete" onClick={() => {}} icon={<IoTrashOutline size={24} />} /> */}
+          <AppCardData desciption="Status" data={`${appStatus.icon} ${app.status}`} />
         </div>
+        <SecondaryBtn
+          btnText="Mange app"
+          onClick={redirectToAppDetailsPage}
+          icon={<IoSettingsOutline size={24} />}
+        />
       </div>
     </div>
   );

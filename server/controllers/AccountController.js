@@ -30,9 +30,9 @@ const accountOverview = async (req, res) => {
     const createdAt = user.createdAt;
     const securityQuestion = user.securityQuestion;
     const isRemembered = rememberUser ? true : false;
-    const createdApps = await getAppsByNames(user.createdApps);
-    const adminApps = await getAppsByNames(user.adminApps);
-    const appConnections = await getAppsByNames(user.appConnections);
+    const createdApps = await getAppsByNames(user.createdApps, user.name);
+    const adminApps = await getAppsByNames(user.adminApps, user.name);
+    const appConnections = await getAppsByNames(user.appConnections, user.name);
 
     res.status(200).json({
       message: "Success",

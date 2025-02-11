@@ -134,7 +134,10 @@ export type AuthechoApp = {
   origin: string;
   creator: string;
   admins: string[];
+  resources: ConnectResource[];
   description: string;
+  status: AppStatus;
+  users: number;
 };
 
 export type UserAlias = {
