@@ -90,7 +90,7 @@ export default function ResourceManager({ handleAddResources }: Props) {
           );
         })}
       </ul>
-      <p>
+      <p className="text-gray-400">
         You can enhance your workflow by adding various resources, which will assist you as a
         developer in organizing and maintaining essential links in a centralized location. Examples
         of such links include platforms like GitHub, Figma, and Jira, which are pivotal for

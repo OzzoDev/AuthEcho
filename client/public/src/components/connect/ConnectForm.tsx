@@ -113,14 +113,18 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
         maxLength={100}
         onChange={handleChange}>
         <p>
-          Specify the production domain or development URL (e.g. example.com,
+          Specify the production domain or development URL (e.g., example.com,
           http://localhost:3001).
+          <span className="text-red-400">
+            &nbsp;Please note that only one application is allowed per origin.
+          </span>
         </p>
       </DescriptiveInput>
       <DescriptiveInput
         labelText="Description"
         type="textarea"
         name="appDescription"
+        placeholder="This is my first Authecho app"
         value={connectData.appDescription}
         maxLength={300}
         isRequired={false}
@@ -134,7 +138,7 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
       </DescriptiveInput>
       <ResourceManager handleAddResources={handleAddResources} />
       <AdminManager handleAddAdmins={handleAddAdmins} />
-      {formError && <p className="text-center text-lg text-red-500 mb-[-30px]">{formError}</p>}
+      {formError && <p className="text-center text-lg mb-[-30px] bg-rose-700">{formError}</p>}
       <div className="mt-10">
         <PrimaryBtn btnText="Connect" type="submit" width="w-full" icon={<CiGlobe size={24} />} />
       </div>

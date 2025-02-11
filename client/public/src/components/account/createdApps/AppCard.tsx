@@ -5,12 +5,17 @@ import DangerBtn from "../../btn/DangerBtn";
 import { IoTrashOutline } from "react-icons/io5";
 import SecondaryBtn from "../../btn/SecondaryBtn";
 import { MdOutlineShowChart } from "react-icons/md";
+import useAuthStore from "../../../hooks/useAuthStore";
+import { joinWithAnd } from "../../../utils/utils";
 
 interface Props {
   app: AuthechoApp;
 }
 
 export default function AppCard({ app }: Props) {
+  const { username } = useAuthStore();
+  const admins = joinWithAnd(["You", ...app.admins.filter((admin) => admin !== username)]);
+
   return (
     <div className="flex flex-col gap-y-10 p-4 bg-black bg-opacity-20">
       <div className="flex gap-x-10">
@@ -24,7 +29,7 @@ export default function AppCard({ app }: Props) {
         </div>
         <div className="flex gap-x-2">
           <p className="text-gray-300">App admins</p>
-          <p className="font-semibold">{app.admins.join(", ")}</p>
+          <p className="font-semibold">{admins}</p>
         </div>
       </div>
       <div className="flex justify-between">

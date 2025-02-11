@@ -37,6 +37,7 @@ export default function AdminManager({ handleAddAdmins }: Props) {
   }, [users, admins]);
 
   const addAdmin = (admin: string) => {
+    if (admins.length >= 10) return;
     const adminUsername = admin.split(",")[0].trim();
     setAdmins((prev) => [...new Set([...prev, adminUsername])]);
   };
@@ -63,11 +64,14 @@ export default function AdminManager({ handleAddAdmins }: Props) {
           );
         })}
       </ul>
-      <p>
+      <p className="text-gray-400">
         You have the option to add your colleagues as administrators to your application, which
         grants them elevated access rights. This means they will possess the authority to modify and
         edit the metadata associated with the application, thereby facilitating collaborative
         management and oversight.
+        <span className="text-red-400">
+          &nbsp; Please note that you may add a maximum of 10 admins.
+        </span>
       </p>
     </div>
   );

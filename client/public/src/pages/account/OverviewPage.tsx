@@ -1,18 +1,18 @@
-import useAccountApi from "../../../hooks/useAccountApi";
-import useAccountStore from "../../../hooks/useAccountStore";
-import { HashLoader } from "react-spinners";
-import DataCard from "../../utils/DataCard";
-import { IoCalendarOutline } from "react-icons/io5";
+import { useState, useEffect } from "react";
 import { FaRegClock } from "react-icons/fa";
+import { GoInbox, GoArrowRight } from "react-icons/go";
 import { GrUserAdmin } from "react-icons/gr";
-import { GoArrowRight, GoInbox } from "react-icons/go";
 import { IoIosGitNetwork } from "react-icons/io";
+import { IoCalendarOutline } from "react-icons/io5";
 import { PiUserCheck } from "react-icons/pi";
-import OutlineBtn from "../../btn/OutlineBtn";
-import { useEffect, useState } from "react";
-import { AccountResponse } from "../../../types/types";
+import { HashLoader } from "react-spinners";
+import OutlineBtn from "../../components/btn/OutlineBtn";
+import DataCard from "../../components/utils/DataCard";
+import useAccountApi from "../../hooks/useAccountApi";
+import useAccountStore from "../../hooks/useAccountStore";
+import { AccountResponse } from "../../types/types";
 
-export default function OverviewPanel() {
+export default function OverviewPage() {
   const { status, updateCurrentTab } = useAccountStore(true);
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const [accountOverview, setAccountOverview] = useState<AccountResponse>();

@@ -1,15 +1,15 @@
-import { HashLoader } from "react-spinners";
-import useAccountApi from "../../../hooks/useAccountApi";
-import useAccountStore from "../../../hooks/useAccountStore";
-import useAuthStore from "../../../hooks/useAuthStore";
-import { useEffect, useState } from "react";
-import UpdateDataDropDown from "./UpdateDataDropDown";
-import Modal from "../../utils/Modal";
-import UpdateDataForm from "./UpdateDataForm";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import Accordion from "../../utils/Accordion";
+import { HashLoader } from "react-spinners";
+import UpdateDataDropDown from "../../components/account/settings/UpdateDataDropDown";
+import UpdateDataForm from "../../components/account/settings/UpdateDataForm";
+import Accordion from "../../components/utils/Accordion";
+import Modal from "../../components/utils/Modal";
+import useAccountApi from "../../hooks/useAccountApi";
+import useAccountStore from "../../hooks/useAccountStore";
+import useAuthStore from "../../hooks/useAuthStore";
 
-export default function SettingsPanel() {
+export default function SettingsPage() {
   const navigate = useNavigate();
   const { username, email, updateUsername, updateEmail, clearAuth } = useAuthStore();
   const { requestData, status, error, updateRequestData, updateError } = useAccountStore();

@@ -32,13 +32,13 @@ export default function ResourceInput({
         <DescriptiveInput
           labelText="Name"
           name="name"
-          placeholder={resource.id === 1 ? "eg. Github, Jira" : ""}
+          placeholder={"eg. Github, Jira"}
           onChange={handleChange}
         />
         <DescriptiveInput
           labelText="Resource"
           name="resource"
-          placeholder={resource.id === 1 ? `eg. https://github.com/${username}/MovieHub` : ""}
+          placeholder={`eg. https://github.com/${username}/app`}
           onChange={handleChange}
         />
       </div>

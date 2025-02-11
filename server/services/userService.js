@@ -94,9 +94,11 @@ const getAppsByNames = async (namesArray) => {
       .map((app) => ({
         name: app.name,
         origin: app.origin,
-        description: app.description,
         creator: app.creator,
         admins: app.admins,
+        resources: app.resources,
+        status: app.status,
+        description: app.description,
       }));
     return foundApps;
   } catch (error) {

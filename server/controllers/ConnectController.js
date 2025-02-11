@@ -8,6 +8,7 @@ const {
   addAppConnection,
   getAppsByNames,
 } = require("../services/userService");
+const { removeAllWhitespaces } = require("../utils/utils");
 
 const join = async (req, res) => {
   const { appName, origin, admins, resources, appDescription } = req.body;
@@ -42,7 +43,9 @@ const join = async (req, res) => {
 
     const createdApps = await getAppsByNames(user.createdApps);
 
-    const originAlredyConnectByUser = createdApps.some((app) => app.origin === origin);
+    const originAlredyConnectByUser = createdApps.some(
+      (app) => app.origin === removeAllWhitespaces(origin.toLowerCase())
+    );
 
     if (originAlredyConnectByUser) {
       return res.status(400).json({
@@ -56,10 +59,10 @@ const join = async (req, res) => {
 
     const appModel = new AppModel({
       name: appName,
-      origin,
+      origin: removeAllWhitespaces(origin.toLowerCase()),
       creator,
-      admins: [...admins, creator],
-      resources,
+      admins: [...admins.slice(0, 10), creator],
+      resources: resources.slice(0, 10),
       description: appDescription ? appDescription : "",
       key,
     });
