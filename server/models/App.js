@@ -33,6 +33,11 @@ const AppSchema = new Schema({
     type: String,
     default: "",
   },
+  status: {
+    type: String,
+    enum: ["development", "testing", "pre-production", "production", "maintenance"],
+    default: "development",
+  },
   key: {
     type: String,
     required: true,
