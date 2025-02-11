@@ -11,6 +11,7 @@ export type ApiResponse = {
   appKey?: string;
   appName?: string;
   isBlocked?: boolean;
+  userAlias?: UserAlias[];
 };
 
 export type ApiRequest = {
@@ -68,6 +69,7 @@ export type ApiUseCase =
   | "RESETPASSWORD"
   | "UNLOCKACCOUNT"
   | "ISSUSPENDED"
+  | "GETUSERALIAS"
   | "JOIN";
 
 export type FormState = "default" | "verify" | "resendCode" | "question" | "password";
@@ -134,4 +136,9 @@ export type AuthechoApp = {
   creator: string;
   admins: string[];
   description: string;
+};
+
+export type UserAlias = {
+  name: string;
+  email: string;
 };

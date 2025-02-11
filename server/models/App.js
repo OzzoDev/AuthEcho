@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const ResourceSchema = new Schema({
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  resource: { type: String, required: true },
+  visibility: { type: String, enum: ["private", "public"], required: true },
+});
+
 const AppSchema = new Schema({
   name: {
     type: String,
@@ -16,7 +23,11 @@ const AppSchema = new Schema({
   },
   admins: {
     type: [String],
-    required: true,
+    default: [],
+  },
+  resources: {
+    type: [ResourceSchema],
+    default: [],
   },
   description: {
     type: String,

@@ -31,14 +31,14 @@ export default function ResourceInput({
       <div className="flex flex-col md:flex-row gap-6 w-full">
         <DescriptiveInput
           labelText="Name"
+          name="name"
           placeholder={resource.id === 1 ? "eg. Github, Jira" : ""}
-          isRequired={false}
           onChange={handleChange}
         />
         <DescriptiveInput
           labelText="Resource"
+          name="resource"
           placeholder={resource.id === 1 ? `eg. https://github.com/${username}/MovieHub` : ""}
-          isRequired={false}
           onChange={handleChange}
         />
       </div>

@@ -19,6 +19,7 @@ export const ENDPOINTS = {
   SETSECURITYQUESTION: `${API_BASE_URL}/api/auth/setsecurityquestion`,
   GETUSERSECURITYQUESTION: `${API_BASE_URL}/api/auth/getusersecurityquestion`,
   VALIDATESECURITYQUESTION: `${API_BASE_URL}/api/auth/validatesecurityquestion`,
+  GETUSERALIAS: `${API_BASE_URL}/api/auth/useralias`,
   JOIN: `${API_BASE_URL}/api/connect/join`,
 };
 

@@ -16,6 +16,7 @@ const {
   validateSecurityQuestion,
   getUserSecurityQuestion,
   requestUnlockCode,
+  getUserAlias,
 } = require("../controllers/AuthController");
 const { ensureAuthenticated } = require("../middlewares/Auth");
 const {
@@ -31,6 +32,7 @@ const { setCookies, verifyAuthentication } = require("../middlewares/Cookies");
 const router = require("express").Router();
 
 router.get("/verifyauthentication", verifyAuthentication);
+router.get("/useralias", getUserAlias);
 router.post("/signup", newAccountValidation, signup);
 router.post("/signin", ensureVerificationCode, signin, setCookies);
 router.post("/verifyaccount", verifyAccount);

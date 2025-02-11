@@ -13,7 +13,6 @@ export default function ResourceManager({ handleAddResources }: Props) {
   const [resources, setResources] = useState<ConnectResource[]>([]);
 
   useEffect(() => {
-    console.log(resources);
     handleAddResources(resources);
   }, [resources]);
 

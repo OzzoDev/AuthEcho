@@ -617,6 +617,22 @@ const validateSecurityQuestion = async (req, res) => {
   }
 };
 
+const getUserAlias = async (_, res) => {
+  try {
+    const users = await UserModel.find();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found", success: false });
+    }
+
+    const userAlias = users.map((user) => ({ name: user.name, email: user.email }));
+    res.status(200).json({ message: "Users retrieved successfully", success: true, userAlias });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   signup,
   verifyAccount,
@@ -635,4 +651,5 @@ module.exports = {
   setSecurityQuestion,
   getUserSecurityQuestion,
   validateSecurityQuestion,
+  getUserAlias,
 };

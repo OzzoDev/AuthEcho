@@ -4,8 +4,10 @@ const { hex32BitKey } = require("../utils/crypto");
 const { addCreatedApp, addAdminApp, addAppConnection } = require("../services/userService");
 
 const join = async (req, res) => {
-  const { appName, origin, admin, appDescription } = req.body;
+  const { appName, origin, creator, admins, resources, appDescription } = req.body;
   const user = req.user;
+
+  console.log(req.body);
 
   if (!appName) {
     return res.status(400).json({ message: "App name is not provided", success: false });
@@ -15,8 +17,8 @@ const join = async (req, res) => {
     return res.status(400).json({ message: "App origin is not provided", success: false });
   }
 
-  if (!admin) {
-    return res.status(400).json({ message: "App admin is not provided", success: false });
+  if (!creator) {
+    return res.status(400).json({ message: "App creator is not provided", success: false });
   }
 
   try {
@@ -34,9 +36,10 @@ const join = async (req, res) => {
     const appModel = new AppModel({
       name: appName,
       origin,
+      creator,
+      admins: [...admins, creator],
+      resources,
       description: appDescription ? appDescription : "",
-      creator: admin,
-      admins: [admin],
       key,
     });
 
