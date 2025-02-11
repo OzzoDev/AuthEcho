@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FetchStatus } from "../types/types";
+import { AuthechoApp, FetchStatus } from "../types/types";
 
 export function capitalize(str: string): string {
   if (!str) return str;
@@ -43,4 +43,18 @@ export function joinWithAnd(arr: string[]): string {
 
 export function removeAllWhitespaces(str: string): string {
   return str.replace(/\s+/g, "");
+}
+
+export function calcPageCount(array: AuthechoApp[], maxItems: number): number {
+  // const visibleItems = [...array].filter((item) => item.isVisible);
+  const visibleItems = array;
+  return Math.ceil(visibleItems.length / maxItems);
+}
+
+export function showOnPagination(
+  index: number,
+  page: number,
+  itemsCount: number | undefined = 5
+): boolean {
+  return index >= (page - 1) * itemsCount && index < page * itemsCount;
 }

@@ -27,7 +27,7 @@ export default function Navbar() {
   );
 
   return (
-    <nav className="bg-gray-950">
+    <nav className="bg-gray-950 nav-bar">
       <div className="navigation">
         <NavLink to="/">
           <img
