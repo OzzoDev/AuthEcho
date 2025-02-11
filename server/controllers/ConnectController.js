@@ -22,6 +22,15 @@ const join = async (req, res) => {
     return res.status(400).json({ message: "App origin is not provided", success: false });
   }
 
+  if (appDescription && appDescription.length > 300) {
+    return res
+      .status(400)
+      .json({
+        message: "The application description exceeds the maximum allowed length of 300 characters",
+        success: false,
+      });
+  }
+
   try {
     const appNameExists = await AppModel.findOne({ name: appName }).collation({
       locale: "en",

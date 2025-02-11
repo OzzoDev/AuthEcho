@@ -27,11 +27,11 @@ export default function DataCard({ data, label, icon, children }: Props) {
         <div className="flex flex-col gap-y-4">
           <p className="text-cyan-200 text-lg">{label}</p>
           {isDataNumber ? (
-            <div className="text-green-400 bg-slate-800 w-fit px-2 py-1 rounded-full">
+            <div className="text-green-400 bg-slate-800 w-fit px-4 py-1 rounded-full">
               <animated.div>{number.to((n) => n.toFixed(0))}</animated.div>
             </div>
           ) : (
-            <p className="text-green-400 bg-slate-800 w-fit px-2 py-1 rounded-full">{data}</p>
+            <p className="text-green-400 bg-slate-800 w-fit px-4 py-1 rounded-full">{data}</p>
           )}
         </div>
         {icon}

@@ -38,6 +38,10 @@ const AppSchema = new Schema({
     enum: ["development", "testing", "pre-production", "production", "maintenance"],
     default: "development",
   },
+  users: {
+    type: Number,
+    default: 0,
+  },
   key: {
     type: String,
     required: true,

@@ -2,9 +2,9 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
 import useFormStore from "./useFormStore";
-import { ApiMethod, ApiRequest, ApiResponse, ApiUseCase, ConnectRequest } from "../types/types";
+import { ApiMethod, ApiRequest, ApiResponse, ConnectRequest } from "../types/types";
 
-const useApi = (method: ApiMethod, useCase: ApiUseCase, shouldNavigate?: boolean) => {
+const useApi = (method: ApiMethod, useCase: keyof typeof ENDPOINTS, shouldNavigate?: boolean) => {
   const { formData, setFormError, setFormStatus } = useFormStore();
 
   const url: string = ENDPOINTS[useCase];

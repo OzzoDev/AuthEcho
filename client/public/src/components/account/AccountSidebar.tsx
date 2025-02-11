@@ -12,7 +12,7 @@ export default function AccountSidebar({ tabs }: Props) {
   const navigate = useNavigate();
   const { currentTab, updateCurrentTab } = useAccountStore();
 
-  const switchTab = (tabName: AccountTabName) => {
+  const switchTab = (tabName: AccountTabName): void => {
     updateCurrentTab(tabName);
     navigate(`/account/${removeAllWhitespaces(tabName.toLowerCase().replace("overview", ""))}`);
   };

@@ -9,6 +9,7 @@ import { HiOutlineMail } from "react-icons/hi";
 import AccountHeader from "../components/account/AccountHeader";
 import AccountSidebar from "../components/account/AccountSidebar";
 import { AccountTab } from "../types/types";
+import { useEffect } from "react";
 
 const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
   { tabName: "Overview", icon: <GrOverview size={24} /> },
@@ -21,6 +22,11 @@ const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
 
 export default function AccountLayout() {
   const { isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <ProtectedRoute allowCondition={isAuthenticated}>
       <div className="grow flex flex-col min-h-screen">

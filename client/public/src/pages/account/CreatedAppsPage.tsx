@@ -1,25 +1,41 @@
 import { useEffect, useState } from "react";
 import AppCard from "../../components/account/createdApps/AppCard";
 import useAccountApi from "../../hooks/useAccountApi";
-import { AuthechoApp } from "../../types/types";
+import { AuthechoApp, FetchStatus } from "../../types/types";
+import { Outlet, useParams } from "react-router";
+import { HashLoader } from "react-spinners";
 
 export default function CreatedAppsPage() {
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const [createdApps, setCreatedApps] = useState<AuthechoApp[]>([]);
+  const { appname } = useParams();
+  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
+
+  console.log(appname);
 
   useEffect(() => {
     const getAccountOverview = async () => {
-      const response = await fetchAccountOverview();
+      setApiStatus("loading");
+      const response = await fetchAccountOverview(true);
       const receviedCreatedApps = response?.data.createdApps;
 
       if (receviedCreatedApps) {
-        console.log(receviedCreatedApps);
-
         setCreatedApps(receviedCreatedApps);
+        setApiStatus("success");
+      } else {
+        setApiStatus("error");
       }
     };
     getAccountOverview();
   }, []);
+
+  if (apiStatus === "loading") {
+    return <HashLoader size={50} color="white" className="m-auto" />;
+  }
+
+  if (appname) {
+    return <Outlet />;
+  }
 
   return (
     <div className="w-full">

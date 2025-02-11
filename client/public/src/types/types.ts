@@ -141,3 +141,12 @@ export type UserAlias = {
   name: string;
   email: string;
 };
+
+export type AppStatus = "development" | "testing" | "pre-production" | "production" | "maintenance";
+
+export type AppStatusData = {
+  status: AppStatus;
+  color: string;
+  icon: string;
+  sortValue: number;
+};

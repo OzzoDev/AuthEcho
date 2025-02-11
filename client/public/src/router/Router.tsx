@@ -1,6 +1,5 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router";
 import RootLayout from "../layouts/RootLayout";
-import AccountPage from "../pages/auth/AccountPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 import SigninPage from "../pages/auth/SigninPage";
 import SignupPage from "../pages/auth/SignupPage";
@@ -9,7 +8,6 @@ import AboutPage from "../pages/general/AboutPage";
 import ContactPage from "../pages/general/ContactPage";
 import NotFoundPage from "../pages/general/NotFoundPage";
 import StartPage from "../pages/general/StartPage";
-import ProtectedRoute from "../components/auth/ProtectedRoute";
 import PrivacyPolicyPage from "../pages/general/PrivacyPolicyPage";
 import LicensingPage from "../pages/general/LicensingPage";
 import AccessRedirect from "../components/auth/AccessRedirect";
@@ -18,7 +16,6 @@ import ConnectDocsPage from "../pages/auth/connect/ConnectDocsPage";
 import ConnectPage from "../pages/auth/connect/ConnectPage";
 import ConnectLayout from "../layouts/ConnectLayout";
 import AccountLayout from "../layouts/AccountLayout";
-import OverviewPage from "../pages/account/OverviewPage";
 import { lazy, Suspense } from "react";
 import { HashLoader } from "react-spinners";
 
@@ -28,8 +25,9 @@ const AccountInvoicesPage = lazy(() => import("../pages/account/InvoicesPage"));
 const AccountCreatedAppsPage = lazy(() => import("../pages/account/CreatedAppsPage"));
 const AccountAdminAppsPage = lazy(() => import("../pages/account/AdminAppsPage"));
 const AccountActiveConnectionsPage = lazy(() => import("../pages/account/ActiveConnectionsPage"));
+const AccountCreatedAppsDetailsPage = lazy(() => import("../pages/account/CreatedAppsDetailsPage"));
 
-const Loader = <HashLoader size={50} color="white" />;
+const Loader = <HashLoader size={50} color="white" className="m-auto" />;
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -97,15 +95,23 @@ const router = createBrowserRouter(
               <AccountInvoicesPage />
             </Suspense>
           }
-        />{" "}
+        />
         <Route
           path="myapps"
           element={
             <Suspense fallback={Loader}>
               <AccountCreatedAppsPage />
             </Suspense>
-          }
-        />{" "}
+          }>
+          <Route
+            path=":appname"
+            element={
+              <Suspense fallback={Loader}>
+                <AccountCreatedAppsDetailsPage />
+              </Suspense>
+            }
+          />
+        </Route>
         <Route
           path="administeredapps"
           element={
@@ -113,7 +119,7 @@ const router = createBrowserRouter(
               <AccountAdminAppsPage />
             </Suspense>
           }
-        />{" "}
+        />
         <Route
           path="activeconnections"
           element={
@@ -122,12 +128,6 @@ const router = createBrowserRouter(
             </Suspense>
           }
         />
-        {/* 
-          <Route path="settings" element={<AccountOverviewPage />} />
-          <Route path="invoices" element={<AccountOverviewPage />} />
-          <Route path="myapps" element={<AccountOverviewPage />} />
-          <Route path="administeredapps" element={<AccountOverviewPage />} />
-          <Route path="activeconnections" element={<AccountOverviewPage />} /> */}
       </Route>
       <Route path="/about" element={<AboutPage />} />
       <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
