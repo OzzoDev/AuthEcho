@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ConnectRequest } from "../../types/types";
-import useAuthStore from "../../hooks/useAuthStore";
 import { IoMdCheckmark } from "react-icons/io";
 import ConnectForm from "../../components/connect/ConnectForm";
 import Modal from "../../components/utils/Modal";
@@ -10,11 +9,9 @@ import useClipboard from "../../hooks/useClipboard";
 
 export default function ConnectControls() {
   const { copyToClipboard } = useClipboard();
-  const { username } = useAuthStore();
   const [connectData, setConnectData] = useState<ConnectRequest>({
     appName: "",
     origin: "http://localhost:3001",
-    creator: username || "",
     admins: [],
     resources: [],
     appDescription: "",

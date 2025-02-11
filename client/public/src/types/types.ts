@@ -32,7 +32,6 @@ export type ApiRequest = {
 export type ConnectRequest = {
   appName: string;
   origin: string;
-  creator: string;
   admins: string[];
   resources: ConnectResource[];
   appDescription: string;

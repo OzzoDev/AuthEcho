@@ -88,13 +88,16 @@ const getAppsByNames = async (namesArray) => {
     });
 
     const results = await Promise.all(promises);
-    const foundApps = results.map((app) => ({
-      name: app.name,
-      origin: app.origin,
-      description: app.description,
-      creator: app.creator,
-      admins: app.admins,
-    }));
+
+    const foundApps = results
+      .filter((res) => res)
+      .map((app) => ({
+        name: app.name,
+        origin: app.origin,
+        description: app.description,
+        creator: app.creator,
+        admins: app.admins,
+      }));
     return foundApps;
   } catch (error) {
     throw error;

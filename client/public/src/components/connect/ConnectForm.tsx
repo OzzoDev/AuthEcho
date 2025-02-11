@@ -18,7 +18,7 @@ interface Props {
 }
 
 function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Props) {
-  const { username, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { formError, formStatus } = useFormStore(true);
   const { fetchData: connectApp } = useApi("POST", "JOIN");
 
@@ -58,7 +58,6 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
     setConnectData({
       appName: "",
       origin: "http://localhost:3001",
-      creator: username || "",
       admins: [],
       resources: [],
       appDescription: "",
