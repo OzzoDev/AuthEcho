@@ -17,13 +17,14 @@ import PrimaryBtn from "../../components/btn/PrimaryBtn";
 import SecretText from "../../components/utils/SecretText";
 import UpdateDataForm from "../../components/account/settings/UpdateDataForm";
 import useApi from "../../hooks/useApi";
+import useClipboard from "../../hooks/useClipboard";
 
 export default function CreatedAppsDetailsPage() {
   const navigate = useNavigate();
   const { fetchData: updateApp } = useApi("PUT", "UPDATEAPP");
   const { fetchData: generateAppKey } = useApi("POST", "GENERATEAPKEY");
   const { fetchData: deleteApp } = useApi("DELETE", "DELETEAPP");
-
+  const { copyToClipboard } = useClipboard();
   const { getApp, editApp, removeApp } = useMangeAppStore();
   const { appname } = useParams();
   const [app, setApp] = useState<AuthechoApp>(getApp(appname));
@@ -31,7 +32,6 @@ export default function CreatedAppsDetailsPage() {
   const [editableAdmins, setEditableAdmins] = useState<string[]>(
     (app?.admins ?? []).filter((admin) => admin !== username)
   );
-
   const [resources, setResources] = useState<ConnectResource[]>(app.resources);
   const [admins, setAdmins] = useState<string[]>(editableAdmins);
   const [appData, setAppData] = useState<ConnectRequest>({
@@ -46,7 +46,7 @@ export default function CreatedAppsDetailsPage() {
     deleteCommand: "",
   });
   const [appKey, setAppKey] = useState<string>("");
-
+  const [isKeyCopied, setIsKeyCoiped] = useState<boolean>(false);
   const appStatusOptions = Object.keys(APP_STATUS_MAP).map((key) => capitalize(key));
 
   useEffect(() => {
@@ -123,6 +123,7 @@ export default function CreatedAppsDetailsPage() {
     if (response) {
       const key = response.data.appKey;
       key && setAppKey(key);
+      setIsKeyCoiped(false);
     }
   };
 
@@ -132,6 +133,11 @@ export default function CreatedAppsDetailsPage() {
       removeApp(appData.appName);
       navigate("/account/myapps");
     }
+  };
+
+  const handleCopyKey = () => {
+    setIsKeyCoiped((prev) => !prev);
+    copyToClipboard(appKey);
   };
 
   const redirectToCreatedAppsPage = (): void => {
@@ -225,8 +231,9 @@ export default function CreatedAppsDetailsPage() {
             icon={<IoKeyOutline key={24} />}
           />
           {appKey && (
-            <div className="w-fit">
+            <div className="flex flex gap-x-10 items-center w-fit">
               <SecretText text={appKey} />
+              <button onClick={handleCopyKey}>{isKeyCopied ? "Copied" : "Copy"}</button>
             </div>
           )}
         </div>
