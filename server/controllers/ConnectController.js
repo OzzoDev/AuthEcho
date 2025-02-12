@@ -9,8 +9,16 @@ const {
   getAppsByNames,
 } = require("../services/userService");
 const { removeAllWhitespaces } = require("../utils/utils");
+const {
+  updateAppName,
+  updateAppOrigin,
+  updateAppDesription,
+  updateAppStatus,
+  updateAppAdmins,
+  updateAppResources,
+} = require("../services/appService");
 
-const join = async (req, res) => {
+const joinApp = async (req, res) => {
   const { appName, origin, admins, resources, appDescription } = req.body;
   const userData = req.user;
 
@@ -20,6 +28,13 @@ const join = async (req, res) => {
 
   if (!origin) {
     return res.status(400).json({ message: "App origin is not provided", success: false });
+  }
+
+  if (appName.length > 100) {
+    return res.status(400).json({
+      message: "The application name exceeds the maximum allowed length of 300 characters",
+      success: false,
+    });
   }
 
   if (appDescription && appDescription.length > 300) {
@@ -88,19 +103,112 @@ const join = async (req, res) => {
     appModel.key = await bcrypt.hash(key, 10);
     await appModel.save();
 
-    await addCreatedApp(user.name, appName);
-    await addAdminApp(user.name, appName);
-    await addAppConnection(user.name, appName);
+    await Promise.all([
+      addCreatedApp(user.name, appName),
+      addAdminApp(user.name, appName),
+      addAppConnection(user.name, appName),
+    ]);
 
     res
       .status(201)
       .json({ message: "Successfully joined app", success: true, appKey: key, appName });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const editApp = async (res, res) => {
+  const { app, appName, origin, admins, resources, appDescription, status } = req.body;
+
+  if (!app) {
+    return res.status(400).json({ message: "App is not provided", success: false });
+  }
+
+  try {
+    const app = await AppModel.findOne({ name: app });
+
+    if (!app) {
+      res.status(400).json({ message: "App not found", success: false });
+    }
+
+    const identifier = app.name;
+
+    await Promise.all([
+      updateAppName(identifier, appName),
+      updateAppOrigin(identifier, origin),
+      updateAppDesription(identifier, appDescription),
+      updateAppStatus(identifier, status),
+      updateAppAdmins(identifier, admins),
+      updateAppResources(identifier, resources),
+    ]);
+
+    res.status(200).json({ message: "App updated successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const deleteApp = async (req, res) => {
+  const { app, deleteCommand } = req.body;
+
+  if (!app) {
+    return res.status(400).json({ message: "App is not provided", success: false });
+  }
+
+  try {
+    const isDeleteConfirmed = deleteCommand.toLowerCase() === `delete ${app.toLowerCase()}`;
+
+    if (!isDeleteConfirmed) {
+      return res
+        .status(400)
+        .json({ message: "Deletion failed due to the absence of confirmation", success: false });
+    }
+
+    const deleteResult = await AppModel.deleteOne({ name: app });
+
+    if (deleteResult.deletedCount === 0) {
+      return res.status(404).json({ message: "App not found", success: false });
+    }
+
+    res.status(200).json({ message: "App deleted successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const generateAppKey = async (req, res) => {
+  const { app } = req.body;
+
+  if (!app) {
+    return res.status(400).json({ message: "App is not provided", success: false });
+  }
+
+  try {
+    const targetApp = await AppModel.findOne({ name: app });
+
+    if (!targetApp) {
+      return res.status(404).json({ message: "App not found", success: false });
+    }
+
+    const key = hex32BitKey();
+    targetApp.key = key;
+
+    targetApp.key = await bcrypt.hash(key, 10);
+    await targetApp.save();
+
+    res.status(200).json({ message: "App key updated successfully", success: true, appKey: key });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
 module.exports = {
-  join,
+  joinApp,
+  editApp,
+  deleteApp,
+  generateAppKey,
 };
