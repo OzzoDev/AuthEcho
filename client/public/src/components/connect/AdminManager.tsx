@@ -7,14 +7,14 @@ import useApi from "../../hooks/useApi";
 import useAuthStore from "../../hooks/useAuthStore";
 
 interface Props {
-  handleAddAdmins: (admins: string[]) => void;
+  admins: string[];
+  setAdmins: (admins: string[]) => void;
 }
 
-export default function AdminManager({ handleAddAdmins }: Props) {
+export default function AdminManager({ admins, setAdmins }: Props) {
   const { username } = useAuthStore();
   const { fetchData: getUserAlias } = useApi("GET", "GETUSERALIAS");
   const [users, setUsers] = useState<UserAlias[]>([]);
-  const [admins, setAdmins] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -26,10 +26,6 @@ export default function AdminManager({ handleAddAdmins }: Props) {
     })();
   }, []);
 
-  useEffect(() => {
-    handleAddAdmins(admins);
-  }, [admins]);
-
   const availableUsers: string[] = useMemo(() => {
     return [...users]
       .filter((availableUser) => !admins.includes(availableUser.name))
@@ -39,7 +35,8 @@ export default function AdminManager({ handleAddAdmins }: Props) {
   const addAdmin = (admin: string) => {
     if (admins.length >= 10) return;
     const adminUsername = admin.split(",")[0].trim();
-    setAdmins((prev) => [...new Set([...prev, adminUsername])]);
+    const updatedAdmins = [...new Set([...admins, adminUsername])];
+    setAdmins(updatedAdmins);
   };
 
   const deleteAdmin = (admin: string): void => {

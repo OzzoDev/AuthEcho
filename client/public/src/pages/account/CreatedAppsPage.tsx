@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AppCard from "../../components/account/createdApps/AppCard";
+import AppCard from "../../components/account/app/AppCard";
 import useAccountApi from "../../hooks/useAccountApi";
 import { AuthechoApp, FetchStatus } from "../../types/types";
 import { Outlet, useParams } from "react-router";

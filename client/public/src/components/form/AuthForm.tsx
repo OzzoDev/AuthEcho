@@ -1,6 +1,6 @@
 import useFormStore from "../../hooks/useFormStore";
 import { AUTH_HELPER } from "../../utils/authHelper";
-import Dropdown from "./Dropdown";
+import Dropdown from "../utils/Dropdown";
 import FormInput from "./FormInput";
 import FormPasswordInput from "./FormPasswordInput";
 import FormVerify from "./FormVerify";

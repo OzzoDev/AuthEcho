@@ -8,6 +8,7 @@ import Modal from "../../components/utils/Modal";
 import useAccountApi from "../../hooks/useAccountApi";
 import useAccountStore from "../../hooks/useAccountStore";
 import useAuthStore from "../../hooks/useAuthStore";
+import Divider from "../../components/utils/Divider";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -167,7 +168,7 @@ export default function SettingsPage() {
         </p>
       </Accordion>
 
-      <div className="flex flex-col items-center gap-y-20 mt-[100px] w-full">
+      <div className="flex flex-col items-center gap-y-20 mt-[100px] mb-[80px] w-full">
         <UpdateDataForm
           label="Update username"
           name="name"
@@ -226,12 +227,9 @@ export default function SettingsPage() {
         />
       </div>
 
-      <section className="flex flex-col items-center w-full mt-[80px]">
-        <fieldset className="mb-10 w-full border-t-2 border-red-700">
-          <legend className="text-xl font-semibold ml-10 py-1 px-4 rounded-full border-2 border-red-700">
-            Danger zone
-          </legend>
-        </fieldset>
+      <Divider dividerText="Danger zone" />
+
+      <section className="flex flex-col items-center w-full pt-[40px]">
         <UpdateDataForm
           label="Delete account"
           name="deleteCommand"

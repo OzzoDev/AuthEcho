@@ -18,7 +18,7 @@ export default function AppCardData({ desciption, data, isLink = false, noWrap =
           {data}
         </a>
       ) : (
-        <p style={{ whiteSpace: noWrap ? "nowrap" : "normal" }} className="font-semibold">
+        <p style={{ whiteSpace: noWrap ? "nowrap" : "normal" }} className="font-semibold break-all">
           {data}
         </p>
       )}

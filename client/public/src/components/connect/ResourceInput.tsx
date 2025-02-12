@@ -27,23 +27,29 @@ export default function ResourceInput({
   };
 
   return (
-    <div className="flex flex-col gap-y-6 py-4 px-6 bg-gray-800">
+    <div className="flex flex-col gap-y-6 py-4">
       <div className="flex flex-col md:flex-row gap-6 w-full">
         <DescriptiveInput
           labelText="Name"
           name="name"
+          value={resource.name}
           placeholder={"eg. Github, Jira"}
           onChange={handleChange}
         />
         <DescriptiveInput
           labelText="Resource"
           name="resource"
+          value={resource.resource}
           placeholder={`eg. https://github.com/${username}/app`}
           onChange={handleChange}
         />
       </div>
       <div className="flex flex-col md:flex-row justify-end gap-6">
-        <ToggleBtn btnText="Is public" onClick={() => toggleResourceVisibility(resource.id)} />
+        <ToggleBtn
+          btnText="Is public"
+          selected={resource.visibility === "public" ? true : false}
+          onClick={() => toggleResourceVisibility(resource.id)}
+        />
         <DangerBtn btnText="Remove Resource" onClick={() => deleteResource(resource.id)} />
       </div>
     </div>

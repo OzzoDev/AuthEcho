@@ -15,7 +15,7 @@ export type ApiResponse = {
 };
 
 export type ApiRequest = {
-  useCase?: ApiUseCase;
+  // useCase?: ApiUseCase;
   userData?: string;
   name?: string;
   email?: string;
@@ -32,9 +32,13 @@ export type ApiRequest = {
 export type ConnectRequest = {
   appName: string;
   origin: string;
+  creator?: string;
   admins: string[];
   resources: ConnectResource[];
   appDescription: string;
+  status?: AppStatus;
+  users?: number;
+  deleteCommand?: string;
 };
 
 export type ConnectResource = {
@@ -47,29 +51,6 @@ export type ConnectResource = {
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
 
 export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
-
-export type ApiUseCase =
-  | "SIGNUP"
-  | "SIGNIN"
-  | "SENDVERIFICATIONCODE"
-  | "REQUESTUNLOCKCODE"
-  | "VERIFYACCOUNT"
-  | "VERIFYAUTHENTICATION"
-  | "SIGNOUT"
-  | "SECURITYQUESTIONS"
-  | "SETSECURITYQUESTION"
-  | "GETUSERSECURITYQUESTION"
-  | "VALIDATESECURITYQUESTION"
-  | "UPDATEEMAIL"
-  | "UPDATEUSERNAME"
-  | "UPDATEPASSWORD"
-  | "VALIDATEEMAIL"
-  | "VALIDATEPASSWORD"
-  | "RESETPASSWORD"
-  | "UNLOCKACCOUNT"
-  | "ISSUSPENDED"
-  | "GETUSERALIAS"
-  | "JOIN";
 
 export type FormState = "default" | "verify" | "resendCode" | "question" | "password";
 

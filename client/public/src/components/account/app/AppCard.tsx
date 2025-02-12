@@ -2,7 +2,7 @@ import { AuthechoApp } from "../../../types/types";
 import { IoSettingsOutline } from "react-icons/io5";
 import SecondaryBtn from "../../btn/SecondaryBtn";
 import useAuthStore from "../../../hooks/useAuthStore";
-import { joinWithAnd, removeAllWhitespaces } from "../../../utils/utils";
+import { capitalize, joinWithAnd, removeAllWhitespaces } from "../../../utils/utils";
 import { useNavigate } from "react-router";
 import AppCardData from "./AppCardData";
 import { APP_STATUS_MAP } from "../../../constants/contants";
@@ -62,7 +62,11 @@ export default function AppCard({ app }: Props) {
               style={{ backgroundColor: appStatus.color }}
               className="absolute top-[-5px] right-[-10px] w-[8px] h-[8px] rounded-full"
             />
-            <AppCardData desciption="Status" data={`${appStatus.icon} ${app.status}`} noWrap />
+            <AppCardData
+              desciption="Status"
+              data={`${appStatus.icon} ${capitalize(app.status)}`}
+              noWrap
+            />
           </div>
           <span className="flex gap-x-2">
             {app.users}

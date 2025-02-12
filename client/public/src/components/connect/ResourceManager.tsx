@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { ConnectResource } from "../../types/types";
 import ResourceInput from "./ResourceInput";
 import { GoPlus } from "react-icons/go";
@@ -6,28 +5,24 @@ import { generateID } from "../../utils/utils";
 import OutlineBtn from "../btn/OutlineBtn";
 
 interface Props {
-  handleAddResources: (resources: ConnectResource[]) => void;
+  resources: ConnectResource[];
+  setResources: (resources: ConnectResource[]) => void;
 }
 
-export default function ResourceManager({ handleAddResources }: Props) {
-  const [resources, setResources] = useState<ConnectResource[]>([]);
-
-  useEffect(() => {
-    handleAddResources(resources);
-  }, [resources]);
-
+export default function ResourceManager({ resources, setResources }: Props) {
   const createResourceObject = (): void => {
     if (resources.length >= 10) return;
-
-    setResources((prev) => [
-      ...prev,
+    const updatedResources: ConnectResource[] = [
+      ...resources,
       {
-        id: generateID([...prev].map((res) => res.id)),
+        id: generateID([...resources].map((res) => res.id)),
         name: "",
         resource: "",
         visibility: "private",
       },
-    ]);
+    ];
+
+    setResources(updatedResources);
   };
 
   const addResource = (

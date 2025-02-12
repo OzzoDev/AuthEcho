@@ -1,6 +1,6 @@
 import { IoMdCheckmark } from "react-icons/io";
 import PrimaryBtn from "../../btn/PrimaryBtn";
-import Dropdown from "../../form/Dropdown";
+import Dropdown from "../../utils/Dropdown";
 import { useEffect, useState } from "react";
 
 interface Props {

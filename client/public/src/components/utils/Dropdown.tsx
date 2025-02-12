@@ -6,10 +6,10 @@ import useOutsideClick from "../../hooks/useOutsideClick";
 interface Props {
   initialValue?: string;
   items: string[];
-  onSelect: (question: string) => void | Promise<void>;
+  onSelect: (item: string) => void | Promise<void>;
 }
 
-export default function Dropdown({ initialValue = "Select question", items, onSelect }: Props) {
+export default function Dropdown({ initialValue = "Select", items, onSelect }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [displayText, setDisplayText] = useState<string>(initialValue);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -54,9 +54,9 @@ export default function Dropdown({ initialValue = "Select question", items, onSe
         )}
       </button>
       {isOpen ? (
-        <div className="absolute w-full min-h-[300px] px-[20px] py-[20px] pr-[10px] rounded-[30px] top-0 left-0 overflow-y-auto bg-slate-800">
+        <div className="absolute w-full min-h-[160px] px-[20px] py-[20px] pr-[10px] rounded-[30px] top-0 left-0 overflow-y-auto bg-slate-800">
           <ul role="listbox" onClick={(e) => e.stopPropagation()} className="w-full">
-            <List height={300} itemCount={items.length} itemSize={70} width="100%">
+            <List height={160} itemCount={items.length} itemSize={40} width="100%">
               {renderRow}
             </List>
           </ul>

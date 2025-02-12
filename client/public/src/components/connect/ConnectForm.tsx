@@ -5,7 +5,7 @@ import DescriptiveInput from "../utils/DescriptiveInput";
 import useApi from "../../hooks/useApi";
 import useFormStore from "../../hooks/useFormStore";
 import { ConnectRequest, ConnectResource } from "../../types/types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useAuthStore from "../../hooks/useAuthStore";
 import ResourceManager from "./ResourceManager";
 import AdminManager from "./AdminManager";
@@ -21,30 +21,32 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
   const { isAuthenticated } = useAuthStore();
   const { formError, formStatus } = useFormStore(true);
   const { fetchData: connectApp } = useApi("POST", "JOIN");
+  const [resources, setResources] = useState<ConnectResource[]>([]);
+  const [admins, setAdmins] = useState<string[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    const updatedConnectData: ConnectRequest = {
-      ...connectData,
-      [name]: value,
-    };
-
-    setConnectData(updatedConnectData);
-  };
-
-  const handleAddResources = (resources: ConnectResource[]) => {
+  useEffect(() => {
     const updatedConnectData: ConnectRequest = {
       ...connectData,
       resources,
     };
 
     setConnectData(updatedConnectData);
-  };
+  }, [resources]);
 
-  const handleAddAdmins = (admins: string[]) => {
+  useEffect(() => {
     const updatedConnectData: ConnectRequest = {
       ...connectData,
       admins,
+    };
+
+    setConnectData(updatedConnectData);
+  }, [admins]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    const updatedConnectData: ConnectRequest = {
+      ...connectData,
+      [name]: value,
     };
 
     setConnectData(updatedConnectData);
@@ -132,8 +134,8 @@ function ConnectForm({ connectData, setConnectData, setAppKey, setAppName }: Pro
           thereby assisting users in understanding its features and benefits.
         </p>
       </DescriptiveInput>
-      <ResourceManager handleAddResources={handleAddResources} />
-      <AdminManager handleAddAdmins={handleAddAdmins} />
+      <ResourceManager resources={resources} setResources={setResources} />
+      <AdminManager admins={admins} setAdmins={setAdmins} />
       {formError && <p className="text-center text-lg mb-[-30px] bg-rose-700">{formError}</p>}
       <div className="mt-10">
         <PrimaryBtn btnText="Connect" type="submit" width="w-full" icon={<CiGlobe size={24} />} />

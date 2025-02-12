@@ -26,6 +26,9 @@ const AccountCreatedAppsPage = lazy(() => import("../pages/account/CreatedAppsPa
 const AccountAdminAppsPage = lazy(() => import("../pages/account/AdminAppsPage"));
 const AccountActiveConnectionsPage = lazy(() => import("../pages/account/ActiveConnectionsPage"));
 const AccountCreatedAppsDetailsPage = lazy(() => import("../pages/account/CreatedAppsDetailsPage"));
+const AccountControlledAppTrafficPage = lazy(
+  () => import("../pages/account/ControlledAppTrafficPage")
+);
 
 const Loader = <HashLoader size={50} color="white" className="m-auto" />;
 
@@ -103,14 +106,24 @@ const router = createBrowserRouter(
               <AccountCreatedAppsPage />
             </Suspense>
           }>
-          <Route
-            path=":appname"
-            element={
-              <Suspense fallback={Loader}>
-                <AccountCreatedAppsDetailsPage />
-              </Suspense>
-            }
-          />
+          <Route path=":appname">
+            <Route
+              index
+              element={
+                <Suspense fallback={Loader}>
+                  <AccountCreatedAppsDetailsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="traffic"
+              element={
+                <Suspense fallback={Loader}>
+                  <AccountControlledAppTrafficPage />
+                </Suspense>
+              }
+            />
+          </Route>
         </Route>
         <Route
           path="administeredapps"
@@ -137,4 +150,5 @@ const router = createBrowserRouter(
     </Route>
   )
 );
+
 export default router;
