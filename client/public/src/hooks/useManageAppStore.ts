@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useCallback } from "react";
 import { setApps } from "../store/manageAppSlice";
-import { AuthechoApp, ConnectRequest } from "../types/types";
+import { AuthechoApp } from "../types/types";
 import { removeAllWhitespaces } from "../utils/utils";
 
 const useMangeAppStore = () => {
@@ -17,23 +17,37 @@ const useMangeAppStore = () => {
   );
 
   const getApp = (appName: string | undefined): AuthechoApp => {
-    const foundApp = (manageAppState.apps ?? []).find(
-      (app) => removeAllWhitespaces(app.name.toLowerCase()) === removeAllWhitespaces(appName ?? "")
-    );
+    if (!appName) {
+      return createDefaultApp();
+    }
+
+    console.log(manageAppState.apps);
+
+    const foundApp = manageAppState.apps.find((app) => {
+      return removeAllWhitespaces(app.name.toLowerCase()) === removeAllWhitespaces(appName ?? "");
+    });
 
     return foundApp || createDefaultApp();
   };
 
   const editApp = useCallback(
-    (editedApp: ConnectRequest): void => {
+    (editedApp: AuthechoApp): void => {
       const updatedApps = manageAppState.apps.map((app) => {
-        if (app.name === editedApp.appName) {
+        if (app.name === editedApp.name) {
           return editedApp;
         }
         return app;
       });
 
-      setApps(updatedApps as AuthechoApp[]);
+      dispatch(setApps(updatedApps as AuthechoApp[]));
+    },
+    [dispatch]
+  );
+
+  const removeApp = useCallback(
+    (appName: string): void => {
+      const filteredApps = manageAppState.apps.filter((app) => app.name !== appName);
+      dispatch(setApps(filteredApps));
     },
     [dispatch]
   );
@@ -56,6 +70,7 @@ const useMangeAppStore = () => {
     updateApps,
     getApp,
     editApp,
+    removeApp,
   };
 };
 

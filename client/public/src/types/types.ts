@@ -30,6 +30,7 @@ export type ApiRequest = {
 };
 
 export type ConnectRequest = {
+  app?: string;
   appName: string;
   origin: string;
   creator?: string;

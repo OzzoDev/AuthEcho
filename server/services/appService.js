@@ -1,12 +1,18 @@
 const AppModel = require("../models/App");
-const { removeAllWhitespaces } = require("../utils/utils");
+const { removeAllWhitespaces, decapitalize } = require("../utils/utils");
+const { findUser } = require("./userService");
 
 const findApp = async (identifier) => {
   return await AppModel.findOne({ name: identifier }).collation({ locale: "en", strength: 1 });
 };
 
-const updateAppName = async (identifier, appName) => {
+const updateAppName = async (identifier, appName, userData) => {
+  const user = await findUser(userData);
   const app = await findApp(identifier);
+
+  if (!user) {
+    return null;
+  }
 
   if (!appName) {
     return null;
@@ -40,6 +46,17 @@ const updateAppName = async (identifier, appName) => {
     if (app.name === appName) {
       return null;
     }
+
+    const apps = user.createdApps;
+    const updatedApps = apps.map((appItem) => {
+      if (appItem === app.name) {
+        return appName;
+      }
+      return appItem;
+    });
+
+    user.createdApps = updatedApps;
+    await user.save();
 
     app.name = appName;
     await app.save();
@@ -108,12 +125,14 @@ const updateAppStatus = async (identifier, appStatus) => {
     return null;
   }
 
+  const normalizedStatus = decapitalize(appStatus);
+
   if (app) {
-    if (app.status === appStatus) {
+    if (app.status === normalizedStatus) {
       return null;
     }
 
-    app.status = appStatus;
+    app.status = normalizedStatus;
     await app.save();
 
     return true;
@@ -172,7 +191,9 @@ const updateAppResources = async (identifier, appResources) => {
       return null;
     }
 
-    app.resources = appResources;
+    const filteredResources = appResources.filter((res) => res.name !== "" && res.resource !== "");
+
+    app.resources = filteredResources;
     await app.save();
 
     return true;

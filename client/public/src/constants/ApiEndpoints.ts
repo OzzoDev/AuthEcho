@@ -21,6 +21,9 @@ export const ENDPOINTS = {
   VALIDATESECURITYQUESTION: `${API_BASE_URL}/api/auth/validatesecurityquestion`,
   GETUSERALIAS: `${API_BASE_URL}/api/auth/useralias`,
   JOIN: `${API_BASE_URL}/api/connect/join`,
+  UPDATEAPP: `${API_BASE_URL}/api/connect/updateapp`,
+  GENERATEAPKEY: `${API_BASE_URL}/api/connect/appkey`,
+  DELETEAPP: `${API_BASE_URL}/api/connect/deleteapp`,
 };
 
 export const ACCOUNT_ENDPOINTS = {

@@ -16,10 +16,15 @@ import Divider from "../../components/utils/Divider";
 import PrimaryBtn from "../../components/btn/PrimaryBtn";
 import SecretText from "../../components/utils/SecretText";
 import UpdateDataForm from "../../components/account/settings/UpdateDataForm";
+import useApi from "../../hooks/useApi";
 
 export default function CreatedAppsDetailsPage() {
   const navigate = useNavigate();
-  const { getApp, editApp } = useMangeAppStore();
+  const { fetchData: updateApp } = useApi("PUT", "UPDATEAPP");
+  const { fetchData: generateAppKey } = useApi("POST", "GENERATEAPKEY");
+  const { fetchData: deleteApp } = useApi("DELETE", "DELETEAPP");
+
+  const { getApp, editApp, removeApp } = useMangeAppStore();
   const { appname } = useParams();
   const [app, setApp] = useState<AuthechoApp>(getApp(appname));
   const { username } = useAuthStore();
@@ -30,6 +35,7 @@ export default function CreatedAppsDetailsPage() {
   const [resources, setResources] = useState<ConnectResource[]>(app.resources);
   const [admins, setAdmins] = useState<string[]>(editableAdmins);
   const [appData, setAppData] = useState<ConnectRequest>({
+    app: app.name,
     appName: app.name,
     appDescription: app.description,
     origin: app.origin,
@@ -39,13 +45,12 @@ export default function CreatedAppsDetailsPage() {
     users: app.users,
     deleteCommand: "",
   });
-  const [newAppKey, setNewAppKey] = useState<string>("");
+  const [appKey, setAppKey] = useState<string>("");
 
   const appStatusOptions = Object.keys(APP_STATUS_MAP).map((key) => capitalize(key));
 
   useEffect(() => {
-    editApp(appData);
-    setApp({
+    const editedApp = {
       name: appData.appName,
       origin: appData.origin,
       creator: appData.creator || "",
@@ -54,15 +59,27 @@ export default function CreatedAppsDetailsPage() {
       resources: appData.resources,
       status: appData.status || "development",
       users: app.users,
-    });
+    };
+    editApp(editedApp);
+    setApp(editedApp);
     setEditableAdmins((app?.admins ?? []).filter((admin) => admin !== username));
   }, [appData]);
 
   useEffect(() => {
-    return () => {
-      console.log("Details page is unmounting, so send put request to updated edited app data");
-    };
-  }, []);
+    const updateDelay = setTimeout(() => {
+      const updateAppData = async () => {
+        try {
+          await updateApp(false, appData);
+          console.log("App data updated successfully.");
+        } catch (error) {
+          console.error("Error updating app data:", error);
+        }
+      };
+      updateAppData();
+    }, 1200);
+
+    return () => clearTimeout(updateDelay);
+  }, [appData]);
 
   useEffect(() => {
     const updatedAppData: ConnectRequest = {
@@ -99,6 +116,22 @@ export default function CreatedAppsDetailsPage() {
       status: status as AppStatus,
     };
     setAppData(updatedAppData);
+  };
+
+  const handleGenerateAppKey = async () => {
+    const response = await generateAppKey(false, appData);
+    if (response) {
+      const key = response.data.appKey;
+      key && setAppKey(key);
+    }
+  };
+
+  const handleDeleteApp = async () => {
+    const response = await deleteApp(false, appData);
+    if (response) {
+      removeApp(appData.appName);
+      navigate("/account/myapps");
+    }
   };
 
   const redirectToCreatedAppsPage = (): void => {
@@ -188,12 +221,12 @@ export default function CreatedAppsDetailsPage() {
         <div className="flex flex-col md:flex-row justify-center items-center gap-x-10 gap-y-6">
           <PrimaryBtn
             btnText="Get new API key"
-            onClick={() => {}}
+            onClick={handleGenerateAppKey}
             icon={<IoKeyOutline key={24} />}
           />
-          {newAppKey && (
+          {appKey && (
             <div className="w-fit">
-              <SecretText text={newAppKey} />
+              <SecretText text={appKey} />
             </div>
           )}
         </div>
@@ -213,7 +246,7 @@ export default function CreatedAppsDetailsPage() {
           isDangerous={true}
           btnText="Delete"
           onChange={handleEditApp}
-          onSubmit={() => {}}>
+          onSubmit={handleDeleteApp}>
           <p className="mt-4">
             Please proceed with caution. If you choose to delete an application, there will be no
             way to restore it. To delete it anyway, please type

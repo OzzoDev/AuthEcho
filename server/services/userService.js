@@ -123,4 +123,5 @@ module.exports = {
   addAdminApp,
   addAppConnection,
   getAppsByNames,
+  findUser,
 };

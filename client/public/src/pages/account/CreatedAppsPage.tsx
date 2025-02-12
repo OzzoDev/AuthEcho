@@ -28,6 +28,8 @@ export default function CreatedAppsPage() {
       const response = await fetchAccountOverview(true);
       const receviedCreatedApps = response?.data.createdApps;
 
+      console.log("Apps: ", receviedCreatedApps);
+
       if (receviedCreatedApps) {
         setCreatedApps(receviedCreatedApps);
         updateApps(receviedCreatedApps);
@@ -55,6 +57,16 @@ export default function CreatedAppsPage() {
   const filteredCreatedApps = createdApps.filter((_, index) =>
     showOnPagination(index, page.current, 4)
   );
+
+  const noApps = filteredCreatedApps.length === 0;
+
+  if (noApps) {
+    return (
+      <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
+        You have not connected any apps yet
+      </h2>
+    );
+  }
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] w-full">

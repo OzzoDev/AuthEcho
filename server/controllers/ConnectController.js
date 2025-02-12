@@ -118,25 +118,33 @@ const joinApp = async (req, res) => {
   }
 };
 
-const editApp = async (res, res) => {
+const updateApp = async (req, res) => {
   const { app, appName, origin, admins, resources, appDescription, status } = req.body;
+  const user = req.user;
 
   if (!app) {
     return res.status(400).json({ message: "App is not provided", success: false });
   }
 
   try {
-    const app = await AppModel.findOne({ name: app });
+    const userData = await UserModel.findOne({ name: user.name });
 
-    if (!app) {
+    if (!userData) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const targetApp = await AppModel.findOne({ name: app });
+
+    if (!targetApp) {
       res.status(400).json({ message: "App not found", success: false });
     }
 
-    const identifier = app.name;
+    const identifier = targetApp.name;
+    const allCreatorApps = await getAppsByNames(userData.createdApps);
 
     await Promise.all([
-      updateAppName(identifier, appName),
-      updateAppOrigin(identifier, origin),
+      updateAppName(identifier, appName, user.name),
+      updateAppOrigin(identifier, origin, allCreatorApps),
       updateAppDesription(identifier, appDescription),
       updateAppStatus(identifier, status),
       updateAppAdmins(identifier, admins),
@@ -152,6 +160,7 @@ const editApp = async (res, res) => {
 
 const deleteApp = async (req, res) => {
   const { app, deleteCommand } = req.body;
+  const user = req.user;
 
   if (!app) {
     return res.status(400).json({ message: "App is not provided", success: false });
@@ -165,6 +174,17 @@ const deleteApp = async (req, res) => {
         .status(400)
         .json({ message: "Deletion failed due to the absence of confirmation", success: false });
     }
+
+    const userData = await UserModel.findOne({ name: user.name });
+
+    if (!userData) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const filteredCreatedApps = userData.createdApps.filter((appItem) => appItem !== app);
+
+    userData.createdApps = filteredCreatedApps;
+    await userData.save();
 
     const deleteResult = await AppModel.deleteOne({ name: app });
 
@@ -208,7 +228,7 @@ const generateAppKey = async (req, res) => {
 
 module.exports = {
   joinApp,
-  editApp,
+  updateApp,
   deleteApp,
   generateAppKey,
 };
