@@ -76,7 +76,7 @@ export default function CreatedAppsDetailsPage() {
         }
       };
       updateAppData();
-    }, 1200);
+    }, 1000);
 
     return () => clearTimeout(updateDelay);
   }, [appData]);

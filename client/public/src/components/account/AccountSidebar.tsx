@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router";
-import useAccountStore from "../../hooks/useAccountStore";
-import { AccountTab, AccountTabName } from "../../types/types";
+import { AccountTab } from "../../types/types";
 import AccountSidebarTab from "./AccountSidebarTab";
 import { removeAllWhitespaces } from "../../utils/utils";
 
@@ -9,14 +7,6 @@ interface Props {
 }
 
 export default function AccountSidebar({ tabs }: Props) {
-  const navigate = useNavigate();
-  const { currentTab, updateCurrentTab } = useAccountStore();
-
-  const switchTab = (tabName: AccountTabName): void => {
-    updateCurrentTab(tabName);
-    navigate(`/account/${removeAllWhitespaces(tabName.toLowerCase().replace("overview", ""))}`);
-  };
-
   return (
     <div className="h-fit lg:h-auto w-screen lg:w-full lg:max-w-[280px] bg-slate-800">
       <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-hidden">
@@ -25,9 +15,8 @@ export default function AccountSidebar({ tabs }: Props) {
             <li key={index}>
               <AccountSidebarTab
                 tabName={tab.tabName}
-                currentTab={currentTab}
+                path={removeAllWhitespaces(tab.tabName.toLowerCase().replace("overview", ""))}
                 icon={tab.icon}
-                onClick={() => switchTab(tab.tabName)}
               />
             </li>
           );

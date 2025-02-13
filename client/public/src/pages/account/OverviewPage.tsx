@@ -10,13 +10,12 @@ import OutlineBtn from "../../components/btn/OutlineBtn";
 import DataCard from "../../components/utils/DataCard";
 import useAccountApi from "../../hooks/useAccountApi";
 import useAccountStore from "../../hooks/useAccountStore";
-import { AccountResponse, AccountTabName } from "../../types/types";
+import { AccountResponse } from "../../types/types";
 import { useNavigate } from "react-router";
-import { removeAllWhitespaces } from "../../utils/utils";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
-  const { status, updateCurrentTab } = useAccountStore(true);
+  const { status } = useAccountStore(true);
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const [accountOverview, setAccountOverview] = useState<AccountResponse>();
 
@@ -33,11 +32,6 @@ export default function OverviewPage() {
   if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
-
-  const switchTab = (tabName: AccountTabName): void => {
-    updateCurrentTab(tabName);
-    navigate(`/account/${removeAllWhitespaces(tabName.toLowerCase().replace("overview", ""))}`);
-  };
 
   const rememberMessage = accountOverview?.isRemembered
     ? "Your are remembered"
@@ -83,7 +77,7 @@ export default function OverviewPage() {
         <div className="mt-auto">
           <OutlineBtn
             btnText="See more"
-            onClick={() => switchTab("My apps")}
+            onClick={() => navigate("/account/myapps")}
             icon={<GoArrowRight size={24} />}
           />
         </div>
@@ -97,7 +91,7 @@ export default function OverviewPage() {
         <div className="mt-auto">
           <OutlineBtn
             btnText="See more"
-            onClick={() => switchTab("Administered apps")}
+            onClick={() => navigate("/account/administeredapps")}
             icon={<GoArrowRight size={24} />}
           />
         </div>
@@ -114,7 +108,7 @@ export default function OverviewPage() {
         <div className="mt-auto">
           <OutlineBtn
             btnText="See more"
-            onClick={() => switchTab("Active Connections")}
+            onClick={() => navigate("/account/activeconnections")}
             icon={<GoArrowRight size={24} />}
           />
         </div>

@@ -1,15 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useCallback, useEffect } from "react";
-import { AccountRequest, AccountResponse, AccountTabName, FetchStatus } from "../types/types";
-import {
-  reset,
-  setCurrentTab,
-  setError,
-  setRequestData,
-  setResponseData,
-  setStatus,
-} from "../store/accountSlice";
+import { AccountRequest, AccountResponse, FetchStatus } from "../types/types";
+import { reset, setError, setRequestData, setResponseData, setStatus } from "../store/accountSlice";
 
 const useAccountStore = (shouldReset?: boolean) => {
   const dispatch = useDispatch();
@@ -47,13 +40,6 @@ const useAccountStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
-  const updateCurrentTab = useCallback(
-    (currentTab: AccountTabName) => {
-      dispatch(setCurrentTab(currentTab));
-    },
-    [dispatch]
-  );
-
   const clear = useCallback(() => {
     dispatch(reset());
   }, [dispatch]);
@@ -64,7 +50,6 @@ const useAccountStore = (shouldReset?: boolean) => {
     updateError,
     updateRequestData,
     updateResponseData,
-    updateCurrentTab,
     clear,
   };
 };
