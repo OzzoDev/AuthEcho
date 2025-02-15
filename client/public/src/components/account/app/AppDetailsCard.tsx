@@ -13,14 +13,19 @@ interface Props {
 export default function AppDetailsCard({ app }: Props) {
   const { username } = useAuthStore();
   const [admins, setAdmins] = useState<string>(
-    joinWithAnd(["You", ...app.admins.filter((admin) => admin !== username)])
+    joinWithAnd(app.admins.map((admin) => (admin === username ? "You" : admin)))
   );
   const [appStatus, setAppStatus] = useState<AppStatusData>(
     APP_STATUS_MAP[decapitalize(app.status) as AppStatus]
   );
 
+  const creator = app.creator === username ? "You" : app.creator;
+
+  // console.log(admins, creator);
+  // console.log(app);
+
   useEffect(() => {
-    setAdmins(joinWithAnd(["You", ...app.admins.filter((admin) => admin !== username)]));
+    setAdmins(joinWithAnd(app.admins.map((admin) => (admin === username ? "You" : admin))));
     setAppStatus(APP_STATUS_MAP[decapitalize(app.status) as AppStatus]);
   }, [app]);
 
@@ -46,6 +51,7 @@ export default function AppDetailsCard({ app }: Props) {
       <div>
         <AppCardData desciption="Name" data={app.name} />
         <AppCardData desciption="Origin" data={app.origin} isLink />
+        <AppCardData desciption="Creator" data={creator} />
         <AppCardData desciption="Admins" data={admins} />
         <AppCardData desciption="Description" data={app.description} />
       </div>

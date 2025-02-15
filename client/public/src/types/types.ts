@@ -34,7 +34,7 @@ export type ConnectRequest = {
   appName: string;
   origin: string;
   creator?: string;
-  admins: string[];
+  admins?: string[];
   resources: ConnectResource[];
   appDescription: string;
   status?: AppStatus;
@@ -135,4 +135,10 @@ export type AppStatusData = {
   color: string;
   icon: string;
   sortValue: number;
+};
+
+export type paginatedPage = {
+  current: number;
+  latest: number;
+  pageCount: number;
 };

@@ -1,4 +1,5 @@
 const AppModel = require("../models/App");
+const UserModel = require("../models/User");
 const { removeAllWhitespaces, decapitalize } = require("../utils/utils");
 const { findUser } = require("./userService");
 
@@ -140,7 +141,7 @@ const updateAppStatus = async (identifier, appStatus) => {
   return null;
 };
 
-const updateAppAdmins = async (identifier, appAdmins) => {
+const updateAppAdmins = async (identifier, appAdmins, username) => {
   const app = await findApp(identifier);
 
   if (!appAdmins) {
@@ -156,7 +157,29 @@ const updateAppAdmins = async (identifier, appAdmins) => {
       return null;
     }
 
-    app.admins = appAdmins;
+    const usersLostAccess = app.admins.filter((admin) => !appAdmins.includes(admin));
+
+    if (usersLostAccess.length > 0) {
+      await UserModel.updateMany(
+        { name: { $in: usersLostAccess } },
+        { $pull: { adminApps: app.name } }
+      );
+    }
+
+    const allUsers = await Promise.all(
+      [...appAdmins].map((appAdmin) => UserModel.findOne({ name: appAdmin }))
+    );
+
+    const validUsers = allUsers.filter((user) => user);
+
+    if (validUsers.length > 0) {
+      await UserModel.updateMany(
+        { name: { $in: appAdmins } },
+        { $addToSet: { adminApps: app.name } }
+      );
+    }
+
+    app.admins = appAdmins.filter((admin) => admin !== username);
     await app.save();
 
     return true;

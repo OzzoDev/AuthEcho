@@ -21,11 +21,11 @@ const useMangeAppStore = () => {
       return createDefaultApp();
     }
 
-    console.log(manageAppState.apps);
-
     const foundApp = manageAppState.apps.find((app) => {
       return removeAllWhitespaces(app.name.toLowerCase()) === removeAllWhitespaces(appName ?? "");
     });
+
+    console.log("Found: ", manageAppState);
 
     return foundApp || createDefaultApp();
   };

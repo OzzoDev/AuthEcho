@@ -2,12 +2,7 @@ const bcrypt = require("bcrypt");
 const AppModel = require("../models/App");
 const UserModel = require("../models/User");
 const { hex32BitKey } = require("../utils/crypto");
-const {
-  addCreatedApp,
-  addAdminApp,
-  addAppConnection,
-  getAppsByNames,
-} = require("../services/userService");
+const { addCreatedApp, getAppsByNames } = require("../services/userService");
 const { removeAllWhitespaces } = require("../utils/utils");
 const {
   updateAppName,
@@ -94,7 +89,7 @@ const joinApp = async (req, res) => {
       name: appName,
       origin: removeAllWhitespaces(origin.toLowerCase()),
       creator,
-      admins: [...admins.slice(0, 10), creator],
+      admins: [...admins.slice(0, 10)],
       resources: resources.slice(0, 10),
       description: appDescription ? appDescription : "",
       key,
@@ -103,11 +98,7 @@ const joinApp = async (req, res) => {
     appModel.key = await bcrypt.hash(key, 10);
     await appModel.save();
 
-    await Promise.all([
-      addCreatedApp(user.name, appName),
-      addAdminApp(user.name, appName),
-      addAppConnection(user.name, appName),
-    ]);
+    await addCreatedApp(user.name, appName);
 
     res
       .status(201)
@@ -139,6 +130,15 @@ const updateApp = async (req, res) => {
       res.status(400).json({ message: "App not found", success: false });
     }
 
+    const isAppCreator = user.name === targetApp.creator;
+    const isAppAdmin = targetApp.admins.includes(user.name);
+
+    if (!isAppCreator && !isAppAdmin) {
+      return res
+        .status(403)
+        .json({ message: "Only app creator or app admin can edit app", success: false });
+    }
+
     const identifier = targetApp.name;
     const allCreatorApps = await getAppsByNames(userData.createdApps);
 
@@ -147,9 +147,16 @@ const updateApp = async (req, res) => {
       updateAppOrigin(identifier, origin, allCreatorApps),
       updateAppDesription(identifier, appDescription),
       updateAppStatus(identifier, status),
-      updateAppAdmins(identifier, admins),
       updateAppResources(identifier, resources),
     ]);
+
+    if (!isAppCreator) {
+      return res
+        .status(404)
+        .json({ message: "Only app creator can change app admins", success: false });
+    }
+
+    await updateAppAdmins(identifier, admins, user.name);
 
     res.status(200).json({ message: "App updated successfully", success: true });
   } catch (error) {
@@ -179,6 +186,18 @@ const deleteApp = async (req, res) => {
 
     if (!userData) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const targetApp = await AppModel.findOne({ name: app });
+
+    if (!targetApp) {
+      return res.status(404).json({ message: "App not found", success: false });
+    }
+
+    const isAppCreator = user.name === app.creator;
+
+    if (!isAppCreator) {
+      return res.status(404).json({ message: "Only app creator can delete app", success: false });
     }
 
     const filteredCreatedApps = userData.createdApps.filter((appItem) => appItem !== app);

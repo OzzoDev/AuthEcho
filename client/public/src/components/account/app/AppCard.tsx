@@ -1,24 +1,26 @@
 import { AuthechoApp } from "../../../types/types";
 import { IoSettingsOutline } from "react-icons/io5";
 import SecondaryBtn from "../../btn/SecondaryBtn";
-import useAuthStore from "../../../hooks/useAuthStore";
 import { capitalize, joinWithAnd, removeAllWhitespaces } from "../../../utils/utils";
 import { useNavigate } from "react-router";
 import AppCardData from "./AppCardData";
 import { APP_STATUS_MAP } from "../../../constants/contants";
 import { PiUsersThree } from "react-icons/pi";
+import useAuthStore from "../../../hooks/useAuthStore";
 
 interface Props {
   app: AuthechoApp;
+  detailsPath: "myapps" | "administeredapps";
 }
 
-export default function AppCard({ app }: Props) {
+export default function AppCard({ app, detailsPath }: Props) {
   const navigate = useNavigate();
   const { username } = useAuthStore();
-  const admins = joinWithAnd(["You", ...app.admins.filter((admin) => admin !== username)]);
+  const creator = app.creator === username ? "You" : app.creator;
+  const admins = joinWithAnd(app.admins.map((admin) => (admin === username ? "You" : admin)));
 
-  const redirectToAppDetailsPage = (): void => {
-    navigate(`/account/myapps/${removeAllWhitespaces(app.name.toLowerCase())}`);
+  const redirectToDetailsPage = (): void => {
+    navigate(`/account/${detailsPath}/${removeAllWhitespaces(app.name.toLowerCase())}`);
   };
 
   const appStatus = APP_STATUS_MAP[app.status];
@@ -29,6 +31,7 @@ export default function AppCard({ app }: Props) {
         <div className="flex flex-col gap-y-2 w-full">
           <AppCardData desciption="Name" data={app.name} />
           <AppCardData desciption="Origin" data={app.origin} isLink />
+          <AppCardData desciption="Creator" data={creator} />
           <AppCardData desciption="Admins" data={admins} />
           <AppCardData desciption="Description" data={app.description} />
         </div>
@@ -75,7 +78,7 @@ export default function AppCard({ app }: Props) {
         </div>
         <SecondaryBtn
           btnText="Mange app"
-          onClick={redirectToAppDetailsPage}
+          onClick={redirectToDetailsPage}
           icon={<IoSettingsOutline size={24} />}
         />
       </div>

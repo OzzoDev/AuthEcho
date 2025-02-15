@@ -1,19 +1,13 @@
 import { useEffect, useState } from "react";
 import AppCard from "../../components/account/app/AppCard";
 import useAccountApi from "../../hooks/useAccountApi";
-import { AuthechoApp, FetchStatus } from "../../types/types";
+import { AuthechoApp, FetchStatus, paginatedPage } from "../../types/types";
 import { Outlet, useParams } from "react-router";
 import { HashLoader } from "react-spinners";
 import useMangeAppStore from "../../hooks/useManageAppStore";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
 import AppFilters from "../../components/account/app/AppFilters";
-
-type paginatedPage = {
-  current: number;
-  latest: number;
-  pageCount: number;
-};
 
 export default function CreatedAppsPage() {
   const { updateApps } = useMangeAppStore();
@@ -98,7 +92,7 @@ export default function CreatedAppsPage() {
             {filteredCreatedApps.map((app, index) => {
               return (
                 <li key={index}>
-                  <AppCard app={app} />
+                  <AppCard app={app} detailsPath="myapps" />
                 </li>
               );
             })}

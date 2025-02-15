@@ -1,49 +1,42 @@
-import OutlineBtn from "../../components/btn/OutlineBtn";
+import { useState, useEffect } from "react";
 import { IoArrowBackOutline, IoBarChartOutline, IoKeyOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router";
-import useMangeAppStore from "../../hooks/useManageAppStore";
-import { useEffect, useState } from "react";
-import { AppStatus, AuthechoApp, ConnectRequest, ConnectResource } from "../../types/types";
+import AppDetailsCard from "../../components/account/app/AppDetailsCard";
+import UpdateDataForm from "../../components/account/settings/UpdateDataForm";
+import OutlineBtn from "../../components/btn/OutlineBtn";
+import PrimaryBtn from "../../components/btn/PrimaryBtn";
 import AdminManager from "../../components/connect/AdminManager";
 import ResourceManager from "../../components/connect/ResourceManager";
-import useAuthStore from "../../hooks/useAuthStore";
-import AppDetailsCard from "../../components/account/app/AppDetailsCard";
 import DescriptiveInput from "../../components/utils/DescriptiveInput";
-import { APP_STATUS_MAP } from "../../constants/contants";
 import Dropdown from "../../components/utils/Dropdown";
+import SecretText from "../../components/utils/SecretText";
+import { APP_STATUS_MAP } from "../../constants/contants";
+import useApi from "../../hooks/useApi";
+import useAuthStore from "../../hooks/useAuthStore";
+import useClipboard from "../../hooks/useClipboard";
+import useMangeAppStore from "../../hooks/useManageAppStore";
+import { AuthechoApp, ConnectResource, ConnectRequest, AppStatus } from "../../types/types";
 import { capitalize } from "../../utils/utils";
 import Divider from "../../components/utils/Divider";
-import PrimaryBtn from "../../components/btn/PrimaryBtn";
-import SecretText from "../../components/utils/SecretText";
-import UpdateDataForm from "../../components/account/settings/UpdateDataForm";
-import useApi from "../../hooks/useApi";
-import useClipboard from "../../hooks/useClipboard";
 
-export default function CreatedAppsDetailsPage() {
+export default function AdminAppDetailsPage() {
   const navigate = useNavigate();
   const { fetchData: updateApp } = useApi("PUT", "UPDATEAPP");
   const { fetchData: generateAppKey } = useApi("POST", "GENERATEAPKEY");
-  const { fetchData: deleteApp } = useApi("DELETE", "DELETEAPP");
   const { copyToClipboard } = useClipboard();
-  const { getApp, editApp, removeApp } = useMangeAppStore();
+  const { getApp, editApp } = useMangeAppStore();
   const { appname } = useParams();
   const [app, setApp] = useState<AuthechoApp>(getApp(appname));
-  const { username } = useAuthStore();
-  const [editableAdmins, setEditableAdmins] = useState<string[]>(
-    (app?.admins ?? []).filter((admin) => admin !== username)
-  );
   const [resources, setResources] = useState<ConnectResource[]>(app.resources);
-  const [admins, setAdmins] = useState<string[]>(editableAdmins);
   const [appData, setAppData] = useState<ConnectRequest>({
     app: app.name,
     appName: app.name,
     appDescription: app.description,
     origin: app.origin,
+    creator: app.creator,
     admins: app.admins,
     resources: app.resources,
     status: app.status,
-    users: app.users,
-    deleteCommand: "",
   });
   const [appKey, setAppKey] = useState<string>("");
   const [isKeyCopied, setIsKeyCoiped] = useState<boolean>(false);
@@ -62,18 +55,12 @@ export default function CreatedAppsDetailsPage() {
     };
     editApp(editedApp);
     setApp(editedApp);
-    setEditableAdmins((app?.admins ?? []).filter((admin) => admin !== username));
   }, [appData]);
 
   useEffect(() => {
     const updateDelay = setTimeout(() => {
       const updateAppData = async () => {
-        try {
-          await updateApp(false, appData);
-          console.log("App data updated successfully.");
-        } catch (error) {
-          console.error("Error updating app data:", error);
-        }
+        await updateApp(false, appData);
       };
       updateAppData();
     }, 1000);
@@ -89,15 +76,6 @@ export default function CreatedAppsDetailsPage() {
 
     setAppData(updatedAppData);
   }, [resources]);
-
-  useEffect(() => {
-    const updatedAppData: ConnectRequest = {
-      ...appData,
-      admins,
-    };
-
-    setAppData(updatedAppData);
-  }, [admins]);
 
   const handleEditApp = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
@@ -127,25 +105,17 @@ export default function CreatedAppsDetailsPage() {
     }
   };
 
-  const handleDeleteApp = async () => {
-    const response = await deleteApp(false, appData);
-    if (response) {
-      removeApp(appData.appName);
-      navigate("/account/myapps");
-    }
-  };
-
   const handleCopyKey = () => {
     setIsKeyCoiped((prev) => !prev);
     copyToClipboard(appKey);
   };
 
-  const redirectToCreatedAppsPage = (): void => {
-    navigate("/account/myapps");
+  const redirectToAdminAppsPage = (): void => {
+    navigate("/account/administeredapps");
   };
 
   const redirectToTraffic = (): void => {
-    navigate(`/account/myapps/${appname}/traffic`);
+    navigate(`/account/administeredapps/${appname}/traffic`);
   };
 
   return (
@@ -153,7 +123,7 @@ export default function CreatedAppsDetailsPage() {
       <div className="flex justify-between p-4">
         <OutlineBtn
           btnText="Go back"
-          onClick={redirectToCreatedAppsPage}
+          onClick={redirectToAdminAppsPage}
           icon={<IoArrowBackOutline size={24} />}
         />
         <PrimaryBtn
@@ -220,7 +190,6 @@ export default function CreatedAppsDetailsPage() {
           </p>
         </div>
         <ResourceManager resources={resources} setResources={setResources} />
-        <AdminManager admins={admins} setAdmins={setAdmins} />
       </div>
       <Divider dividerText="Advanced settings" color="darkcyan" />
       <div className="flex flex-col items-center gap-y-8 w-full py-[40px]">
@@ -242,25 +211,6 @@ export default function CreatedAppsDetailsPage() {
           Please note that this key is displayed only once for security purposes. It is strongly
           recommend that you store it in a secure location for future reference.
         </p>
-      </div>
-      <Divider dividerText="Danger zone" />
-      <div className="flex flex-col items-center w-full py-[40px]">
-        <UpdateDataForm
-          label="Delete app"
-          name="deleteCommand"
-          value={appData.deleteCommand || ""}
-          placeholder={`delete ${appData.appName}`}
-          isDangerous={true}
-          btnText="Delete"
-          onChange={handleEditApp}
-          onSubmit={handleDeleteApp}>
-          <p className="mt-4">
-            Please proceed with caution. If you choose to delete an application, there will be no
-            way to restore it. To delete it anyway, please type
-            <span className="text-red-400"> delete {appData.appName}</span> and then click the
-            delete button.
-          </p>
-        </UpdateDataForm>
       </div>
     </div>
   );
