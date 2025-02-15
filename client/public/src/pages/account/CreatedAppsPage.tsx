@@ -7,6 +7,7 @@ import { HashLoader } from "react-spinners";
 import useMangeAppStore from "../../hooks/useManageAppStore";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
+import AppFilters from "../../components/account/app/AppFilters";
 
 type paginatedPage = {
   current: number;
@@ -28,12 +29,13 @@ export default function CreatedAppsPage() {
       const response = await fetchAccountOverview(true);
       const receviedCreatedApps = response?.data.createdApps;
 
-      console.log("Apps: ", receviedCreatedApps);
-
       if (receviedCreatedApps) {
-        setCreatedApps(receviedCreatedApps);
-        updateApps(receviedCreatedApps);
-        setPage((prev) => ({ ...prev, pageCount: calcPageCount(receviedCreatedApps, 4) }));
+        const sortedApps = receviedCreatedApps
+          .map((app) => ({ ...app, isVisible: true }))
+          .sort((a, b) => b.users - a.users);
+        setCreatedApps(sortedApps);
+        updateApps(sortedApps);
+        setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
         setApiStatus("success");
       } else {
         setApiStatus("error");
@@ -42,8 +44,20 @@ export default function CreatedAppsPage() {
     getAccountOverview();
   }, []);
 
+  useEffect(() => {
+    setPage((prev) => ({ ...prev, pageCount: calcPageCount(createdApps, 4) }));
+  }, [createdApps]);
+
   const handlePagination = (_: unknown, value: number) => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
+  };
+
+  const reCalcPaginationOnSearch = (query: string) => {
+    if (query) {
+      setPage((prev) => ({ ...prev, current: 1 }));
+    } else {
+      setPage((prev) => ({ ...prev, current: prev.latest }));
+    }
   };
 
   if (apiStatus === "loading") {
@@ -54,11 +68,12 @@ export default function CreatedAppsPage() {
     return <Outlet />;
   }
 
-  const filteredCreatedApps = createdApps.filter((_, index) =>
-    showOnPagination(index, page.current, 4)
-  );
+  const filteredCreatedApps = createdApps
+    .filter((app) => app.isVisible)
+    .filter((_, index) => showOnPagination(index, page.current, 4));
 
-  const noApps = filteredCreatedApps.length === 0;
+  const noApps = createdApps.length === 0;
+  const noMatchingApps = filteredCreatedApps.length === 0;
 
   if (noApps) {
     return (
@@ -69,22 +84,27 @@ export default function CreatedAppsPage() {
   }
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] w-full">
+    <div className="flex flex-col w-full">
       <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
-        Your created apps
+        {noMatchingApps ? "No matching apps" : "Your created apps"}
       </h2>
-      <ul className="flex flex-col gap-y-[60px]">
-        {filteredCreatedApps.map((app, index) => {
-          return (
-            <li key={index}>
-              <AppCard app={app} />
-            </li>
-          );
-        })}
-      </ul>
-      <div className="flex justify-center pb-[140px]">
-        <Paginator onChange={handlePagination} count={page.pageCount} />
-      </div>
+      <AppFilters apps={createdApps} setApps={setCreatedApps} onSearch={reCalcPaginationOnSearch} />
+      {!noMatchingApps && (
+        <>
+          <div className="flex justify-center py-6">
+            <Paginator onChange={handlePagination} count={page.pageCount} />
+          </div>
+          <ul className="flex flex-col gap-y-[60px] mb-[100px]">
+            {filteredCreatedApps.map((app, index) => {
+              return (
+                <li key={index}>
+                  <AppCard app={app} />
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
     </div>
   );
 }

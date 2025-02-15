@@ -60,24 +60,24 @@ export const APP_STATUS_MAP: Record<AppStatus, AppStatusData> = {
     status: "maintenance",
     color: "#505859",
     icon: "🔧",
-    sortValue: 0,
+    sortValue: 1,
   },
   testing: {
     status: "testing",
     color: "#c363f7",
     icon: "🚀",
-    sortValue: 0,
+    sortValue: 2,
   },
   "pre-production": {
     status: "pre-production",
     color: "#fa760a",
     icon: "📢",
-    sortValue: 0,
+    sortValue: 3,
   },
   production: {
     status: "production",
     color: "#0afa6e",
     icon: "🎉",
-    sortValue: 0,
+    sortValue: 4,
   },
 };

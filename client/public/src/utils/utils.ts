@@ -51,8 +51,7 @@ export function removeAllWhitespaces(str: string): string {
 }
 
 export function calcPageCount(array: AuthechoApp[], maxItems: number): number {
-  // const visibleItems = [...array].filter((item) => item.isVisible);
-  const visibleItems = array;
+  const visibleItems = [...array].filter((item) => item.isVisible);
   return Math.ceil(visibleItems.length / maxItems);
 }
 

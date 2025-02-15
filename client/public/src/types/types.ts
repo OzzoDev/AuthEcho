@@ -120,6 +120,7 @@ export type AuthechoApp = {
   description: string;
   status: AppStatus;
   users: number;
+  isVisible?: boolean;
 };
 
 export type UserAlias = {

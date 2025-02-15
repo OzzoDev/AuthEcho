@@ -7,7 +7,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 100;
+  z-index: 10000;
   box-shadow: 0 0 7px cyan;
   color: white;
   background-color: black;
