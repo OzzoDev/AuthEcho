@@ -93,7 +93,7 @@ const getAppsByNames = async (namesArray, username) => {
       .filter((res) => res)
       .map((app) => {
         const resources =
-          username === app.creator
+          username === app.creator || app.admins.includes(username)
             ? app.resources
             : app.resources.map((resource) => resource.visibility === "public");
         return {

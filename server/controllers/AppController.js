@@ -3,6 +3,7 @@ const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { hex8BitKey } = require("../utils/crypto");
 const { getDate } = require("../utils/date");
+const { addAppConnection } = require("../services/userService");
 
 const requestCode = async (req, res) => {
   const appName = req.headers["authecho-app-name"];
@@ -169,6 +170,8 @@ const signIn = async (req, res, next) => {
     user.lastLogin = getDate();
     user.failedLoginAttempts = 0;
     await user.save();
+
+    await addAppConnection(user.name, app.name);
 
     req.body.user = user;
     req.body.statusCode = 200;

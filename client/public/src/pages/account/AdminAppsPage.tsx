@@ -28,8 +28,6 @@ export default function AdminAppsPage() {
           .map((app) => ({ ...app, isVisible: true }))
           .sort((a, b) => b.users - a.users);
 
-        console.log("sorted apps: ", sortedApps);
-
         setCreatedApps(sortedApps);
         updateApps(sortedApps);
         setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
@@ -92,9 +90,9 @@ export default function AdminAppsPage() {
             <Paginator onChange={handlePagination} count={page.pageCount} />
           </div>
           <ul className="flex flex-col gap-y-[60px] mb-[100px]">
-            {filteredCreatedApps.map((app, index) => {
+            {filteredCreatedApps.map((app) => {
               return (
-                <li key={index}>
+                <li key={app.name}>
                   <AppCard app={app} detailsPath="administeredapps" />
                 </li>
               );

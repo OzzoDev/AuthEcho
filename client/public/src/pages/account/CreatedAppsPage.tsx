@@ -89,9 +89,9 @@ export default function CreatedAppsPage() {
             <Paginator onChange={handlePagination} count={page.pageCount} />
           </div>
           <ul className="flex flex-col gap-y-[60px] mb-[100px]">
-            {filteredCreatedApps.map((app, index) => {
+            {filteredCreatedApps.map((app) => {
               return (
-                <li key={index}>
+                <li key={app.name}>
                   <AppCard app={app} detailsPath="myapps" />
                 </li>
               );

@@ -11,16 +11,18 @@ import useAuthStore from "../../../hooks/useAuthStore";
 interface Props {
   app: AuthechoApp;
   detailsPath: "myapps" | "administeredapps";
+  isManageable?: boolean;
 }
 
-export default function AppCard({ app, detailsPath }: Props) {
+export default function AppCard({ app, detailsPath, isManageable = true }: Props) {
   const navigate = useNavigate();
   const { username } = useAuthStore();
   const creator = app.creator === username ? "You" : app.creator;
   const admins = joinWithAnd(app.admins.map((admin) => (admin === username ? "You" : admin)));
 
   const redirectToDetailsPage = (): void => {
-    navigate(`/account/${detailsPath}/${removeAllWhitespaces(app.name.toLowerCase())}`);
+    isManageable &&
+      navigate(`/account/${detailsPath}/${removeAllWhitespaces(app.name.toLowerCase())}`);
   };
 
   const appStatus = APP_STATUS_MAP[app.status];
@@ -76,11 +78,13 @@ export default function AppCard({ app, detailsPath }: Props) {
             <PiUsersThree size={26} />
           </span>
         </div>
-        <SecondaryBtn
-          btnText="Mange app"
-          onClick={redirectToDetailsPage}
-          icon={<IoSettingsOutline size={24} />}
-        />
+        {isManageable && (
+          <SecondaryBtn
+            btnText="Manage app"
+            onClick={redirectToDetailsPage}
+            icon={<IoSettingsOutline size={24} />}
+          />
+        )}
       </div>
     </div>
   );

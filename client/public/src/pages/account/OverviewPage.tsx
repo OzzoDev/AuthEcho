@@ -96,14 +96,12 @@ export default function OverviewPage() {
           />
         </div>
       </DataCard>
-      <DataCard
-        data={appConnections}
-        label="Total Application Connections"
-        icon={<IoIosGitNetwork size={30} />}>
+      <DataCard data={appConnections} label="App Connections" icon={<IoIosGitNetwork size={30} />}>
         <p className="text-gray-300">
-          This indicates the total number of applications you have access to with your Authecho
-          account. It includes both newly signed-in applications and those you have created and
-          connected to Authecho, as well as applications where you have been granted admin access.
+          This indicates the number of applications you can access with your Authecho account.
+          However, applications that you control, either as an administrator or those you have
+          created within Authecho, are not included. Therefore, only the applications you have
+          signed into using your Authecho account are counted.
         </p>
         <div className="mt-auto">
           <OutlineBtn
