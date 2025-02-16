@@ -2,7 +2,13 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
 import useFormStore from "./useFormStore";
-import { ApiMethod, ApiRequest, ApiResponse, ConnectRequest } from "../types/types";
+import {
+  ApiMethod,
+  ApiRequest,
+  ApiResponse,
+  AppActivityRequest,
+  ConnectRequest,
+} from "../types/types";
 
 const useApi = (method: ApiMethod, useCase: keyof typeof ENDPOINTS, shouldNavigate?: boolean) => {
   const { formData, setFormError, setFormStatus } = useFormStore();
@@ -11,7 +17,7 @@ const useApi = (method: ApiMethod, useCase: keyof typeof ENDPOINTS, shouldNaviga
 
   const fetchData = async (
     trackState?: boolean,
-    apiParams?: ConnectRequest | ApiRequest
+    apiParams?: ConnectRequest | ApiRequest | AppActivityRequest
   ): Promise<AxiosResponse<ApiResponse> | null> => {
     try {
       if (trackState) {

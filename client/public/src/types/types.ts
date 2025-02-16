@@ -12,10 +12,10 @@ export type ApiResponse = {
   appName?: string;
   isBlocked?: boolean;
   userAlias?: UserAlias[];
+  logs?: ActivityLog[];
 };
 
 export type ApiRequest = {
-  // useCase?: ApiUseCase;
   userData?: string;
   name?: string;
   email?: string;
@@ -47,6 +47,21 @@ export type ConnectResource = {
   name: string;
   resource: string;
   visibility: "private" | "public";
+};
+
+export type AppActivityRequest = {
+  appName: string;
+  days?: number;
+};
+
+export type ActivityLog = {
+  date: string;
+  userCount: number;
+};
+
+export type TimeOption = {
+  time: string;
+  days: number;
 };
 
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";

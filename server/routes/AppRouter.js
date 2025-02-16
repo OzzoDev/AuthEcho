@@ -4,6 +4,7 @@ const {
   verifyCode,
   validateQuestion,
   signIn,
+  trackUserActivity,
 } = require("../controllers/AppController");
 const {
   setAppCookies,
@@ -16,6 +17,7 @@ const { ensureUser } = require("../middlewares/Auth");
 router.get("/signout", removeAppCookies);
 router.get("/authenticate", authenticateApp);
 router.get("/verifysession", verifyAppSession);
+router.get("/activity", ensureUser, trackUserActivity);
 
 router.post("/requestcode", ensureUser, requestCode);
 router.post("/verifycode", ensureUser, verifyCode);

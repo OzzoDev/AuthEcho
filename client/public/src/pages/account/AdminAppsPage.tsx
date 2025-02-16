@@ -12,7 +12,7 @@ import { calcPageCount, showOnPagination } from "../../utils/utils";
 export default function AdminAppsPage() {
   const { updateApps } = useMangeAppStore();
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
-  const [createdApps, setCreatedApps] = useState<AuthechoApp[]>([]);
+  const [adminApps, setAdminApps] = useState<AuthechoApp[]>([]);
   const { appname } = useParams();
   const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
   const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
@@ -28,7 +28,7 @@ export default function AdminAppsPage() {
           .map((app) => ({ ...app, isVisible: true }))
           .sort((a, b) => b.users - a.users);
 
-        setCreatedApps(sortedApps);
+        setAdminApps(sortedApps);
         updateApps(sortedApps);
         setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
         setApiStatus("success");
@@ -40,8 +40,8 @@ export default function AdminAppsPage() {
   }, []);
 
   useEffect(() => {
-    setPage((prev) => ({ ...prev, pageCount: calcPageCount(createdApps, 4) }));
-  }, [createdApps]);
+    setPage((prev) => ({ ...prev, pageCount: calcPageCount(adminApps, 4) }));
+  }, [adminApps]);
 
   const handlePagination = (_: unknown, value: number) => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
@@ -63,12 +63,13 @@ export default function AdminAppsPage() {
     return <Outlet />;
   }
 
-  const filteredCreatedApps = createdApps
+  const filteredCreatedApps = adminApps
     .filter((app) => app.isVisible)
     .filter((_, index) => showOnPagination(index, page.current, 4));
 
-  const noApps = createdApps.length === 0;
+  const noApps = adminApps.length === 0;
   const noMatchingApps = filteredCreatedApps.length === 0;
+  const paginate = adminApps.length > 4;
 
   if (noApps) {
     return (
@@ -83,12 +84,14 @@ export default function AdminAppsPage() {
       <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
         {noMatchingApps ? "No matching apps" : "Administered apps"}
       </h2>
-      <AppFilters apps={createdApps} setApps={setCreatedApps} onSearch={reCalcPaginationOnSearch} />
+      <AppFilters apps={adminApps} setApps={setAdminApps} onSearch={reCalcPaginationOnSearch} />
       {!noMatchingApps && (
         <>
-          <div className="flex justify-center py-6">
-            <Paginator onChange={handlePagination} count={page.pageCount} />
-          </div>
+          {paginate && (
+            <div className="flex justify-center py-6">
+              <Paginator onChange={handlePagination} count={page.pageCount} />
+            </div>
+          )}
           <ul className="flex flex-col gap-y-[60px] mb-[100px]">
             {filteredCreatedApps.map((app) => {
               return (

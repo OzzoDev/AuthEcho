@@ -8,7 +8,7 @@ interface Props {
 
 export default function AccountSidebar({ tabs }: Props) {
   return (
-    <div className="h-fit lg:h-auto w-screen lg:w-full lg:max-w-[280px] bg-slate-800">
+    <div className="h-fit lg:h-auto w-screen lg:w-full lg:w-[320px] lg:max-w-[300px] bg-slate-800">
       <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-hidden">
         {tabs.map((tab, index) => {
           return (

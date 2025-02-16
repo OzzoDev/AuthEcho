@@ -12,6 +12,7 @@ const {
   updateAppAdmins,
   updateAppResources,
 } = require("../services/appService");
+const ActivityLogModel = require("../models/ActivityLog");
 
 const joinApp = async (req, res) => {
   const { appName, origin, admins, resources, appDescription } = req.body;
@@ -245,9 +246,56 @@ const generateAppKey = async (req, res) => {
   }
 };
 
+const getAppActivityLogs = async (req, res) => {
+  const { appName, days } = req.body;
+
+  if (!appName) {
+    return res.status(400).json({ message: "App name is required", success: false });
+  }
+
+  let query = { appName };
+
+  const defaultDays = days === 0 || days === 1 ? 2 : days || 30;
+
+  if (days !== -1) {
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - defaultDays);
+    const fromDateString = fromDate.toISOString().split("T")[0];
+
+    query.date = { $gte: fromDateString };
+  }
+
+  try {
+    const logs = await ActivityLogModel.find(query, {
+      _id: 0,
+      appName: 0,
+    }).sort({ date: 1 });
+
+    // let logs = [];
+    // const today = new Date();
+
+    // for (let i = 0; i < defaultDays; i++) {
+    //   const date = new Date();
+    //   date.setDate(today.getDate() - i);
+    //   const formattedDate = date.toISOString().split("T")[0];
+
+    //   logs.push({
+    //     date: formattedDate,
+    //     userCount: days === 90 ? Math.floor(Math.random() * 891) : Math.floor(Math.random() * 21),
+    //   });
+    // }
+
+    res.status(200).json({ success: true, logs });
+  } catch (error) {
+    console.error("Error retrieving activity logs:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   joinApp,
   updateApp,
   deleteApp,
   generateAppKey,
+  getAppActivityLogs,
 };

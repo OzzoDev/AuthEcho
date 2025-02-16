@@ -9,7 +9,7 @@ import { calcPageCount, showOnPagination } from "../../utils/utils";
 
 export default function ActiveConnectionsPage() {
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
-  const [createdApps, setCreatedApps] = useState<AuthechoApp[]>([]);
+  const [activeConnections, setActiveConnections] = useState<AuthechoApp[]>([]);
   const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
   const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
@@ -24,7 +24,7 @@ export default function ActiveConnectionsPage() {
           .map((app) => ({ ...app, isVisible: true }))
           .sort((a, b) => b.users - a.users);
 
-        setCreatedApps(sortedApps);
+        setActiveConnections(sortedApps);
         setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
         setApiStatus("success");
       } else {
@@ -35,8 +35,8 @@ export default function ActiveConnectionsPage() {
   }, []);
 
   useEffect(() => {
-    setPage((prev) => ({ ...prev, pageCount: calcPageCount(createdApps, 4) }));
-  }, [createdApps]);
+    setPage((prev) => ({ ...prev, pageCount: calcPageCount(activeConnections, 4) }));
+  }, [activeConnections]);
 
   const handlePagination = (_: unknown, value: number) => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
@@ -54,12 +54,13 @@ export default function ActiveConnectionsPage() {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 
-  const filteredCreatedApps = createdApps
+  const filteredCreatedApps = activeConnections
     .filter((app) => app.isVisible)
     .filter((_, index) => showOnPagination(index, page.current, 4));
 
-  const noApps = createdApps.length === 0;
+  const noApps = activeConnections.length === 0;
   const noMatchingApps = filteredCreatedApps.length === 0;
+  const paginate = activeConnections.length > 4;
 
   if (noApps) {
     return (
@@ -74,12 +75,18 @@ export default function ActiveConnectionsPage() {
       <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
         {noMatchingApps ? "No matching apps" : "Active application connections"}
       </h2>
-      <AppFilters apps={createdApps} setApps={setCreatedApps} onSearch={reCalcPaginationOnSearch} />
+      <AppFilters
+        apps={activeConnections}
+        setApps={setActiveConnections}
+        onSearch={reCalcPaginationOnSearch}
+      />
       {!noMatchingApps && (
         <>
-          <div className="flex justify-center py-6">
-            <Paginator onChange={handlePagination} count={page.pageCount} />
-          </div>
+          {paginate && (
+            <div className="flex justify-center py-6">
+              <Paginator onChange={handlePagination} count={page.pageCount} />
+            </div>
+          )}
           <ul className="flex flex-col gap-y-[60px] mb-[100px]">
             {filteredCreatedApps.map((app) => {
               return (

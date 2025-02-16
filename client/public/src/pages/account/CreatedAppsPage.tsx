@@ -68,6 +68,7 @@ export default function CreatedAppsPage() {
 
   const noApps = createdApps.length === 0;
   const noMatchingApps = filteredCreatedApps.length === 0;
+  const paginate = createdApps.length > 4;
 
   if (noApps) {
     return (
@@ -85,9 +86,11 @@ export default function CreatedAppsPage() {
       <AppFilters apps={createdApps} setApps={setCreatedApps} onSearch={reCalcPaginationOnSearch} />
       {!noMatchingApps && (
         <>
-          <div className="flex justify-center py-6">
-            <Paginator onChange={handlePagination} count={page.pageCount} />
-          </div>
+          {paginate && (
+            <div className="flex justify-center py-6">
+              <Paginator onChange={handlePagination} count={page.pageCount} />
+            </div>
+          )}
           <ul className="flex flex-col gap-y-[60px] mb-[100px]">
             {filteredCreatedApps.map((app) => {
               return (

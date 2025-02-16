@@ -25,8 +25,6 @@ const useMangeAppStore = () => {
       return removeAllWhitespaces(app.name.toLowerCase()) === removeAllWhitespaces(appName ?? "");
     });
 
-    console.log("Found: ", manageAppState);
-
     return foundApp || createDefaultApp();
   };
 

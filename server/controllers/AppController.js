@@ -4,6 +4,7 @@ const { sendEmail } = require("../middlewares/Auth");
 const { hex8BitKey } = require("../utils/crypto");
 const { getDate } = require("../utils/date");
 const { addAppConnection } = require("../services/userService");
+const ActivityLogModel = require("../models/ActivityLog");
 
 const requestCode = async (req, res) => {
   const appName = req.headers["authecho-app-name"];
@@ -185,8 +186,33 @@ const signIn = async (req, res, next) => {
 
     next();
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const trackUserActivity = async (req, res) => {
+  const username = req.user.name;
+  const appName = req.app.name;
+  const today = new Date().toISOString().split("T")[0];
+
+  try {
+    const result = await ActivityLogModel.updateOne(
+      { appName, date: today },
+      {
+        $addToSet: { users: username },
+        $inc: { userCount: 1 },
+      },
+      { upsert: true }
+    );
+
+    const message =
+      result.modifiedCount > 0 ? "User added to app's activity log" : "User already tracked today";
+
+    res.status(200).json({ message, success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
@@ -195,4 +221,5 @@ module.exports = {
   verifyCode,
   validateQuestion,
   signIn,
+  trackUserActivity,
 };

@@ -1,4 +1,4 @@
-import { AppStatus, AppStatusData } from "../types/types";
+import { AppStatus, AppStatusData, TimeOption } from "../types/types";
 
 export const USERNAME_KEY = "AUTHECHO_USERNAME";
 export const EMAIL_KEY = "AUTHECHO_EMAIL";
@@ -81,3 +81,18 @@ export const APP_STATUS_MAP: Record<AppStatus, AppStatusData> = {
     sortValue: 4,
   },
 };
+
+export const TIME_OPTIONS: TimeOption[] = [
+  { time: "Start", days: -1 },
+  { time: "5y", days: 1825 },
+  { time: "3y", days: 1095 },
+  { time: "1y", days: 365 },
+  { time: "6m", days: 180 },
+  { time: "3m", days: 90 },
+  { time: "1m", days: 30 },
+  { time: "2w", days: 14 },
+  { time: "1w", days: 7 },
+  { time: "3d", days: 3 },
+  { time: "1d", days: 1 },
+  { time: "Today", days: 0 },
+];
