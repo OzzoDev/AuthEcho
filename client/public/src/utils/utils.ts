@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AuthechoApp, FetchStatus } from "../types/types";
+import { AuthechoApp, FetchStatus, Invoice } from "../types/types";
 
 export function capitalize(str: string): string {
   if (!str) return str;
@@ -50,7 +50,7 @@ export function removeAllWhitespaces(str: string): string {
   return str.replace(/\s+/g, "");
 }
 
-export function calcPageCount(array: AuthechoApp[], maxItems: number): number {
+export function calcPageCount(array: AuthechoApp[] | Invoice[], maxItems: number): number {
   const visibleItems = [...array].filter((item) => item.isVisible);
   return Math.ceil(visibleItems.length / maxItems);
 }

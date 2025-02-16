@@ -157,3 +157,14 @@ export type paginatedPage = {
   latest: number;
   pageCount: number;
 };
+
+export type Invoice = {
+  _id: string;
+  subject: string;
+  from: string;
+  to: string;
+  text: string;
+  isRead: boolean;
+  sentAt: string;
+  isVisible: boolean;
+};

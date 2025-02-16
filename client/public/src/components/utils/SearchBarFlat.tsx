@@ -6,9 +6,9 @@ interface Props {
   onChange: (item: string) => void;
 }
 
-export default function SearchBar({ placeholder = "Search", autofocus, onChange }: Props) {
+export default function SearchBarFlat({ placeholder = "Search", autofocus, onChange }: Props) {
   return (
-    <div className="flex items-center gap-x-2 p-2 border-[1px] border-white rounded-full">
+    <div className="flex items-center gap-x-2 p-2 border-b-[1px] border-white">
       <IoSearch size={20} />
       <input
         placeholder={placeholder}
