@@ -4,6 +4,8 @@ import SearchBarFlat from "../../components/utils/SearchBarFlat";
 import { Invoice, paginatedPage } from "../../types/types";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
+import { Outlet, useParams } from "react-router";
+import useAccountStore from "../../hooks/useAccountStore";
 
 const invoicesArray: Invoice[] = [
   {
@@ -22,7 +24,7 @@ const invoicesArray: Invoice[] = [
     from: "graphics@example.com",
     to: "clientB@example.com",
     text: "We appreciate your business! This invoice details the graphic design work completed for your marketing materials.",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -32,7 +34,7 @@ const invoicesArray: Invoice[] = [
     from: "seoagency@example.com",
     to: "clientC@example.com",
     text: "Your SEO optimization services are detailed in this invoice. Thank you for trusting us to enhance your online visibility.",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -42,7 +44,7 @@ const invoicesArray: Invoice[] = [
     from: "contentwriters@example.com",
     to: "clientD@example.com",
     text: "This invoice reflects the content creation services provided for your blog posts and articles. We hope you enjoy the results!",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -52,7 +54,7 @@ const invoicesArray: Invoice[] = [
     from: "marketingteam@example.com",
     to: "clientE@example.com",
     text: "Thank you for allowing us to manage your digital marketing campaign. This invoice outlines the services provided this month.",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -62,7 +64,7 @@ const invoicesArray: Invoice[] = [
     from: "socialmedia@example.com",
     to: "clientF@example.com",
     text: "We appreciate your partnership! This invoice covers the management of your social media accounts for the past month.",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -72,7 +74,7 @@ const invoicesArray: Invoice[] = [
     from: "appdev@example.com",
     to: "clientG@example.com",
     text: "Thank you for choosing us for your mobile app development needs. This invoice outlines the work completed to date.",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -82,7 +84,7 @@ const invoicesArray: Invoice[] = [
     from: "videostudio@example.com",
     to: "clientH@example.com",
     text: "This invoice details the video production services provided for your latest project. We appreciate your trust in us!",
-    isRead: false,
+    isRead: true,
     sentAt: "2025-04-01:13:55",
     isVisible: true,
   },
@@ -109,11 +111,22 @@ const invoicesArray: Invoice[] = [
 ];
 
 export default function InvoicesPage() {
+  const { invoiceid } = useParams();
+  const { updateInvoices } = useAccountStore();
   const [invoices, setInvoices] = useState<Invoice[]>(invoicesArray);
   const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
-    setPage((prev) => ({ ...prev, pageCount: calcPageCount(invoices, 4) }));
+    const sortedInvoices = [...invoices].sort((a, b) => {
+      const isReadA = a.isRead;
+      const isReadB = b.isRead;
+
+      return isReadA === isReadB ? 0 : isReadA ? 1 : -1;
+    });
+
+    setInvoices(sortedInvoices);
+    updateInvoices(sortedInvoices);
+    setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedInvoices, 4) }));
   }, []);
 
   useEffect(() => {
@@ -134,7 +147,7 @@ export default function InvoicesPage() {
     }
   };
 
-  const handlePagination = (_: unknown, value: number) => {
+  const handlePagination = (_: unknown, value: number): void => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
   };
 
@@ -143,6 +156,10 @@ export default function InvoicesPage() {
     .filter((invoice) => invoice.isVisible);
 
   const paginate = invoices.length > 4;
+
+  if (invoiceid) {
+    return <Outlet />;
+  }
 
   return (
     <div className="w-full">

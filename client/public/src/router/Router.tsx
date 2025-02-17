@@ -30,6 +30,7 @@ const AccountControlledAppTrafficPage = lazy(
   () => import("../pages/account/ControlledAppTrafficPage")
 );
 const AcccountAdminAppDetailsPage = lazy(() => import("../pages/account/AdminAppDetailsPage"));
+const AccountInvoicePage = lazy(() => import("../pages/account/InvoicePage"));
 
 const Loader = <HashLoader size={50} color="white" className="m-auto" />;
 
@@ -98,8 +99,16 @@ const router = createBrowserRouter(
             <Suspense fallback={Loader}>
               <AccountInvoicesPage />
             </Suspense>
-          }
-        />
+          }>
+          <Route
+            path=":invoiceid"
+            element={
+              <Suspense fallback={Loader}>
+                <AccountInvoicePage />
+              </Suspense>
+            }
+          />
+        </Route>
         <Route
           path="myapps"
           element={

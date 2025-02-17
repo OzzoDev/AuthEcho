@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AccountRequest, AccountResponse, FetchStatus } from "../types/types";
+import { AccountRequest, AccountResponse, FetchStatus, Invoice } from "../types/types";
+import { USER_INVOICES_KEY } from "../constants/contants";
 
 interface AccountState {
   status: FetchStatus;
   error: string;
   requestData: AccountRequest;
   responseData: AccountResponse;
+  invoices: Invoice[];
 }
 
 const initialState: AccountState = {
@@ -13,6 +15,7 @@ const initialState: AccountState = {
   error: "",
   requestData: {},
   responseData: { message: "", success: false },
+  invoices: JSON.parse(sessionStorage.getItem(USER_INVOICES_KEY) || "[]"),
 };
 
 const formSlice = createSlice({
@@ -31,6 +34,12 @@ const formSlice = createSlice({
     setResponseData(state, action: PayloadAction<AccountResponse>) {
       state.responseData = action.payload;
     },
+    setInvoices(state, action: PayloadAction<Invoice[]>) {
+      if (action.payload) {
+        state.invoices = action.payload;
+        sessionStorage.setItem(USER_INVOICES_KEY, JSON.stringify(action.payload));
+      }
+    },
     reset(state) {
       state.status = "idle";
       state.error = "";
@@ -40,6 +49,7 @@ const formSlice = createSlice({
   },
 });
 
-export const { setStatus, setError, setRequestData, setResponseData, reset } = formSlice.actions;
+export const { setStatus, setError, setRequestData, setResponseData, setInvoices, reset } =
+  formSlice.actions;
 
 export default formSlice.reducer;

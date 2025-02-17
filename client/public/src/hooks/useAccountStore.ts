@@ -1,8 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useCallback, useEffect } from "react";
-import { AccountRequest, AccountResponse, FetchStatus } from "../types/types";
-import { reset, setError, setRequestData, setResponseData, setStatus } from "../store/accountSlice";
+import { AccountRequest, AccountResponse, FetchStatus, Invoice } from "../types/types";
+import {
+  reset,
+  setError,
+  setInvoices,
+  setRequestData,
+  setResponseData,
+  setStatus,
+} from "../store/accountSlice";
 
 const useAccountStore = (shouldReset?: boolean) => {
   const dispatch = useDispatch();
@@ -40,6 +47,27 @@ const useAccountStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
+  const updateInvoices = useCallback(
+    (invoices: Invoice[]) => {
+      dispatch(setInvoices(invoices));
+    },
+    [dispatch]
+  );
+
+  const getInvoice = (invoiceID: string): Invoice | null => {
+    return accountState.invoices.find((invocie) => invocie._id === invoiceID) || null;
+  };
+
+  const removeInvoice = useCallback(
+    (invoiceID: string) => {
+      const filteredInvoices = [...accountState.invoices].filter(
+        (invocie) => invocie._id !== invoiceID
+      );
+      dispatch(setInvoices(filteredInvoices));
+    },
+    [dispatch]
+  );
+
   const clear = useCallback(() => {
     dispatch(reset());
   }, [dispatch]);
@@ -50,6 +78,9 @@ const useAccountStore = (shouldReset?: boolean) => {
     updateError,
     updateRequestData,
     updateResponseData,
+    updateInvoices,
+    getInvoice,
+    removeInvoice,
     clear,
   };
 };

@@ -5,6 +5,7 @@ export const EMAIL_KEY = "AUTHECHO_EMAIL";
 export const AUTH_KEY = "AUTHECHO_AUTHENTICATION";
 export const ADMIN_KEY = "AUTHECHO_ADMIN";
 export const USER_APPS_KEY = "AUTHECHO_USER_APPS";
+export const USER_INVOICES_KEY = "AUTHECHO_USER_INVOCIES";
 
 type Link = {
   linkText: string;

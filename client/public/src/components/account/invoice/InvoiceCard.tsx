@@ -13,7 +13,7 @@ export default function InvoiceCard({ invoice }: Props) {
   const navigate = useNavigate();
 
   const navigateToInvoiceDetailsPage = () => {
-    //
+    navigate(`${encodeURIComponent(invoice._id)}`);
   };
 
   return (

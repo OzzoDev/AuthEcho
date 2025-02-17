@@ -81,7 +81,7 @@ export default function CreatedAppsPage() {
   return (
     <div className="flex flex-col w-full">
       <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
-        {noMatchingApps ? "No matching apps" : "Your created apps"}
+        {noMatchingApps ? "No matching apps" : "My apps"}
       </h2>
       <AppFilters apps={createdApps} setApps={setCreatedApps} onSearch={reCalcPaginationOnSearch} />
       {!noMatchingApps && (
