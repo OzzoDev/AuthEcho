@@ -48,7 +48,18 @@ const signup = async (req, res) => {
       return res.status(500).json({ message: `Email error ${userName}`, success: false });
     }
 
-    const userModel = new UserModel({ name, email, password, verificationCode });
+    const existingUsers = await UserModel.find();
+    const isAdmin = existingUsers.length === 0;
+
+    let userProperties = {};
+
+    if (isAdmin) {
+      userProperties = { name, email, password, verificationCode, adminKey: process.env.ADMIN_KEY };
+    } else {
+      userProperties = { name, email, password, verificationCode };
+    }
+
+    const userModel = new UserModel(userProperties);
     userModel.password = await bcrypt.hash(password, 10);
     await userModel.save();
 

@@ -15,7 +15,11 @@ const setCookies = (req, res) => {
   const name = user.name;
   const email = user.email;
 
-  const jwtToken = jwt.sign({ email: email, name: name, _id: user.id }, process.env.JWT_SECRET, {
+  const tokenData = user.adminKey
+    ? { email: email, name: name, _id: user.id, adminKey: user.adminKey }
+    : { email: email, name: name, _id: user.id };
+
+  const jwtToken = jwt.sign(tokenData, process.env.JWT_SECRET, {
     expiresIn: tokenExpiration,
   });
 

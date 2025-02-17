@@ -67,6 +67,10 @@ const UserSchema = new Schema({
     type: [String],
     default: [],
   },
+  adminKey: {
+    type: String,
+    default: null,
+  },
 });
 
 UserSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });

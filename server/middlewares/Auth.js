@@ -29,6 +29,30 @@ const ensureAuthenticated = (req, res, next) => {
   }
 };
 
+const ensureAdmin = (req, res, next) => {
+  const jwtToken = req.cookies.jwtToken;
+
+  if (!jwtToken) {
+    return res.status(401).json({ message: "Please sign in to continue", success: false });
+  }
+
+  try {
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
+
+    const isAdmin = decoded.adminKey && decoded.adminKey === process.env.ADMIN_KEY;
+
+    if (!isAdmin) {
+      return res.status(403).json({ message: "Unauthenticated", success: false });
+    }
+
+    next();
+  } catch (error) {
+    return res
+      .status(403)
+      .json({ message: "Your session has expired. Please sign in again", success: false });
+  }
+};
+
 const sendEmail = async (recipientEmail, subject, text, verificationCode) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -139,6 +163,7 @@ const ensureUser = async (req, res, next) => {
 
 module.exports = {
   ensureAuthenticated,
+  ensureAdmin,
   sendEmail,
   ensureApiKey,
   verifyAppCredentials,

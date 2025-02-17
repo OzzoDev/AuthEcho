@@ -9,11 +9,11 @@ const hex32BitKey = () => {
 };
 
 const hex64BitKey = () => {
-  return crypto.randomBytes(64).toString("hex");
+  return crypto.randomBytes(64).toString("hex").slice(0, 64);
 };
 
 const hex128BitKey = () => {
-  return crypto.randomBytes(128).toString("hex");
+  return crypto.randomBytes(128).toString("hex").slice(0, 128);
 };
 
 module.exports = {
