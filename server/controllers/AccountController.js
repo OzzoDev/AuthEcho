@@ -9,6 +9,7 @@ const {
   changeSecurityQuestion,
   getAppsByNames,
 } = require("../services/userService");
+const InvoiceModel = require("../models/Invocie");
 
 const REMEMBER_USER_KEY = "rememberUser";
 
@@ -258,8 +259,58 @@ const deleteAccount = async (req, res, next) => {
 
     next();
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const getInvoices = async (req, res) => {
+  const name = req.user.name;
+
+  try {
+    const invoices = await InvoiceModel.find({ to: name });
+
+    res.status(200).json({ message: "Invoices retrieved successfully", success: true, invoices });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const markInvoiceAsRead = async (req, res) => {
+  const { invoiceID } = req.body;
+
+  try {
+    const invoice = await InvoiceModel.findOne({ _id: invoiceID });
+
+    if (!invoice) {
+      return res.status(404).json({ message: "Invocie not found", success: false });
+    }
+
+    invoice.isRead = true;
+    await invoice.save();
+
+    res.status(200).json({ message: "Invoice marked as read successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const deleteInvoice = async (req, res) => {
+  const { invoiceID } = req.body;
+
+  try {
+    const deleteResult = await InvoiceModel.deleteOne({ _id: invoiceID });
+
+    if (deleteResult.deletedCount === 0) {
+      return res.status(404).json({ message: "Invocie not found", success: false });
+    }
+
+    res.status(200).json({ message: "Invoice deleted successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
@@ -272,4 +323,7 @@ module.exports = {
   updateSecurityQuestionAnswer,
   updateSecurityQuestion,
   deleteAccount,
+  getInvoices,
+  markInvoiceAsRead,
+  deleteInvoice,
 };

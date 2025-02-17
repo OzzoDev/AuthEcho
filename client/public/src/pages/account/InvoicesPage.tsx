@@ -6,127 +6,34 @@ import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
 import { Outlet, useParams } from "react-router";
 import useAccountStore from "../../hooks/useAccountStore";
-
-const invoicesArray: Invoice[] = [
-  {
-    _id: "invoice_1",
-    subject: "Invoice #001 - Web Development Services",
-    from: "designstudio@example.com",
-    to: "clientA@example.com",
-    text: "Thank you for choosing our web development services. This invoice covers the design and implementation of your new website.",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_2",
-    subject: "Invoice #002 - Graphic Design Services",
-    from: "graphics@example.com",
-    to: "clientB@example.com",
-    text: "We appreciate your business! This invoice details the graphic design work completed for your marketing materials.",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_3",
-    subject: "Invoice #003 - SEO Optimization",
-    from: "seoagency@example.com",
-    to: "clientC@example.com",
-    text: "Your SEO optimization services are detailed in this invoice. Thank you for trusting us to enhance your online visibility.",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_4",
-    subject: "Invoice #004 - Content Creation",
-    from: "contentwriters@example.com",
-    to: "clientD@example.com",
-    text: "This invoice reflects the content creation services provided for your blog posts and articles. We hope you enjoy the results!",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_5",
-    subject: "Invoice #005 - Digital Marketing Campaign",
-    from: "marketingteam@example.com",
-    to: "clientE@example.com",
-    text: "Thank you for allowing us to manage your digital marketing campaign. This invoice outlines the services provided this month.",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_6",
-    subject: "Invoice #006 - Social Media Management",
-    from: "socialmedia@example.com",
-    to: "clientF@example.com",
-    text: "We appreciate your partnership! This invoice covers the management of your social media accounts for the past month.",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_7",
-    subject: "Invoice #007 - Mobile App Development",
-    from: "appdev@example.com",
-    to: "clientG@example.com",
-    text: "Thank you for choosing us for your mobile app development needs. This invoice outlines the work completed to date.",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_8",
-    subject: "Invoice #008 - Video Production Services",
-    from: "videostudio@example.com",
-    to: "clientH@example.com",
-    text: "This invoice details the video production services provided for your latest project. We appreciate your trust in us!",
-    isRead: true,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_9",
-    subject: "Invoice #009 - IT Support Services",
-    from: "itsupport@example.com",
-    to: "clientI@example.com",
-    text: "Thank you for using our IT support services. This invoice covers the assistance provided over the last month.",
-    isRead: false,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-  {
-    _id: "invoice_10",
-    subject: "Invoice #010 - Consulting Services",
-    from: "consultancy@example.com",
-    to: "clientJ@example.com",
-    text: "We value your business! This invoice summarizes the consulting services rendered to help your business grow.",
-    isRead: false,
-    sentAt: "2025-04-01:13:55",
-    isVisible: true,
-  },
-];
+import useAccountApi from "../../hooks/useAccountApi";
+import { HashLoader } from "react-spinners";
 
 export default function InvoicesPage() {
   const { invoiceid } = useParams();
-  const { updateInvoices } = useAccountStore();
-  const [invoices, setInvoices] = useState<Invoice[]>(invoicesArray);
+  const { status, updateInvoices } = useAccountStore();
+  const { callApi: fetchInvoices } = useAccountApi("GET", "GETINVOICES");
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
-    const sortedInvoices = [...invoices].sort((a, b) => {
-      const isReadA = a.isRead;
-      const isReadB = b.isRead;
+    (async () => {
+      const response = await fetchInvoices();
+      const fetchedInvocies = response?.data.invoices;
 
-      return isReadA === isReadB ? 0 : isReadA ? 1 : -1;
-    });
+      if (fetchedInvocies) {
+        const sortedInvoices = [...fetchedInvocies].sort((a, b) => {
+          const isReadA = a.isRead;
+          const isReadB = b.isRead;
 
-    setInvoices(sortedInvoices);
-    updateInvoices(sortedInvoices);
-    setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedInvoices, 4) }));
+          return isReadA === isReadB ? 0 : isReadA ? 1 : -1;
+        });
+
+        setInvoices(sortedInvoices);
+        updateInvoices(sortedInvoices);
+        setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedInvoices, 4) }));
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -156,6 +63,18 @@ export default function InvoicesPage() {
     .filter((invoice) => invoice.isVisible);
 
   const paginate = invoices.length > 4;
+
+  if (status === "loading") {
+    return <HashLoader size={50} color="white" className="m-auto" />;
+  }
+
+  if (invoices.length === 0) {
+    return (
+      <h2 className="text-2xl font-semibold text-red-400 ml-[20px] pt-[30px] pb-[60px]">
+        You currently have no invoices
+      </h2>
+    );
+  }
 
   if (invoiceid) {
     return <Outlet />;

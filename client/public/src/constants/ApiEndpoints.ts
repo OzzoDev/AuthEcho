@@ -38,4 +38,7 @@ export const ACCOUNT_ENDPOINTS = {
   UPDATESECURITYQUESTIONANSWER: `${API_BASE_URL}/api/account/updatesecurityquestionanswer`,
   SECURITYQUESTIONS: `${API_BASE_URL}/api/auth/securityquestions`,
   DELETEACCOUNT: `${API_BASE_URL}/api/account/deleteaccount`,
+  GETINVOICES: `${API_BASE_URL}/api/account/invoices`,
+  READINVOICE: `${API_BASE_URL}/api/account/readinvoice`,
+  DELETEINVOCIE: `${API_BASE_URL}/api/account/deleteinvoice`,
 };

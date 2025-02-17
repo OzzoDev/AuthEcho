@@ -22,7 +22,7 @@ export default function ControlledAppTrafficPage() {
   useEffect(() => {
     (async () => {
       const fetchPromises = [...TIME_OPTIONS].map((timeOption) =>
-        fetchAppActivity(true, { appName: app.name, days: timeOption.days })
+        fetchAppActivity(undefined, { appName: app.name, days: timeOption.days })
       );
       const response = await Promise.all(fetchPromises);
       const logs = response.map((res) => res?.data.logs ?? []);

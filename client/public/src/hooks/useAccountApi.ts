@@ -1,11 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ACCOUNT_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
-import { AccountApiUseCase, AccountResponse, ApiMethod, ApiResponse } from "../types/types";
+import { AccountResponse, ApiMethod, ApiResponse } from "../types/types";
 import useAccountStore from "./useAccountStore";
 import useAuthStore from "./useAuthStore";
 
-const useAccountApi = (method: ApiMethod, useCase: AccountApiUseCase) => {
+const useAccountApi = (method: ApiMethod, useCase: keyof typeof ACCOUNT_ENDPOINTS) => {
   const { username } = useAuthStore();
   const { requestData, updateStatus, updateError } = useAccountStore();
 

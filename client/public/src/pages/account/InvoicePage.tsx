@@ -6,25 +6,38 @@ import AppCardData from "../../components/account/app/AppCardData";
 import { useEffect } from "react";
 import DangerBtn from "../../components/btn/DangerBtn";
 import { FaRegTrashCan } from "react-icons/fa6";
+import useAccountApi from "../../hooks/useAccountApi";
+import { HashLoader } from "react-spinners";
 
 export default function InvoicePage() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
-  const { getInvoice, removeInvoice } = useAccountStore();
+  const { status, getInvoice, removeInvoice } = useAccountStore();
+  const { callApi: readInvocie } = useAccountApi("PUT", "READINVOICE");
+  const { callApi: deleteInvocie } = useAccountApi("DELETE", "DELETEINVOCIE");
   const invoice = getInvoice(decodeURIComponent(invoiceid || ""));
 
   useEffect(() => {
-    //Mark invoice as read on mount
+    (async () => {
+      await readInvocie();
+    })();
   }, []);
 
   const navigateToInvoicesPage = (): void => {
     navigate("/account/invoices");
   };
 
-  const handleDeleteInvocie = (): void => {
-    removeInvoice(decodeURIComponent(invoiceid || ""));
-    navigateToInvoicesPage();
+  const handleDeleteInvocie = async (): Promise<void> => {
+    const response = await deleteInvocie();
+    if (response) {
+      removeInvoice(decodeURIComponent(invoiceid || ""));
+      navigateToInvoicesPage();
+    }
   };
+
+  if (status === "loading") {
+    return <HashLoader size={50} color="white" className="m-auto" />;
+  }
 
   if (!invoice) {
     return (

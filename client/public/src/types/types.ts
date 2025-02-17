@@ -64,6 +64,10 @@ export type TimeOption = {
   days: number;
 };
 
+export type InvoiceRequest = {
+  invoiceID: number;
+};
+
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
 
 export type ApiMethod = "GET" | "POST" | "PUT" | "POST" | "PATCH" | "DELETE";
@@ -112,19 +116,8 @@ export type AccountResponse = {
   adminApps?: AuthechoApp[];
   appConnections?: AuthechoApp[];
   questions?: string[];
+  invoices?: Invoice[];
 };
-
-export type AccountApiUseCase =
-  | "ACCOUNTOVERVIEW"
-  | "SIGNOUT"
-  | "REQUESTEMAILCODE"
-  | "UPDATENAME"
-  | "UPDATEEMAIL"
-  | "UPDATEPASSWORD"
-  | "UPDATESECURITYQUESTION"
-  | "UPDATESECURITYQUESTIONANSWER"
-  | "SECURITYQUESTIONS"
-  | "DELETEACCOUNT";
 
 export type AuthechoApp = {
   name: string;
