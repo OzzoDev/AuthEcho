@@ -37,6 +37,9 @@ const accountOverview = async (req, res) => {
     const adminApps = await getAppsByNames(user.adminApps, user.name);
     const appConnections = await getAppsByNames(user.appConnections, user.name);
 
+    const invoices = await InvoiceModel.find({ to: user.name });
+    const unReadInvoices = invoices.filter((invoice) => !invoice.isRead).length;
+
     res.status(200).json({
       message: "Success",
       success: true,
@@ -47,6 +50,7 @@ const accountOverview = async (req, res) => {
       createdApps,
       adminApps,
       appConnections,
+      unReadInvoices,
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });

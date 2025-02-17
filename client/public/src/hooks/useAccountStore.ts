@@ -9,6 +9,7 @@ import {
   setRequestData,
   setResponseData,
   setStatus,
+  setUnReadInvocies,
 } from "../store/accountSlice";
 
 const useAccountStore = (shouldReset?: boolean) => {
@@ -68,6 +69,13 @@ const useAccountStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
+  const updateUnReadInvoices = useCallback(
+    (unReadInvocies: number) => {
+      dispatch(setUnReadInvocies(unReadInvocies));
+    },
+    [dispatch]
+  );
+
   const clear = useCallback(() => {
     dispatch(reset());
   }, [dispatch]);
@@ -81,6 +89,7 @@ const useAccountStore = (shouldReset?: boolean) => {
     updateInvoices,
     getInvoice,
     removeInvoice,
+    updateUnReadInvoices,
     clear,
   };
 };

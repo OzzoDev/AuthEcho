@@ -117,6 +117,7 @@ export type AccountResponse = {
   appConnections?: AuthechoApp[];
   questions?: string[];
   invoices?: Invoice[];
+  unReadInvoices?: number;
 };
 
 export type AuthechoApp = {

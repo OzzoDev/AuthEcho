@@ -10,6 +10,8 @@ import AccountHeader from "../components/account/AccountHeader";
 import AccountSidebar from "../components/account/AccountSidebar";
 import { AccountTab } from "../types/types";
 import { useEffect } from "react";
+import useAccountStore from "../hooks/useAccountStore";
+import useAccountApi from "../hooks/useAccountApi";
 
 const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
   { tabName: "Overview", icon: <GrOverview size={24} /> },
@@ -22,8 +24,15 @@ const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
 
 export default function AccountLayout() {
   const { isAuthenticated } = useAuthStore();
+  const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
+  const { updateUnReadInvoices } = useAccountStore();
 
   useEffect(() => {
+    (async () => {
+      const response = await fetchAccountOverview();
+      const unReadInvocies = response?.data.unReadInvoices;
+      unReadInvocies && updateUnReadInvoices(unReadInvocies);
+    })();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 

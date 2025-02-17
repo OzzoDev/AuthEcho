@@ -5,6 +5,7 @@ import PrimaryBtn from "../../btn/PrimaryBtn";
 import { IoMailUnreadOutline } from "react-icons/io5";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
 import useAccountApi from "../../../hooks/useAccountApi";
+import useAccountStore from "../../../hooks/useAccountStore";
 
 interface Props {
   invoice: Invoice;
@@ -12,11 +13,20 @@ interface Props {
 
 export default function InvoiceCard({ invoice }: Props) {
   const navigate = useNavigate();
+  const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const { callApi: readInvocie } = useAccountApi("PUT", "READINVOICE");
+  const { updateUnReadInvoices } = useAccountStore();
 
   const navigateToInvoiceDetailsPage = async () => {
     const response = await readInvocie(false, { invoiceID: invoice._id });
-    response && navigate(`${encodeURIComponent(invoice._id)}`);
+    if (response) {
+      const accountOverview = await fetchAccountOverview();
+      const unReadInvocies = accountOverview?.data.unReadInvoices;
+      if (unReadInvocies !== undefined) {
+        updateUnReadInvoices(unReadInvocies);
+      }
+      navigate(`${encodeURIComponent(invoice._id)}`);
+    }
   };
 
   return (

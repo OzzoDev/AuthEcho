@@ -8,6 +8,7 @@ interface AccountState {
   requestData: AccountRequest;
   responseData: AccountResponse;
   invoices: Invoice[];
+  unReadInvoices: number;
 }
 
 const initialState: AccountState = {
@@ -16,6 +17,7 @@ const initialState: AccountState = {
   requestData: {},
   responseData: { message: "", success: false },
   invoices: JSON.parse(sessionStorage.getItem(USER_INVOICES_KEY) || "[]"),
+  unReadInvoices: 0,
 };
 
 const formSlice = createSlice({
@@ -40,6 +42,9 @@ const formSlice = createSlice({
         sessionStorage.setItem(USER_INVOICES_KEY, JSON.stringify(action.payload));
       }
     },
+    setUnReadInvocies(state, action: PayloadAction<number>) {
+      state.unReadInvoices = action.payload;
+    },
     reset(state) {
       state.status = "idle";
       state.error = "";
@@ -49,7 +54,14 @@ const formSlice = createSlice({
   },
 });
 
-export const { setStatus, setError, setRequestData, setResponseData, setInvoices, reset } =
-  formSlice.actions;
+export const {
+  setStatus,
+  setError,
+  setRequestData,
+  setResponseData,
+  setInvoices,
+  setUnReadInvocies,
+  reset,
+} = formSlice.actions;
 
 export default formSlice.reducer;
