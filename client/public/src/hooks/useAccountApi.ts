@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ACCOUNT_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
-import { AccountResponse, ApiMethod, ApiResponse } from "../types/types";
+import { AccountResponse, ApiMethod, ApiResponse, InvoiceRequest, Issue } from "../types/types";
 import useAccountStore from "./useAccountStore";
 import useAuthStore from "./useAuthStore";
 
@@ -11,7 +11,10 @@ const useAccountApi = (method: ApiMethod, useCase: keyof typeof ACCOUNT_ENDPOINT
 
   const url = ACCOUNT_ENDPOINTS[useCase];
 
-  const callApi = async (trackState?: boolean): Promise<AxiosResponse<AccountResponse> | null> => {
+  const callApi = async (
+    trackState?: boolean,
+    data?: Issue | InvoiceRequest
+  ): Promise<AxiosResponse<AccountResponse> | null> => {
     try {
       if (trackState) {
         updateStatus("loading");
@@ -24,7 +27,7 @@ const useAccountApi = (method: ApiMethod, useCase: keyof typeof ACCOUNT_ENDPOINT
         headers: {
           "Content-Type": "application/json",
         },
-        ...(method !== "GET" && { data: { ...requestData, user: username } }),
+        ...(method !== "GET" && { data: { ...(data ? data : requestData), user: username } }),
         withCredentials: true,
       };
 

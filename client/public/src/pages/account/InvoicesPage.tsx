@@ -22,12 +22,14 @@ export default function InvoicesPage() {
       const fetchedInvocies = response?.data.invoices;
 
       if (fetchedInvocies) {
-        const sortedInvoices = [...fetchedInvocies].sort((a, b) => {
-          const isReadA = a.isRead;
-          const isReadB = b.isRead;
+        const sortedInvoices = [...fetchedInvocies]
+          .map((invocie) => ({ ...invocie, isVisible: true }))
+          .sort((a, b) => {
+            const isReadA = a.isRead;
+            const isReadB = b.isRead;
 
-          return isReadA === isReadB ? 0 : isReadA ? 1 : -1;
-        });
+            return isReadA === isReadB ? 0 : isReadA ? 1 : -1;
+          });
 
         setInvoices(sortedInvoices);
         updateInvoices(sortedInvoices);
@@ -63,6 +65,7 @@ export default function InvoicesPage() {
     .filter((invoice) => invoice.isVisible);
 
   const paginate = invoices.length > 4;
+  const noMatchingInvocies = ![...invoices].some((invocie) => invocie.isVisible);
 
   if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
@@ -70,7 +73,7 @@ export default function InvoicesPage() {
 
   if (invoices.length === 0) {
     return (
-      <h2 className="text-2xl font-semibold text-red-400 ml-[20px] pt-[30px] pb-[60px]">
+      <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
         You currently have no invoices
       </h2>
     );
@@ -85,16 +88,24 @@ export default function InvoicesPage() {
       <div className="p-2 mb-10">
         <SearchBarFlat onChange={handleSearch} />
       </div>
-      {paginate && (
-        <div className="flex justify-center py-6">
-          <Paginator onChange={handlePagination} count={page.pageCount} />
-        </div>
+      {noMatchingInvocies ? (
+        <h2 className="text-xl font-semibold text-red-400 p-8">
+          You do not have any invoices that match the search query.
+        </h2>
+      ) : (
+        <>
+          {paginate && (
+            <div className="flex justify-center py-6">
+              <Paginator onChange={handlePagination} count={page.pageCount} />
+            </div>
+          )}
+          <ul className="flex flex-col gap-y-10 w-full">
+            {filteredInvoices.map((invoice) => {
+              return <InvoiceCard key={invoice._id} invoice={invoice} />;
+            })}
+          </ul>
+        </>
       )}
-      <ul className="flex flex-col gap-y-10 w-full">
-        {filteredInvoices.map((invoice) => {
-          return <InvoiceCard key={invoice._id} invoice={invoice} />;
-        })}
-      </ul>
     </div>
   );
 }

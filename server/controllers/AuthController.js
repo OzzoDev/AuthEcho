@@ -628,7 +628,7 @@ const getUserAlias = async (_, res) => {
     const userAlias = users.map((user) => ({ name: user.name, email: user.email }));
     res.status(200).json({ message: "Users retrieved successfully", success: true, userAlias });
   } catch (error) {
-    console.error(error); // Log the error
+    console.error(error);
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };

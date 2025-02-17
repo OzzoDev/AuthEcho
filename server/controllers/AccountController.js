@@ -10,6 +10,8 @@ const {
   getAppsByNames,
 } = require("../services/userService");
 const InvoiceModel = require("../models/Invocie");
+const IssueModel = require("../models/Issue");
+const AppModel = require("../models/App");
 
 const REMEMBER_USER_KEY = "rememberUser";
 
@@ -74,6 +76,10 @@ const updateName = async (req, res, next) => {
       $or: [{ email: userData }, { name: userData }],
     }).collation({ locale: "en", strength: 1 });
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
     if (name.toLowerCase() === user.name.toLowerCase()) {
       return res
         .status(409)
@@ -89,14 +95,36 @@ const updateName = async (req, res, next) => {
       return res.status(409).json({ message: "Username already exists", success: false });
     }
 
-    const updatedUser = await changeName(user.name, name);
+    const session = await UserModel.startSession();
+    session.startTransaction();
 
-    req.body.user = updatedUser;
-    req.body.statusCode = 200;
-    req.body.message = "Username updated successfully";
-    req.body.rememberUser = rememberUser;
+    try {
+      await IssueModel.findOneAndUpdate({ user: user.name }, { user: name }, { session });
+      await InvoiceModel.updateMany({ to: user.name }, { to: name }, { session });
+      await AppModel.updateMany({ creator: user.name }, { creator: name }, { session });
+      const appEntries = await AppModel.find({ admins: user.name }, { admins: 1 }).session(session);
+      const currentAdmins = appEntries.flatMap((entry) => entry.admins);
+      await AppModel.updateMany(
+        { admins: user.name },
+        { $set: { admins: currentAdmins.map((admin) => (admin === user.name ? name : admin)) } },
+        { session }
+      );
+      const updatedUser = await changeName(user.name, name);
 
-    next();
+      await session.commitTransaction();
+      req.body.user = updatedUser;
+      req.body.statusCode = 200;
+      req.body.message = "Username updated successfully";
+      req.body.rememberUser = rememberUser;
+
+      next();
+    } catch (error) {
+      await session.abortTransaction();
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error", success: false });
+    } finally {
+      session.endSession();
+    }
   } catch (error) {
     res.status(500).json({ message: "Internal server error", success: false });
     console.error(error);
@@ -314,6 +342,60 @@ const deleteInvoice = async (req, res) => {
   }
 };
 
+const reportIssue = async (req, res) => {
+  const { issue, text } = req.body;
+  const name = req.user.name;
+
+  if (!issue) {
+    return res.status(400).json({ message: "Name of issue is missing", success: false });
+  }
+
+  if (!text) {
+    return res.status(400).json({ message: "Issue description is missing", success: false });
+  }
+
+  if (issue.length > 100) {
+    return res
+      .status(400)
+      .json({ message: "Name of issue cannot be longer then 100 characters", success: false });
+  }
+
+  if (text.length > 500) {
+    return res
+      .status(400)
+      .json({ message: "Issue description cannot be longer then 500 characters", success: false });
+  }
+
+  try {
+    const existingIssue = await IssueModel.findOne({ user: name });
+
+    if (existingIssue) {
+      return res.status(400).json({
+        message: "You have already reported an issue that remains unresolved.",
+        success: false,
+      });
+    }
+
+    const newIssue = new IssueModel({ issue, text, user: name });
+    await newIssue.save();
+
+    const newInvoice = new InvoiceModel({
+      subject: "Issue Report Confirmation",
+      to: name,
+      from: "Authecho",
+      text: `Dear ${name},\n\nWe wish to inform you that the issue you reported, titled "${issue}", has been duly acknowledged and is currently under review. Our team is thoroughly examining the matter to determine its underlying cause. Rest assured, we are committed to resolving this issue as swiftly as possible.\n\nOnce a resolution is reached, we will provide you with detailed information regarding the outcome of your report. We appreciate your patience and understanding during this process.\n\nThank you for bringing this matter to our attention.\n\nBest regards,\nThe Authecho Team`,
+    });
+    await newInvoice.save();
+
+    return res
+      .status(201)
+      .json({ message: "Issue reported successfully", success: true, issue: newIssue });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   accountOverview,
   requestEmailCode,
@@ -326,4 +408,5 @@ module.exports = {
   getInvoices,
   markInvoiceAsRead,
   deleteInvoice,
+  reportIssue,
 };

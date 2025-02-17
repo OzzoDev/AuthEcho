@@ -2,16 +2,12 @@ const mongoose = require("mongoose");
 const { getDate } = require("../utils/date");
 const Schema = mongoose.Schema;
 
-const InvocieSchema = new Schema({
-  subject: {
+const IssueSchema = new Schema({
+  user: {
     type: String,
     required: true,
   },
-  to: {
-    type: String,
-    required: true,
-  },
-  from: {
+  issue: {
     type: String,
     required: true,
   },
@@ -19,16 +15,12 @@ const InvocieSchema = new Schema({
     type: String,
     required: true,
   },
-  isRead: {
-    type: Boolean,
-    default: false,
-  },
   sentAt: {
     type: String,
     default: getDate(),
   },
 });
 
-const InvoiceModel = mongoose.model("invoices", InvocieSchema);
+const IssueModel = mongoose.model("issues", IssueSchema);
 
-module.exports = InvoiceModel;
+module.exports = IssueModel;

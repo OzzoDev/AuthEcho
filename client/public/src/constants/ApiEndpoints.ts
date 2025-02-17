@@ -41,4 +41,5 @@ export const ACCOUNT_ENDPOINTS = {
   GETINVOICES: `${API_BASE_URL}/api/account/invoices`,
   READINVOICE: `${API_BASE_URL}/api/account/readinvoice`,
   DELETEINVOCIE: `${API_BASE_URL}/api/account/deleteinvoice`,
+  REPORTISSUE: `${API_BASE_URL}/api/account/reportissue`,
 };

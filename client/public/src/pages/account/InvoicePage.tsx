@@ -3,7 +3,6 @@ import OutlineBtn from "../../components/btn/OutlineBtn";
 import { useNavigate, useParams } from "react-router";
 import useAccountStore from "../../hooks/useAccountStore";
 import AppCardData from "../../components/account/app/AppCardData";
-import { useEffect } from "react";
 import DangerBtn from "../../components/btn/DangerBtn";
 import { FaRegTrashCan } from "react-icons/fa6";
 import useAccountApi from "../../hooks/useAccountApi";
@@ -13,22 +12,15 @@ export default function InvoicePage() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
   const { status, getInvoice, removeInvoice } = useAccountStore();
-  const { callApi: readInvocie } = useAccountApi("PUT", "READINVOICE");
   const { callApi: deleteInvocie } = useAccountApi("DELETE", "DELETEINVOCIE");
   const invoice = getInvoice(decodeURIComponent(invoiceid || ""));
-
-  useEffect(() => {
-    (async () => {
-      await readInvocie();
-    })();
-  }, []);
 
   const navigateToInvoicesPage = (): void => {
     navigate("/account/invoices");
   };
 
   const handleDeleteInvocie = async (): Promise<void> => {
-    const response = await deleteInvocie();
+    const response = await deleteInvocie(true, { invoiceID: decodeURIComponent(invoiceid || "") });
     if (response) {
       removeInvoice(decodeURIComponent(invoiceid || ""));
       navigateToInvoicesPage();
@@ -76,7 +68,20 @@ export default function InvoicePage() {
             <DangerBtn btnText="Delete" onClick={handleDeleteInvocie} icon={<FaRegTrashCan />} />
           </div>
         </div>
-        <p>{invoice.text}</p>
+        <ul className="flex flex-col gap-y-4 text-sky-200">
+          {invoice.text
+            .split("\n\n")
+            .filter((str) => str)
+            .map((str) => {
+              return (
+                <li key={str + Math.random()}>
+                  {str.split("\n").map((sub) => {
+                    return <p key={str + sub + Math.random()}>{sub}</p>;
+                  })}
+                </li>
+              );
+            })}
+        </ul>
       </div>
     </div>
   );

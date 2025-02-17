@@ -65,7 +65,7 @@ export type TimeOption = {
 };
 
 export type InvoiceRequest = {
-  invoiceID: number;
+  invoiceID: string;
 };
 
 export type VerifyAction = "verifyEmail" | "verifyPassword" | "unlockAccount" | "verifyAccess";
@@ -160,4 +160,9 @@ export type Invoice = {
   isRead: boolean;
   sentAt: string;
   isVisible: boolean;
+};
+
+export type Issue = {
+  issue: string;
+  text: string;
 };

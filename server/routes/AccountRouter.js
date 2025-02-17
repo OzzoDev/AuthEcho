@@ -11,6 +11,7 @@ const {
   getInvoices,
   markInvoiceAsRead,
   deleteInvoice,
+  reportIssue,
 } = require("../controllers/AccountController");
 const { emailValidation } = require("../middlewares/AuthValidation");
 const { setCookies, removeCookies } = require("../middlewares/Cookies");
@@ -20,6 +21,7 @@ router.get("/signout", removeCookies);
 router.get("/invoices", getInvoices);
 
 router.post("/requestemailcode", emailValidation, requestEmailCode);
+router.post("/reportissue", reportIssue);
 
 router.put("/updatename", updateName, setCookies);
 router.put("/updateemail", emailValidation, updateEmail, setCookies);
