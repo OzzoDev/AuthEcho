@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ADMIN_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
-import { AccountResponse, AdminRequest, ApiMethod, ApiResponse } from "../types/types";
+import { AdminRequest, AdminResponse, ApiMethod, ApiResponse } from "../types/types";
 import useAuthStore from "./useAuthStore";
 import useAdminStore from "./useAdminStore";
 
@@ -14,7 +14,7 @@ const useAdminApi = (method: ApiMethod, useCase: keyof typeof ADMIN_ENDPOINTS) =
   const callApi = async (
     trackState?: boolean,
     data?: AdminRequest
-  ): Promise<AxiosResponse<AccountResponse> | null> => {
+  ): Promise<AxiosResponse<AdminResponse> | null> => {
     try {
       if (trackState) {
         updateStatus("loading");

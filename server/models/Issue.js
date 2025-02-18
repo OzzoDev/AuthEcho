@@ -19,6 +19,10 @@ const IssueSchema = new Schema({
     type: String,
     default: getDate(),
   },
+  isResolved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const IssueModel = mongoose.model("issues", IssueSchema);

@@ -12,6 +12,8 @@ import { PiUsersThreeBold } from "react-icons/pi";
 import { LuFlag } from "react-icons/lu";
 import AdminHeader from "../components/admin/AdminHeader";
 import AdminSidebar from "../components/admin/AdminSideBar";
+import useAdminApi from "../hooks/useAdminApi";
+import useAdminStore from "../hooks/useAdminStore";
 
 const ACCOUNT_SIDEBAR_TABS: AdminTab[] = [
   { tabName: "Overview", icon: <GrOverview size={24} /> },
@@ -24,16 +26,17 @@ const ACCOUNT_SIDEBAR_TABS: AdminTab[] = [
 
 export default function AdminLayout() {
   const { isAuthenticated, isAdmin } = useAuthStore();
-  //   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
-  //   const { updateUnReadInvoices, updateAccountOverview } = useAccountStore();
+  const { callApi: fetchOverview } = useAdminApi("GET", "OVERVIEW");
+  const { updateOverview, updateUnResolvedIssue } = useAdminStore();
 
   useEffect(() => {
     (async () => {
-      //   const response = await fetchAccountOverview();
-      //   const unReadInvocies = response?.data.unReadInvoices;
-      //   const overview = response?.data;
-      //   overview && updateAccountOverview(overview);
-      //   unReadInvocies && updateUnReadInvoices(unReadInvocies);
+      const response = await fetchOverview();
+
+      const unResolvedIssues = response?.data.unResolvedIssues;
+      const overview = response?.data;
+      overview && updateOverview(overview);
+      unResolvedIssues && updateUnResolvedIssue(unResolvedIssues);
     })();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);

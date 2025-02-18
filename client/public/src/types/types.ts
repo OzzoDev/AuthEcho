@@ -149,7 +149,7 @@ export type AdminResponse = {
   users?: UserData[];
   apps?: AuthechoApp[];
   issues?: ReportedIssue[];
-  unReadIssues?: number;
+  unResolvedIssues?: number;
   userCountToday?: number;
 };
 

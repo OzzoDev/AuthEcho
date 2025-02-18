@@ -224,6 +224,15 @@ const updateAppResources = async (identifier, appResources) => {
   return null;
 };
 
+const getApps = async () => {
+  try {
+    const apps = await AppModel.find();
+    return apps;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   updateAppName,
   updateAppOrigin,
@@ -231,4 +240,5 @@ module.exports = {
   updateAppStatus,
   updateAppAdmins,
   updateAppResources,
+  getApps,
 };

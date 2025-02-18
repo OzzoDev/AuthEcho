@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const AppModel = require("../models/App");
+const UserModel = require("../models/User");
 
 const findUser = async (identifier) => {
   return await User.findOne({
@@ -113,6 +114,16 @@ const getAppsByNames = async (namesArray, username) => {
   }
 };
 
+const getUsers = async () => {
+  try {
+    const users = await UserModel.find();
+    const excludedAdmin = users.filter((user) => !user.adminKey);
+    return excludedAdmin;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   changeName,
   changeEmail,
@@ -124,4 +135,5 @@ module.exports = {
   addAppConnection,
   getAppsByNames,
   findUser,
+  getUsers,
 };
