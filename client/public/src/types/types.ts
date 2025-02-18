@@ -106,8 +106,8 @@ export type AccountRequest = {
 };
 
 export type AccountResponse = {
-  message: string;
-  success: boolean;
+  message?: string;
+  success?: boolean;
   createdAt?: string;
   lastLogin?: string;
   securityQuestion?: string;

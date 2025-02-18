@@ -16,6 +16,7 @@ const {
 
 require("dotenv").config();
 require("./models/db");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -35,6 +36,13 @@ const openCors = cors({
 
 app.use(cookieParser());
 app.use(bodyParser.json());
+
+app.use("/", (req, res, next) => {
+  const decoded = jwt.verify(req.cookies.jwtToken, process.env.JWT_SECRET);
+  console.log(decoded);
+
+  next();
+});
 
 app.use("/auth", restrictedCors, ensureApiKey, AuthRouter);
 app.use("/account", restrictedCors, ensureAuthenticated, ensureApiKey, AccountRouter);

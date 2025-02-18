@@ -283,11 +283,19 @@ const deleteAccount = async (req, res, next) => {
         .json({ message: "Deletion failed due to the absence of confirmation", success: false });
     }
 
-    const deleteResult = await UserModel.deleteOne({ name });
+    const user = await UserModel.findOne({ name });
 
-    if (deleteResult.deletedCount === 0) {
+    if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
+
+    const isAdmin = user.adminKey;
+
+    if (isAdmin) {
+      return res.status(400).json({ message: "Cannot delete admin account", success: false });
+    }
+
+    await UserModel.deleteOne({ name });
 
     next();
   } catch (error) {

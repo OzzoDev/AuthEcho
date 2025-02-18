@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { FaRegClock } from "react-icons/fa";
 import { GoInbox, GoArrowRight } from "react-icons/go";
 import { GrUserAdmin } from "react-icons/gr";
@@ -8,26 +7,12 @@ import { PiUserCheck } from "react-icons/pi";
 import { HashLoader } from "react-spinners";
 import OutlineBtn from "../../components/btn/OutlineBtn";
 import DataCard from "../../components/utils/DataCard";
-import useAccountApi from "../../hooks/useAccountApi";
 import useAccountStore from "../../hooks/useAccountStore";
-import { AccountResponse } from "../../types/types";
 import { useNavigate } from "react-router";
 
 export default function OverviewPage() {
   const navigate = useNavigate();
-  const { status } = useAccountStore(true);
-  const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
-  const [accountOverview, setAccountOverview] = useState<AccountResponse>();
-
-  useEffect(() => {
-    const getAccountOverview = async () => {
-      const response = await fetchAccountOverview();
-      if (response) {
-        setAccountOverview(response.data);
-      }
-    };
-    getAccountOverview();
-  }, []);
+  const { status, accountOverview } = useAccountStore(true);
 
   if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;

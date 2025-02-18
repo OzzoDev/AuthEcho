@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { AccountRequest, AccountResponse, FetchStatus, Invoice } from "../types/types";
 import {
   reset,
+  setAccountOverview,
   setError,
   setInvoices,
   setRequestData,
@@ -76,6 +77,13 @@ const useAccountStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
+  const updateAccountOverview = useCallback(
+    (accountOverview: AccountResponse) => {
+      dispatch(setAccountOverview(accountOverview));
+    },
+    [dispatch]
+  );
+
   const clear = useCallback(() => {
     dispatch(reset());
   }, [dispatch]);
@@ -90,6 +98,7 @@ const useAccountStore = (shouldReset?: boolean) => {
     getInvoice,
     removeInvoice,
     updateUnReadInvoices,
+    updateAccountOverview,
     clear,
   };
 };

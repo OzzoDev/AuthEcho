@@ -1,41 +1,31 @@
 import { useEffect, useState } from "react";
 import AppCard from "../../components/account/app/AppCard";
-import useAccountApi from "../../hooks/useAccountApi";
-import { AuthechoApp, FetchStatus, paginatedPage } from "../../types/types";
+import { AuthechoApp, paginatedPage } from "../../types/types";
 import { Outlet, useParams } from "react-router";
 import { HashLoader } from "react-spinners";
 import useMangeAppStore from "../../hooks/useManageAppStore";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
 import AppFilters from "../../components/account/app/AppFilters";
+import useAccountStore from "../../hooks/useAccountStore";
 
 export default function CreatedAppsPage() {
   const { updateApps } = useMangeAppStore();
-  const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
+  const { status, accountOverview } = useAccountStore();
   const [createdApps, setCreatedApps] = useState<AuthechoApp[]>([]);
   const { appname } = useParams();
-  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
   const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
-    const getAccountOverview = async () => {
-      setApiStatus("loading");
-      const response = await fetchAccountOverview(true);
-      const receviedCreatedApps = response?.data.createdApps;
-
-      if (receviedCreatedApps) {
-        const sortedApps = receviedCreatedApps
-          .map((app) => ({ ...app, isVisible: true }))
-          .sort((a, b) => b.users - a.users);
-        setCreatedApps(sortedApps);
-        updateApps(sortedApps);
-        setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
-        setApiStatus("success");
-      } else {
-        setApiStatus("error");
-      }
-    };
-    getAccountOverview();
+    const createdApps = accountOverview.createdApps;
+    if (createdApps) {
+      const sortedApps = createdApps
+        .map((app) => ({ ...app, isVisible: true }))
+        .sort((a, b) => b.users - a.users);
+      setCreatedApps(sortedApps);
+      updateApps(sortedApps);
+      setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
+    }
   }, []);
 
   useEffect(() => {
@@ -54,7 +44,7 @@ export default function CreatedAppsPage() {
     }
   };
 
-  if (apiStatus === "loading") {
+  if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 

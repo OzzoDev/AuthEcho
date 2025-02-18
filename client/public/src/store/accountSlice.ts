@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AccountRequest, AccountResponse, FetchStatus, Invoice } from "../types/types";
-import { USER_INVOICES_KEY } from "../constants/contants";
+import { ACCOUNT_OVERVIEW_KEY, USER_INVOICES_KEY } from "../constants/contants";
 
 interface AccountState {
   status: FetchStatus;
@@ -9,6 +9,7 @@ interface AccountState {
   responseData: AccountResponse;
   invoices: Invoice[];
   unReadInvoices: number;
+  accountOverview: AccountResponse;
 }
 
 const initialState: AccountState = {
@@ -18,6 +19,7 @@ const initialState: AccountState = {
   responseData: { message: "", success: false },
   invoices: JSON.parse(sessionStorage.getItem(USER_INVOICES_KEY) || "[]"),
   unReadInvoices: 0,
+  accountOverview: JSON.parse(sessionStorage.getItem(ACCOUNT_OVERVIEW_KEY) || "{}"),
 };
 
 const formSlice = createSlice({
@@ -45,6 +47,12 @@ const formSlice = createSlice({
     setUnReadInvocies(state, action: PayloadAction<number>) {
       state.unReadInvoices = action.payload;
     },
+    setAccountOverview(state, action: PayloadAction<AccountResponse>) {
+      if (action.payload) {
+        state.accountOverview = action.payload;
+        sessionStorage.setItem(ACCOUNT_OVERVIEW_KEY, JSON.stringify(action.payload));
+      }
+    },
     reset(state) {
       state.status = "idle";
       state.error = "";
@@ -61,6 +69,7 @@ export const {
   setResponseData,
   setInvoices,
   setUnReadInvocies,
+  setAccountOverview,
   reset,
 } = formSlice.actions;
 

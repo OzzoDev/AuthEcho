@@ -4,39 +4,29 @@ import { HashLoader } from "react-spinners";
 import AppCard from "../../components/account/app/AppCard";
 import AppFilters from "../../components/account/app/AppFilters";
 import Paginator from "../../components/utils/Paginator";
-import useAccountApi from "../../hooks/useAccountApi";
 import useMangeAppStore from "../../hooks/useManageAppStore";
-import { AuthechoApp, FetchStatus, paginatedPage } from "../../types/types";
+import { AuthechoApp, paginatedPage } from "../../types/types";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
+import useAccountStore from "../../hooks/useAccountStore";
 
 export default function AdminAppsPage() {
   const { updateApps } = useMangeAppStore();
-  const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
+  const { status, accountOverview } = useAccountStore();
   const [adminApps, setAdminApps] = useState<AuthechoApp[]>([]);
   const { appname } = useParams();
-  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
   const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
-    const getAccountOverview = async () => {
-      setApiStatus("loading");
-      const response = await fetchAccountOverview(true);
-      const receviedAdminsApps = response?.data.adminApps;
+    const adminApps = accountOverview.adminApps;
+    if (adminApps) {
+      const sortedApps = adminApps
+        .map((app) => ({ ...app, isVisible: true }))
+        .sort((a, b) => b.users - a.users);
 
-      if (receviedAdminsApps) {
-        const sortedApps = receviedAdminsApps
-          .map((app) => ({ ...app, isVisible: true }))
-          .sort((a, b) => b.users - a.users);
-
-        setAdminApps(sortedApps);
-        updateApps(sortedApps);
-        setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
-        setApiStatus("success");
-      } else {
-        setApiStatus("error");
-      }
-    };
-    getAccountOverview();
+      setAdminApps(sortedApps);
+      updateApps(sortedApps);
+      setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedApps, 4) }));
+    }
   }, []);
 
   useEffect(() => {
@@ -55,7 +45,7 @@ export default function AdminAppsPage() {
     }
   };
 
-  if (apiStatus === "loading") {
+  if (status === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 

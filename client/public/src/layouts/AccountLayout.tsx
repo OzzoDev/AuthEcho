@@ -25,12 +25,14 @@ const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
 export default function AccountLayout() {
   const { isAuthenticated } = useAuthStore();
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
-  const { updateUnReadInvoices } = useAccountStore();
+  const { updateUnReadInvoices, updateAccountOverview } = useAccountStore();
 
   useEffect(() => {
     (async () => {
       const response = await fetchAccountOverview();
       const unReadInvocies = response?.data.unReadInvoices;
+      const overview = response?.data;
+      overview && updateAccountOverview(overview);
       unReadInvocies && updateUnReadInvoices(unReadInvocies);
     })();
     window.scrollTo({ top: 0, behavior: "smooth" });
