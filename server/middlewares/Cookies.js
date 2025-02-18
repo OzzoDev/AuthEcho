@@ -14,8 +14,9 @@ const setCookies = (req, res) => {
 
   const name = user.name;
   const email = user.email;
+  const isAdmin = !!user.adminKey;
 
-  const tokenData = user.adminKey
+  const tokenData = isAdmin
     ? { email: email, name: name, _id: user.id, adminKey: user.adminKey }
     : { email: email, name: name, _id: user.id };
 
@@ -43,7 +44,7 @@ const setCookies = (req, res) => {
   res.cookie(JWT_TOKEN_KEY, jwtToken, cookieOptions);
   res.cookie(REMEMBER_USER_KEY, rememberUser, cookieOptions);
 
-  res.status(statusCode).json({ message, success: true, name, email });
+  res.status(statusCode).json({ message, success: true, name, email, isAdmin });
 };
 
 const setAppCookies = (req, res) => {
@@ -244,8 +245,11 @@ const verifyAuthentication = async (req, res) => {
 
       const name = decoded.name;
       const email = decoded.email;
+      const isAdmin = !!decoded.adminKey;
 
-      return res.status(200).json({ message: "Authenticated", success: true, name, email });
+      return res
+        .status(200)
+        .json({ message: "Authenticated", success: true, name, email, isAdmin });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         return res.status(403).json({

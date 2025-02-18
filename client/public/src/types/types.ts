@@ -89,8 +89,15 @@ export type AccountTabName =
   | "Invoices"
   | "Reported issues";
 
+export type AdminTabName = "Overview" | "Settings" | "Apps" | "Users" | "Reported issues";
+
 export type AccountTab = {
   tabName: AccountTabName;
+  icon: ReactNode;
+};
+
+export type AdminTab = {
+  tabName: AdminTabName;
   icon: ReactNode;
 };
 

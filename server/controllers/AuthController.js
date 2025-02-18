@@ -532,7 +532,7 @@ const getSecurityQuestions = async (_, res) => {
 };
 
 const setSecurityQuestion = async (req, res, next) => {
-  const { name, email, password, securityQuestion, securityQuestionAnswer } = req.body;
+  const { name, password, securityQuestion, securityQuestionAnswer } = req.body;
 
   if (!securityQuestion) {
     return res.status(400).json({ message: "Select a security question", success: false });

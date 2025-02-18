@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AUTH_KEY, USERNAME_KEY, EMAIL_KEY, ADMIN_KEY } from "../constants/contants";
+import {
+  AUTH_KEY,
+  USERNAME_KEY,
+  EMAIL_KEY,
+  ADMIN_KEY,
+  ACCOUNT_OVERVIEW_KEY,
+} from "../constants/contants";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -37,11 +43,14 @@ const authSlice = createSlice({
     },
     clearAuthState: (state) => {
       state.isAuthenticated = false;
+      state.isAdmin = false;
       state.username = "";
       state.email = "";
       sessionStorage.removeItem(AUTH_KEY);
       sessionStorage.removeItem(USERNAME_KEY);
       sessionStorage.removeItem(EMAIL_KEY);
+      sessionStorage.removeItem(ADMIN_KEY);
+      sessionStorage.removeItem(ACCOUNT_OVERVIEW_KEY);
     },
   },
 });

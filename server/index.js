@@ -12,11 +12,11 @@ const {
   ensureApiKey,
   verifyAppCredentials,
   ensureAdmin,
-  ensureUser,
 } = require("./middlewares/Auth");
 
 require("dotenv").config();
 require("./models/db");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -38,17 +38,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use("/auth", restrictedCors, ensureApiKey, AuthRouter);
-app.use("/account", restrictedCors, ensureAuthenticated, ensureUser, ensureApiKey, AccountRouter);
-app.use(
-  "/admin",
-  restrictedCors,
-  ensureAuthenticated,
-  ensureUser,
-  ensureAdmin,
-  ensureApiKey,
-  AdminRouter
-);
-app.use("/connect", restrictedCors, ensureApiKey, ensureAuthenticated, ensureUser, ConnectRouter);
+app.use("/account", restrictedCors, ensureAuthenticated, ensureApiKey, AccountRouter);
+app.use("/admin", restrictedCors, ensureAuthenticated, ensureAdmin, ensureApiKey, AdminRouter);
+app.use("/connect", restrictedCors, ensureApiKey, ensureAuthenticated, ConnectRouter);
 app.use("/app", openCors, verifyAppCredentials, AppRouter);
 
 app.listen(PORT, () => {

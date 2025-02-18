@@ -18,6 +18,7 @@ import ConnectLayout from "../layouts/ConnectLayout";
 import AccountLayout from "../layouts/AccountLayout";
 import { lazy, Suspense } from "react";
 import { HashLoader } from "react-spinners";
+import AdminLayout from "../layouts/AdminLayout";
 
 const AccountOverviewPage = lazy(() => import("../pages/account/OverviewPage"));
 const AccountSettingsPage = lazy(() => import("../pages/account/SettingsPage"));
@@ -37,7 +38,7 @@ const Loader = <HashLoader size={50} color="white" className="m-auto" />;
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
-      <Route path="/" element={<StartPage />} />
+      <Route index element={<StartPage />} />
       <Route
         path="/signup"
         element={
@@ -170,6 +171,102 @@ const router = createBrowserRouter(
           }
         />
       </Route>
+
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          index
+          element={
+            <Suspense fallback={Loader}>
+              <AccountOverviewPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <Suspense fallback={Loader}>
+              <AccountSettingsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="invoices"
+          element={
+            <Suspense fallback={Loader}>
+              <AccountInvoicesPage />
+            </Suspense>
+          }>
+          <Route
+            path=":invoiceid"
+            element={
+              <Suspense fallback={Loader}>
+                <AccountInvoicePage />
+              </Suspense>
+            }
+          />
+        </Route>
+        <Route
+          path="myapps"
+          element={
+            <Suspense fallback={Loader}>
+              <AccountCreatedAppsPage />
+            </Suspense>
+          }>
+          <Route path=":appname">
+            <Route
+              index
+              element={
+                <Suspense fallback={Loader}>
+                  <AccountCreatedAppsDetailsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="traffic"
+              element={
+                <Suspense fallback={Loader}>
+                  <AccountControlledAppTrafficPage />
+                </Suspense>
+              }
+            />
+          </Route>
+        </Route>
+        <Route
+          path="administeredapps"
+          element={
+            <Suspense fallback={Loader}>
+              <AccountAdminAppsPage />
+            </Suspense>
+          }>
+          <Route path=":appname">
+            <Route
+              index
+              element={
+                <Suspense fallback={Loader}>
+                  <AcccountAdminAppDetailsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="traffic"
+              element={
+                <Suspense fallback={Loader}>
+                  <AccountControlledAppTrafficPage />
+                </Suspense>
+              }
+            />
+          </Route>
+        </Route>
+        <Route
+          path="activeconnections"
+          element={
+            <Suspense fallback={Loader}>
+              <AccountActiveConnectionsPage />
+            </Suspense>
+          }
+        />
+      </Route>
+
       <Route path="/about" element={<AboutPage />} />
       <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
       <Route path="/licensing" element={<LicensingPage />} />
