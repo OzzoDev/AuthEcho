@@ -46,6 +46,10 @@ const AppSchema = new Schema({
     type: String,
     required: true,
   },
+  isFrozen: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 AppSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });

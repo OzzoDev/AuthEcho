@@ -71,6 +71,10 @@ const UserSchema = new Schema({
     type: String,
     default: null,
   },
+  isFrozen: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.index({ name: 1 }, { unique: true, collation: { locale: "en", strength: 1 } });

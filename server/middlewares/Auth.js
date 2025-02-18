@@ -109,6 +109,10 @@ const verifyAppCredentials = async (req, res, next) => {
       return res.status(404).json({ message: "App not found", success: true });
     }
 
+    if (app.isFrozen) {
+      return res.status(403).json({ message: "App isFrozen", success: true });
+    }
+
     const requestOrigin = req.headers.origin;
 
     if (requestOrigin && requestOrigin !== app.origin) {
@@ -142,6 +146,10 @@ const ensureUser = async (req, res, next) => {
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
     }
 
     if (user.suspended) {
