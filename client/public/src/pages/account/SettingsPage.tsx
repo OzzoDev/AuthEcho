@@ -255,13 +255,11 @@ export default function SettingsPage() {
           ) : (
             <p className="text-green-500">
               {latestUpdatedValue} upated successfully
-              {latestUpdatedValue === "Security question" ? (
+              {latestUpdatedValue === "Security question" && (
                 <span className="text-green-300">
                   &nbsp; Please remember to update the answer to your security question if you have
                   not already done so.
                 </span>
-              ) : (
-                ""
               )}
             </p>
           )}

@@ -98,7 +98,7 @@ export type AdminTabName =
   | "Settings"
   | "Apps"
   | "Users"
-  | "Reported issues"
+  | "Reported Issues"
   | "Traffic";
 
 export type AccountTab = {
