@@ -7,6 +7,7 @@ export const ADMIN_KEY = "AUTHECHO_ADMIN";
 export const USER_APPS_KEY = "AUTHECHO_USER_APPS";
 export const USER_INVOICES_KEY = "AUTHECHO_USER_INVOCIES";
 export const ACCOUNT_OVERVIEW_KEY = "AUTHECHO_ACCOUNTOVERVIEW";
+export const ADMIN_OVERVIEW_KEY = "AUTHECHO_ADMIN_OVERVIEW_KEY";
 
 type Link = {
   linkText: string;

@@ -1,5 +1,12 @@
 import { ReactNode } from "react";
 
+export type UserData = {
+  name: string;
+  email: string;
+  createdAt: string;
+  lastLogin: string;
+};
+
 export type ApiResponse = {
   message: string;
   success: boolean;
@@ -81,15 +88,18 @@ export type FormUsage = "SIGNUP" | "SIGNIN" | "RESETPASSWORD" | "UNLOCKACCOUNT";
 export type AccountTabName =
   | "Overview"
   | "Settings"
-  | "Apps"
-  | "Users"
   | "My apps"
   | "Administered apps"
   | "Active Connections"
-  | "Invoices"
-  | "Reported issues";
+  | "Invoices";
 
-export type AdminTabName = "Overview" | "Settings" | "Apps" | "Users" | "Reported issues";
+export type AdminTabName =
+  | "Overview"
+  | "Settings"
+  | "Apps"
+  | "Users"
+  | "Reported issues"
+  | "Traffic";
 
 export type AccountTab = {
   tabName: AccountTabName;
@@ -112,6 +122,12 @@ export type AccountRequest = {
   deleteCommand?: string;
 };
 
+export type AdminRequest = {
+  user?: string;
+  app?: string;
+  deleteCommand?: string;
+};
+
 export type AccountResponse = {
   message?: string;
   success?: boolean;
@@ -125,6 +141,16 @@ export type AccountResponse = {
   questions?: string[];
   invoices?: Invoice[];
   unReadInvoices?: number;
+};
+
+export type AdminResponse = {
+  message?: string;
+  success?: boolean;
+  users?: UserData[];
+  apps?: AuthechoApp[];
+  issues?: ReportedIssue[];
+  unReadIssues?: number;
+  userCountToday?: number;
 };
 
 export type AuthechoApp = {
@@ -173,4 +199,10 @@ export type Invoice = {
 export type Issue = {
   issue: string;
   text: string;
+};
+
+export type ReportedIssue = {
+  issue: string;
+  text: string;
+  isResolved: boolean;
 };

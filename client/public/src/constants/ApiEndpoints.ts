@@ -43,3 +43,13 @@ export const ACCOUNT_ENDPOINTS = {
   DELETEINVOCIE: `${API_BASE_URL}/api/account/deleteinvoice`,
   REPORTISSUE: `${API_BASE_URL}/api/account/reportissue`,
 };
+
+export const ADMIN_ENDPOINTS = {
+  OVERVIEW: `${API_BASE_URL}/api/admin/overview`,
+  FREEZEUSER: `${API_BASE_URL}/api/admin/freezeuser`,
+  FREEZEAPP: `${API_BASE_URL}/api/admin/freezeapp`,
+  DELETEUSER: `${API_BASE_URL}/api/admin/deleteuser`,
+  DELETEAPP: `${API_BASE_URL}/api/admin/deleteapp`,
+  RESOLVEISSUE: `${API_BASE_URL}/api/admin/resolveissue`,
+  DELETEISSUE: `${API_BASE_URL}/api/admin/deleteissue`,
+};
