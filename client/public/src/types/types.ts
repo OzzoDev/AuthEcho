@@ -129,6 +129,7 @@ export type AdminRequest = {
   app?: string;
   deleteCommand?: string;
   issueID?: string;
+  days: number;
 };
 
 export type AccountResponse = {
@@ -155,6 +156,7 @@ export type AdminResponse = {
   issue?: ReportedIssue;
   unResolvedIssues?: number;
   userCountToday?: number;
+  logs: ActivityLog[];
 };
 
 export type AuthechoApp = {

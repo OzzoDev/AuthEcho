@@ -1,3 +1,4 @@
+const ActivityLogModel = require("../models/ActivityLog");
 const AppModel = require("../models/App");
 const InvoiceModel = require("../models/Invocie");
 const IssueModel = require("../models/Issue");
@@ -268,6 +269,34 @@ const resolveIssue = async (req, res) => {
   }
 };
 
+const appActivity = async (req, res) => {
+  const { days } = req.body;
+
+  let query = { appName: "Authecho" };
+
+  const defaultDays = days === 0 || days === 1 ? 2 : days || 30;
+
+  if (days !== -1) {
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - defaultDays);
+    const fromDateString = fromDate.toISOString().split("T")[0];
+
+    query.date = { $gte: fromDateString };
+  }
+
+  try {
+    const logs = await ActivityLogModel.find(query, {
+      _id: 0,
+      appName: 0,
+    }).sort({ date: 1 });
+
+    res.status(200).json({ success: true, logs });
+  } catch (error) {
+    console.error("Error retrieving activity logs:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   getOverview,
   deleteUser,
@@ -276,4 +305,5 @@ module.exports = {
   freezeApp,
   deleteIssue,
   resolveIssue,
+  appActivity,
 };

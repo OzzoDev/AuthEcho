@@ -52,4 +52,5 @@ export const ADMIN_ENDPOINTS = {
   FREEZEAPP: `${API_BASE_URL}/api/admin/freezeapp`,
   DELETEISSUE: `${API_BASE_URL}/api/admin/deleteissue`,
   RESOLVEISSUE: `${API_BASE_URL}/api/admin/resolveissue`,
+  APPACTIVITY: `${API_BASE_URL}/api/admin/appactivity`,
 };
