@@ -38,6 +38,7 @@ export default function AdminLayout() {
           ...overview,
           apps: overview.apps?.map((app) => ({ ...app, isVisible: true })),
           users: overview.users?.map((user) => ({ ...user, isVisible: true })),
+          issues: overview.issues?.map((issue) => ({ ...issue, isVisible: true })),
         });
       unResolvedIssues && updateUnResolvedIssue(unResolvedIssues);
     })();

@@ -11,7 +11,7 @@ interface Props {
 export default function AdminSidebarTab({ tabName, path, icon }: Props) {
   const { unResolvedIssues } = useAdminStore();
 
-  const renderUnReadInvoicesCount = tabName === "Reported issues" && unResolvedIssues > 0;
+  const renderUnReadInvoicesCount = tabName === "Reported Issues" && unResolvedIssues > 0;
 
   return (
     <NavLink

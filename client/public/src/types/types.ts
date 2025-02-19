@@ -128,6 +128,7 @@ export type AdminRequest = {
   username?: string;
   app?: string;
   deleteCommand?: string;
+  issueID?: string;
 };
 
 export type AccountResponse = {
@@ -151,6 +152,7 @@ export type AdminResponse = {
   users?: UserData[];
   apps?: AuthechoApp[];
   issues?: ReportedIssue[];
+  issue?: ReportedIssue;
   unResolvedIssues?: number;
   userCountToday?: number;
 };
@@ -205,7 +207,11 @@ export type Issue = {
 };
 
 export type ReportedIssue = {
+  _id: string;
+  user: string;
   issue: string;
   text: string;
   isResolved: boolean;
+  sentAt: string;
+  isVisible: boolean;
 };

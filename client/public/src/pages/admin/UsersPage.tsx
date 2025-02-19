@@ -41,7 +41,7 @@ export default function UsersPage() {
     }));
   };
 
-  const handlePagination = (_: unknown, value: number) => {
+  const handlePagination = (_: unknown, value: number): void => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
   };
 
@@ -58,7 +58,7 @@ export default function UsersPage() {
   }
 
   const filteredUsers = [...users]
-    .filter((app) => app.isVisible)
+    .filter((user) => user.isVisible)
     .filter((_, index) => showOnPagination(index, page.current, ITEMS_PER_PAGE));
 
   const paginate = users.length > ITEMS_PER_PAGE && filteredUsers.length > 0;
@@ -82,7 +82,7 @@ export default function UsersPage() {
       </div>
       {filteredUsers.length === 0 ? (
         <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
-          No matching users
+          No matching user
         </h2>
       ) : (
         <ul className="flex flex-col gap-y-16 p-6 my-12">

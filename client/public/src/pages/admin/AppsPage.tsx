@@ -51,7 +51,7 @@ export default function AppsPage() {
     setSearchCategory(updatedSearchCatecory);
   };
 
-  const handlePagination = (_: unknown, value: number) => {
+  const handlePagination = (_: unknown, value: number): void => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
   };
 
@@ -96,7 +96,7 @@ export default function AppsPage() {
       </div>
       {filteredApps.length === 0 ? (
         <h2 className="text-2xl font-semibold text-cyan-300 ml-[20px] pt-[30px] pb-[60px]">
-          No matching applications
+          No matching application
         </h2>
       ) : (
         <ul className="flex flex-col gap-y-16 p-6 my-12">

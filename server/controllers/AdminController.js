@@ -204,11 +204,19 @@ const deleteIssue = async (req, res) => {
   const { issueID } = req.body;
 
   try {
+    const issueData = await IssueModel.findOne({ _id: issueID });
+
+    if (!issueData) {
+      return res.status(404).json({ message: "Issue not found", success: false });
+    }
+
+    if (!issueData.isResolved) {
+      return res.status(400).json({ message: "Issue is not resolved", success: false });
+    }
+
     await IssueModel.deleteOne({ _id: issueID });
 
-    const issues = await getIssues();
-
-    res.status(204).json({ message: "Issue deleted successfully", success: true, issues });
+    res.status(204).json({ message: "Issue deleted successfully", success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error", success: false });
@@ -231,9 +239,29 @@ const resolveIssue = async (req, res) => {
     issueData.isResolved = !isResolved;
     await issueData.save();
 
+    let newInvoice;
+
+    if (isResolved) {
+      newInvoice = new InvoiceModel({
+        subject: "Issue Unresolved Notification",
+        to: issueData.user,
+        from: "Authecho",
+        text: `Dear ${issueData.user},\n\nWe regret to inform you that, despite our diligent efforts, we have not yet been able to reach a resolution regarding the issue you previously reported. Please rest assured that our team is actively working on this matter, and we sincerely appreciate your patience and understanding during this process.\n\nFor your reference, the issue pertains to: "${issueData.issue}".\n\nThank you for your continued understanding and support.\n\nBest regards,\nThe Authecho Team`,
+      });
+    } else {
+      newInvoice = new InvoiceModel({
+        subject: "Issue Resolved Notification",
+        to: issueData.user,
+        from: "Authecho",
+        text: `Dear ${issueData.user},\n\nWe are pleased to inform you that the issue you reported has now been successfully resolved. Following a thorough investigation, we can confidently assure you that the problem no longer persists. We greatly appreciate your efforts in bringing this matter to our attention, as your feedback is invaluable in helping us enhance your experience with Authecho.\n\nFor your reference, the issue pertains to: "${issueData.issue}".\n\nThank you for your understanding and support.\n\nBest regards,\nThe Authecho Team`,
+      });
+    }
+
+    await newInvoice.save();
+
     const issues = await getIssues();
 
-    res.status(200).json({ message, status: true, issues });
+    res.status(200).json({ message, status: true, issue: issueData, issues });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error", success: false });

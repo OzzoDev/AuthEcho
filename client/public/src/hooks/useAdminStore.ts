@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useCallback, useEffect } from "react";
-import { AdminResponse, FetchStatus } from "../types/types";
+import { AdminResponse, FetchStatus, ReportedIssue } from "../types/types";
 import { reset, setError, setOverview, setStatus, setUnResolvedIssues } from "../store/adminSlice";
 
 const useAdminStore = (shouldReset?: boolean) => {
@@ -35,6 +35,10 @@ const useAdminStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
+  const getIssue = (issueID: string): ReportedIssue | undefined => {
+    return adminState.overview.issues?.find((issue) => issue._id === issueID);
+  };
+
   const updateOverview = useCallback(
     (overview: AdminResponse) => {
       dispatch(setOverview(overview));
@@ -59,6 +63,7 @@ const useAdminStore = (shouldReset?: boolean) => {
     updateStatus,
     updateError,
     updateUnResolvedIssue,
+    getIssue,
     updateOverview,
     updateOverviewProperty,
     clear,

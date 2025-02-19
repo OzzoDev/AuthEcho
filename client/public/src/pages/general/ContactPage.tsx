@@ -75,6 +75,7 @@ export default function ContactPage() {
             name="issue"
             value={issueData.issue}
             placeholder="eg., Account access issue"
+            minLength={10}
             maxLength={100}
             isRequired
             onChange={handleChange}>
@@ -83,7 +84,8 @@ export default function ContactPage() {
               our team to investigate the problem more effectively and facilitate a timely
               resolution.
               <span className="text-red-400">
-                &nbsp;Please note that the maximum allowable character limit is 100.
+                &nbsp;Please be advised that the maximum allowable character limit is 100, and a
+                minimum of 10 characters is required.
               </span>
             </p>
           </DescriptiveInput>
@@ -93,6 +95,7 @@ export default function ContactPage() {
             name="text"
             value={issueData.text}
             placeholder="eg., I have been locked out of my account"
+            minLength={50}
             maxLength={500}
             isRequired
             onChange={handleChange}>
@@ -101,8 +104,8 @@ export default function ContactPage() {
               thorough explanation will help ensure that the problem does not persist for an
               extended period.
               <span className="text-red-400">
-                &nbsp;Kindly note that you may use a maximum of 500 characters to describe the
-                issue.
+                &nbsp;Please be informed that you may use a maximum of 500 characters to describe
+                the issue, with a minimum requirement of 50 characters.
               </span>
             </p>
           </DescriptiveInput>

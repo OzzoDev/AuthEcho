@@ -76,12 +76,10 @@ const updateName = async (req, res, next) => {
   const rememberUser = req.cookies[REMEMBER_USER_KEY];
 
   if (name && (name.length < 3 || name.length > 20)) {
-    return res
-      .status(400)
-      .json({
-        message: "Username must be minimum 3 and maximum 20 characters long",
-        success: false,
-      });
+    return res.status(400).json({
+      message: "Username must be minimum 3 and maximum 20 characters long",
+      success: false,
+    });
   }
 
   try {
@@ -375,6 +373,12 @@ const reportIssue = async (req, res) => {
     return res.status(400).json({ message: "Issue description is missing", success: false });
   }
 
+  if (issue.length < 10) {
+    return res
+      .status(400)
+      .json({ message: "Name of issue cannot be shorter then 10 characters", success: false });
+  }
+
   if (issue.length > 100) {
     return res
       .status(400)
@@ -387,10 +391,18 @@ const reportIssue = async (req, res) => {
       .json({ message: "Issue description cannot be longer then 500 characters", success: false });
   }
 
+  if (text.length < 50) {
+    return res
+      .status(400)
+      .json({ message: "Issue description cannot be shorther then 50 characters", success: false });
+  }
+
   try {
     const existingIssue = await IssueModel.findOne({ user: name });
 
-    if (existingIssue) {
+    const isUnresolved = existingIssue && !existingIssue.isResolved;
+
+    if (isUnresolved) {
       return res.status(400).json({
         message: "You have already reported an issue that remains unresolved.",
         success: false,
