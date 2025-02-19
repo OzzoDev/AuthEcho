@@ -33,7 +33,12 @@ export default function AdminLayout() {
 
       const unResolvedIssues = response?.data.unResolvedIssues;
       const overview = response?.data;
-      overview && updateOverview(overview);
+      overview &&
+        updateOverview({
+          ...overview,
+          apps: overview.apps?.map((app) => ({ ...app, isVisible: true })),
+          users: overview.users?.map((user) => ({ ...user, isVisible: true })),
+        });
       unResolvedIssues && updateUnResolvedIssue(unResolvedIssues);
     })();
     window.scrollTo({ top: 0, behavior: "smooth" });

@@ -7,6 +7,7 @@ const { hex8BitKey } = require("../utils/crypto");
 const { getDate } = require("../utils/date");
 const { getEmailText } = require("../utils/email");
 const { securityQuestions } = require("../utils/security");
+const { getUsers } = require("../services/userService");
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -82,6 +83,10 @@ const verifyAccount = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
+
     const compairson = verificationCode === user.verificationCode;
 
     const newVerificationCode = hex8BitKey();
@@ -129,6 +134,10 @@ const signin = async (req, res, next) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
+
     if (user.suspended || user.blocked) {
       return res.status(403).json({ message: "Account is suspended", success: false });
     }
@@ -174,113 +183,6 @@ const signin = async (req, res, next) => {
   }
 };
 
-const updateEmail = async (req, res, next) => {
-  const { userData, email: newEmail, verificationCode } = req.body;
-  const { email: currentEmail } = req.user;
-
-  try {
-    if (!newEmail) {
-      return res.status(400).json({ message: "Email is not provided", success: false });
-    }
-
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    if (newEmail.toLowerCase() === currentEmail.toLowerCase()) {
-      return res
-        .status(409)
-        .json({ message: "New email must be different from current email", success: false });
-    }
-
-    const schema = Joi.object({
-      newEmail: Joi.string().email().required(),
-    });
-
-    const { error: emailError } = schema.validate({ newEmail });
-
-    if (emailError) {
-      return res.status(400).json({ message: emailError.details[0].message, success: false });
-    }
-
-    const emailDuplicate = await UserModel.findOne({
-      email: newEmail,
-      _id: { $ne: user._id },
-    }).collation({ locale: "en", strength: 1 });
-
-    if (emailDuplicate) {
-      return res.status(409).json({ message: "Email already exists", success: false });
-    }
-
-    const isVerificationEqual = verificationCode === user.verificationCode;
-
-    if (!isVerificationEqual) {
-      return res.status(400).json({ message: "Verification code is wrong", success: false });
-    }
-
-    const newVerificationCode = hex8BitKey();
-
-    user.email = newEmail;
-    user.verificationCode = newVerificationCode;
-    await user.save();
-
-    req.body.user = user;
-    req.body.statusCode = 200;
-    req.body.message = "Email updated successfully";
-
-    next();
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
-    console.error(error);
-  }
-};
-
-const updateUsername = async (req, res, next) => {
-  const { userData, name: newName } = req.body;
-  const { name: currentName } = req.user;
-
-  try {
-    if (!newName) {
-      return res.status(400).json({ message: "Username is not provided", success: false });
-    }
-
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    if (newName === currentName) {
-      return res
-        .status(409)
-        .json({ message: "New username must be different from current username", success: false });
-    }
-
-    const usernameDuplicate = await UserModel.findOne({
-      name: newName,
-      _id: { $ne: user._id },
-    }).collation({ locale: "en", strength: 1 });
-
-    if (usernameDuplicate) {
-      return res.status(409).json({ message: "Username alredy exists", success: false });
-    }
-
-    user.name = newName;
-    await user.save();
-
-    req.body.user = user;
-    req.body.statusCode = 200;
-    req.body.message = "Username updated successfully";
-
-    next();
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
-    console.error(error);
-  }
-};
-
 const sendVerificationcode = async (req, res) => {
   const { userData, email, name, action } = req.body;
 
@@ -291,6 +193,10 @@ const sendVerificationcode = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
     }
 
     if (user.blocked || user.suspended) {
@@ -327,6 +233,10 @@ const requestUnlockCode = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
     }
 
     if (!user.blocked && !user.suspended) {
@@ -433,6 +343,10 @@ const resetPassword = async (req, res, next) => {
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
 
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
+
     user.password = await bcrypt.hash(password, 10);
     user.verificationCode = hex8BitKey();
     user.suspended = false;
@@ -450,42 +364,15 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-const updatePassword = async (req, res, next) => {
-  const { userData, password, confirmPassword } = req.body;
-
-  try {
-    const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
-    }
-
-    const isPasswordVaild = await validateNewPassword(password, confirmPassword, user.password);
-
-    if (!isPasswordVaild.isValid) {
-      return res.status(400).json({ message: isPasswordVaild.message, success: false });
-    }
-
-    user.password = await bcrypt.hash(password, 10);
-    await user.save();
-
-    req.body.user = user;
-    req.body.statusCode = 200;
-    req.body.message = "Password updated successfully";
-
-    next();
-    res.status(200).json({ message: "Password updated successfully", success: true });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
-    console.error(error);
-  }
-};
-
 const unlockAccount = async (req, res) => {
   const { userData } = req.body;
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
 
     const newVerificationCode = hex8BitKey();
 
@@ -513,6 +400,10 @@ const isSuspended = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
     }
 
     if (!user.suspended && !user.blocked) {
@@ -579,6 +470,10 @@ const getUserSecurityQuestion = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
+
     const question = user.securityQuestion;
 
     res.status(200).json({
@@ -598,6 +493,10 @@ const validateSecurityQuestion = async (req, res) => {
 
   try {
     const user = await UserModel.findOne({ $or: [{ email: userData }, { name: userData }] });
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
 
     const rightAnswer = await bcrypt.compare(
       securityQuestionAnswer.toLowerCase(),
@@ -630,7 +529,7 @@ const validateSecurityQuestion = async (req, res) => {
 
 const getUserAlias = async (_, res) => {
   try {
-    const users = await UserModel.find();
+    const users = await getUsers();
 
     if (!users || users.length === 0) {
       return res.status(404).json({ message: "No users found", success: false });
@@ -649,13 +548,10 @@ module.exports = {
   verifyAccount,
   signin,
   validateEmail,
-  updateEmail,
-  updateUsername,
   sendVerificationcode,
   requestUnlockCode,
   validatePassword,
   resetPassword,
-  updatePassword,
   unlockAccount,
   isSuspended,
   getSecurityQuestions,

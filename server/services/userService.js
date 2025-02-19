@@ -106,6 +106,7 @@ const getAppsByNames = async (namesArray, username) => {
           status: app.status,
           description: app.description,
           users: app.users,
+          isFrozen: app.isFrozen,
         };
       });
     return foundApps;

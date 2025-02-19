@@ -75,6 +75,15 @@ const updateName = async (req, res, next) => {
   const { user: userData, name } = req.body;
   const rememberUser = req.cookies[REMEMBER_USER_KEY];
 
+  if (name && (name.length < 3 || name.length > 20)) {
+    return res
+      .status(400)
+      .json({
+        message: "Username must be minimum 3 and maximum 20 characters long",
+        success: false,
+      });
+  }
+
   try {
     const user = await UserModel.findOne({
       $or: [{ email: userData }, { name: userData }],

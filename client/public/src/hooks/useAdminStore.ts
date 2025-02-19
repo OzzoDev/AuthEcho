@@ -6,7 +6,7 @@ import { reset, setError, setOverview, setStatus, setUnResolvedIssues } from "..
 
 const useAdminStore = (shouldReset?: boolean) => {
   const dispatch = useDispatch();
-  const accountState = useSelector((state: RootState) => state.admin);
+  const adminState = useSelector((state: RootState) => state.admin);
 
   useEffect(() => {
     if (shouldReset) {
@@ -42,16 +42,25 @@ const useAdminStore = (shouldReset?: boolean) => {
     [dispatch]
   );
 
+  const updateOverviewProperty = useCallback(
+    (key: keyof AdminResponse, value: AdminResponse[typeof key]) => {
+      const updatedOverview = { ...adminState.overview, [key]: value };
+      dispatch(setOverview(updatedOverview));
+    },
+    [dispatch]
+  );
+
   const clear = useCallback(() => {
     dispatch(reset());
   }, [dispatch]);
 
   return {
-    ...accountState,
+    ...adminState,
     updateStatus,
     updateError,
     updateUnResolvedIssue,
     updateOverview,
+    updateOverviewProperty,
     clear,
   };
 };

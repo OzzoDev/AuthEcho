@@ -5,6 +5,8 @@ export type UserData = {
   email: string;
   createdAt: string;
   lastLogin: string;
+  isFrozen: boolean;
+  isVisible: boolean;
 };
 
 export type ApiResponse = {
@@ -123,7 +125,7 @@ export type AccountRequest = {
 };
 
 export type AdminRequest = {
-  user?: string;
+  username?: string;
   app?: string;
   deleteCommand?: string;
 };
@@ -162,6 +164,7 @@ export type AuthechoApp = {
   description: string;
   status: AppStatus;
   users: number;
+  isFrozen: boolean;
   isVisible?: boolean;
 };
 
@@ -179,7 +182,7 @@ export type AppStatusData = {
   sortValue: number;
 };
 
-export type paginatedPage = {
+export type PaginatedPage = {
   current: number;
   latest: number;
   pageCount: number;

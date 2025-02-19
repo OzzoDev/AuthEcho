@@ -19,6 +19,7 @@ export default function AdminManager({ admins, setAdmins }: Props) {
   useEffect(() => {
     (async () => {
       const response = await getUserAlias();
+
       if (response && response.data.userAlias) {
         const userAlias = response.data.userAlias.filter((alias) => alias.name !== username);
         setUsers(userAlias);

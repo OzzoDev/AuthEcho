@@ -35,7 +35,7 @@ export default function DeleteCommand({
           autoCorrect="off"
           spellCheck="false"
           required
-          className="border-0 outline-0 border-b-[1px] border-red-600 color-red-600 bg-transparent"
+          className="border-0 outline-0 border-b-[1px] border-red-600 text-red-400 bg-transparent"
         />
         <DangerBtn btnText="Delete" type="submit" icon={<FaRegTrashCan size={20} />} />
       </div>

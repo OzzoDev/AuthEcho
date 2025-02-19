@@ -50,7 +50,7 @@ export default function OverviewPage() {
         <div className="mt-auto">
           <OutlineBtn
             btnText="See More"
-            onClick={() => navigate("users")}
+            onClick={() => navigate("apps")}
             icon={<GoArrowRight size={24} />}
           />
         </div>
@@ -69,7 +69,7 @@ export default function OverviewPage() {
         <div className="mt-auto">
           <OutlineBtn
             btnText="See More"
-            onClick={() => navigate("users")}
+            onClick={() => navigate("traffic")}
             icon={<GoArrowRight size={24} />}
           />
         </div>

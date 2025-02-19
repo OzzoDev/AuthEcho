@@ -116,7 +116,7 @@ export default function ContactPage() {
           </div>
         </form>
       ) : (
-        <h2 className="text-center text-xl text-red-300">Please login to report an issue</h2>
+        <h2 className="text-center text-xl text-red-300 my-24">Please login to report an issue</h2>
       )}
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AuthechoApp, FetchStatus, Invoice } from "../types/types";
+import { AuthechoApp, FetchStatus, Invoice, UserData } from "../types/types";
 
 export function capitalize(str: string): string {
   if (!str) return str;
@@ -50,7 +50,10 @@ export function removeAllWhitespaces(str: string): string {
   return str.replace(/\s+/g, "");
 }
 
-export function calcPageCount(array: AuthechoApp[] | Invoice[], maxItems: number): number {
+export function calcPageCount(
+  array: AuthechoApp[] | Invoice[] | UserData[],
+  maxItems: number
+): number {
   const visibleItems = [...array].filter((item) => item.isVisible);
   return Math.ceil(visibleItems.length / maxItems);
 }
@@ -61,4 +64,8 @@ export function showOnPagination(
   itemsCount: number | undefined = 5
 ): boolean {
   return index >= (page - 1) * itemsCount && index < page * itemsCount;
+}
+
+export function formatLargeNumber(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }

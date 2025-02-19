@@ -27,6 +27,8 @@ export default function AppCard({ app, detailsPath, isManageable = true }: Props
 
   const appStatus = APP_STATUS_MAP[app.status];
 
+  console.log("App data: ", app);
+
   return (
     <div className="flex flex-col-reverse lg:flex-row justify-between gap-x-10 py-4 px-8">
       <div className="flex flex-col gap-y-8">
@@ -36,6 +38,7 @@ export default function AppCard({ app, detailsPath, isManageable = true }: Props
           <AppCardData desciption="Creator" data={creator} />
           <AppCardData desciption="Admins" data={admins} />
           <AppCardData desciption="Description" data={app.description} />
+          {app.isFrozen && <p className="text-red-500">App is frozen</p>}
         </div>
         <ul className="flex flex-col gap-y-2 w-full">
           {app.resources.map((resource) => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AppCard from "../../components/account/app/AppCard";
-import { AuthechoApp, paginatedPage } from "../../types/types";
+import { AuthechoApp, PaginatedPage } from "../../types/types";
 import { Outlet, useParams } from "react-router";
 import { HashLoader } from "react-spinners";
 import useMangeAppStore from "../../hooks/useManageAppStore";
@@ -14,7 +14,7 @@ export default function CreatedAppsPage() {
   const { status, accountOverview } = useAccountStore();
   const [createdApps, setCreatedApps] = useState<AuthechoApp[]>([]);
   const { appname } = useParams();
-  const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
+  const [page, setPage] = useState<PaginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
     const createdApps = accountOverview.createdApps;
@@ -32,11 +32,11 @@ export default function CreatedAppsPage() {
     setPage((prev) => ({ ...prev, pageCount: calcPageCount(createdApps, 4) }));
   }, [createdApps]);
 
-  const handlePagination = (_: unknown, value: number) => {
+  const handlePagination = (_: unknown, value: number): void => {
     setPage((prev) => ({ ...prev, current: value, latest: value }));
   };
 
-  const reCalcPaginationOnSearch = (query: string) => {
+  const reCalcPaginationOnSearch = (query: string): void => {
     if (query) {
       setPage((prev) => ({ ...prev, current: 1 }));
     } else {

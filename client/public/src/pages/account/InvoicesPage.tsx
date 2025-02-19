@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InvoiceCard from "../../components/account/invoice/InvoiceCard";
 import SearchBarFlat from "../../components/utils/SearchBarFlat";
-import { Invoice, paginatedPage } from "../../types/types";
+import { Invoice, PaginatedPage } from "../../types/types";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
 import { Outlet, useParams } from "react-router";
@@ -14,7 +14,7 @@ export default function InvoicesPage() {
   const { status, updateInvoices } = useAccountStore();
   const { callApi: fetchInvoices } = useAccountApi("GET", "GETINVOICES");
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
+  const [page, setPage] = useState<PaginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
     (async () => {

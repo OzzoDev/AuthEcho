@@ -5,6 +5,8 @@ import DataLabel from "../../utils/DataLabel";
 import DeleteCommand from "./DeleteCommand";
 import { useState } from "react";
 import useAdminApi from "../../../hooks/useAdminApi";
+import useAdminStore from "../../../hooks/useAdminStore";
+import SecondaryBtn from "../../btn/SecondaryBtn";
 
 interface Props {
   userData: UserData;
@@ -12,8 +14,9 @@ interface Props {
 
 export default function UserCard({ userData }: Props) {
   const { callApi: deleteUser } = useAdminApi("POST", "DELETEUSER");
-  const { callApi: freezeAccount } = useAdminApi("POST", "DELETEUSER");
-  const [requestData, setRequestData] = useState<AdminRequest>({ user: userData.name });
+  const { callApi: freezeAccount } = useAdminApi("POST", "FREEZEACCOUNT");
+  const { updateOverviewProperty } = useAdminStore();
+  const [requestData, setRequestData] = useState<AdminRequest>({ username: userData.name });
 
   const handleDelteCommandChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -21,17 +24,23 @@ export default function UserCard({ userData }: Props) {
   };
 
   const handleDeleteAccount = async (): Promise<void> => {
-    const response = await deleteUser(false, requestData);
-    if (response) {
-      console.log("User deleted Successfully");
-    }
+    const response = await deleteUser(true, requestData);
+    const updatedUsers = response?.data.users;
+    updatedUsers &&
+      updateOverviewProperty(
+        "users",
+        updatedUsers.map((user) => ({ ...user, isVisible: true }))
+      );
   };
 
   const handleFreezeAccount = async (): Promise<void> => {
-    const response = await freezeAccount();
-    if (response) {
-      console.log("IsFrozen toggling account");
-    }
+    const response = await freezeAccount(true, requestData);
+    const updatedUsers = response?.data.users;
+    updatedUsers &&
+      updateOverviewProperty(
+        "users",
+        updatedUsers.map((user) => ({ ...user, isVisible: true }))
+      );
   };
 
   return (
@@ -43,15 +52,23 @@ export default function UserCard({ userData }: Props) {
         <DataLabel label="Account created at" data={userData.createdAt} />
       </div>
       <div className="flex flex-col items-end gap-y-8">
-        <DangerBtn
-          btnText="Freeze account"
-          onClick={handleFreezeAccount}
-          icon={<IoIosSnow size={20} />}
-        />
+        {userData.isFrozen ? (
+          <SecondaryBtn
+            btnText="Unfreeze account"
+            onClick={handleFreezeAccount}
+            icon={<IoIosSnow size={20} />}
+          />
+        ) : (
+          <DangerBtn
+            btnText="Freeze account"
+            onClick={handleFreezeAccount}
+            icon={<IoIosSnow size={20} />}
+          />
+        )}
         <DeleteCommand
           command={`delete ${userData.name}`}
-          name=""
-          value=""
+          name="deleteCommand"
+          value={requestData.deleteCommand || ""}
           placeholder={`delete ${userData.name}`}
           onChange={handleDelteCommandChange}
           onSubmit={handleDeleteAccount}

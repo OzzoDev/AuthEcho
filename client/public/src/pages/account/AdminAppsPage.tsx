@@ -5,7 +5,7 @@ import AppCard from "../../components/account/app/AppCard";
 import AppFilters from "../../components/account/app/AppFilters";
 import Paginator from "../../components/utils/Paginator";
 import useMangeAppStore from "../../hooks/useManageAppStore";
-import { AuthechoApp, paginatedPage } from "../../types/types";
+import { AuthechoApp, PaginatedPage } from "../../types/types";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import useAccountStore from "../../hooks/useAccountStore";
 
@@ -14,7 +14,7 @@ export default function AdminAppsPage() {
   const { status, accountOverview } = useAccountStore();
   const [adminApps, setAdminApps] = useState<AuthechoApp[]>([]);
   const { appname } = useParams();
-  const [page, setPage] = useState<paginatedPage>({ current: 1, latest: 1, pageCount: 1 });
+  const [page, setPage] = useState<PaginatedPage>({ current: 1, latest: 1, pageCount: 1 });
 
   useEffect(() => {
     const adminApps = accountOverview.adminApps;

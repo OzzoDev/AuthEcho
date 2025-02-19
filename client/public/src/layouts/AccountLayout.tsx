@@ -1,6 +1,6 @@
 import useAuthStore from "../hooks/useAuthStore";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { GoInbox } from "react-icons/go";
 import { GrOverview, GrUserAdmin } from "react-icons/gr";
 import { IoIosGitNetwork } from "react-icons/io";
@@ -23,7 +23,7 @@ const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
 ];
 
 export default function AccountLayout() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isAdmin } = useAuthStore();
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const { updateUnReadInvoices, updateAccountOverview } = useAccountStore();
 
@@ -37,6 +37,10 @@ export default function AccountLayout() {
     })();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  if (isAdmin) {
+    return <Navigate to="/admin" />;
+  }
 
   return (
     <ProtectedRoute allowCondition={isAuthenticated}>
