@@ -25,6 +25,7 @@ export const ENDPOINTS = {
   GENERATEAPKEY: `${API_BASE_URL}/api/connect/appkey`,
   DELETEAPP: `${API_BASE_URL}/api/connect/deleteapp`,
   APPACTIVITY: `${API_BASE_URL}/api/connect/appactivity`,
+  TRACKACTIVITY: `${API_BASE_URL}/api/activity/trackactivity`,
 };
 
 export const ACCOUNT_ENDPOINTS = {

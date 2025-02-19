@@ -290,7 +290,22 @@ const appActivity = async (req, res) => {
       appName: 0,
     }).sort({ date: 1 });
 
-    res.status(200).json({ success: true, logs });
+    const mappedLogs = logs
+      ? logs.map((log) => ({ users: log.users, userCount: log.users.length }))
+      : [];
+
+    if (mappedLogs.length === 1) {
+      const insertedLogs = [{ users: [], userCount: 0 }, ...mappedLogs];
+      return res.status(200).json({
+        message: "Activity logs retrieved successfully",
+        success: true,
+        logs: insertedLogs,
+      });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Activity logs retrieved successfully", success: true, logs: mappedLogs });
   } catch (error) {
     console.error("Error retrieving activity logs:", error);
     res.status(500).json({ message: "Internal server error", success: false });

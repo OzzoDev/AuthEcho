@@ -1,9 +1,21 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import Footer from "./footer/Footer";
 import PageTransition from "./PageTransition";
 import Header from "./header/Header";
+import { useEffect } from "react";
+import useApi from "../hooks/useApi";
 
 export default function RootLayout() {
+  const location = useLocation();
+  const { fetchData: trackActivity } = useApi("PUT", "TRACKACTIVITY");
+
+  useEffect(() => {
+    (async () => {
+      const response = await trackActivity();
+      console.log(response);
+    })();
+  }, [location]);
+
   return (
     <>
       <Header />

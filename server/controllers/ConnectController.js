@@ -70,6 +70,10 @@ const joinApp = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
+    if (user.adminKey) {
+      return res.status(400).json({ message: "Admin cannot connect app", success: false });
+    }
+
     const createdApps = await getAppsByNames(user.createdApps);
 
     const originAlredyConnectByUser = createdApps.some(
@@ -271,21 +275,22 @@ const getAppActivityLogs = async (req, res) => {
       appName: 0,
     }).sort({ date: 1 });
 
-    // let logs = [];
-    // const today = new Date();
+    const mappedLogs = logs
+      ? logs.map((log) => ({ users: log.users, userCount: log.users.length }))
+      : [];
 
-    // for (let i = 0; i < defaultDays; i++) {
-    //   const date = new Date();
-    //   date.setDate(today.getDate() - i);
-    //   const formattedDate = date.toISOString().split("T")[0];
+    if (mappedLogs.length === 1) {
+      const insertedLogs = [{ users: [], userCount: 0 }, ...mappedLogs];
+      return res.status(200).json({
+        message: "Activity logs retrieved successfully",
+        success: true,
+        logs: insertedLogs,
+      });
+    }
 
-    //   logs.push({
-    //     date: formattedDate,
-    //     userCount: days === 90 ? Math.floor(Math.random() * 891) : Math.floor(Math.random() * 21),
-    //   });
-    // }
-
-    res.status(200).json({ success: true, logs });
+    res
+      .status(200)
+      .json({ message: "Activity logs retrieved successfully", success: true, logs: mappedLogs });
   } catch (error) {
     console.error("Error retrieving activity logs:", error);
     res.status(500).json({ message: "Internal server error", success: false });

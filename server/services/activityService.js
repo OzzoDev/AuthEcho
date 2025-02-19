@@ -13,7 +13,11 @@ const getActivityToday = async () => {
       }
     ).sort({ date: 1 });
 
-    const userCount = logs && logs.length !== 0 ? logs[0].userCount : 0;
+    const mappedLogs = logs
+      ? logs.map((log) => ({ users: log.users, userCount: log.users.length }))
+      : [];
+
+    const userCount = mappedLogs && mappedLogs.length !== 0 ? mappedLogs[0].userCount : 0;
     return userCount;
   } catch (error) {
     throw error;

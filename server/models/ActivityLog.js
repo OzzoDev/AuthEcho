@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const ActivityLogSchema = new Schema({
   appName: { type: String, required: true, index: true },
   date: { type: String, required: true, index: true },
-  userCount: { type: Number, default: 0 },
   users: { type: [String], default: [] },
 });
 

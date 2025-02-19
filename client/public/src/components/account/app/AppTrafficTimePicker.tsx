@@ -30,11 +30,10 @@ export default function AppTrafficTimePicker({ appActivity, setSelectedAppActivi
         return acc + curr.userCount;
       }, 0) / appActivity[index].length;
 
-    const progress: number =
-      averageUserCount / (startDate.userCount === 0 ? 1 : startDate.userCount);
+    const progress: number = startDate.userCount === 0 ? 1 : averageUserCount / startDate.userCount;
 
     if (progress >= 1 || progress === 0) {
-      return `+${(progress * 100 - 100).toFixed(0)}%`;
+      return `+${(progress * 100 - progress > 1 ? 100 : 0).toFixed(0)}%`;
     }
     return `-${((1 - progress) * 100).toFixed(0)}%`;
   };
