@@ -27,6 +27,7 @@ export const ENDPOINTS = {
   APPACTIVITY: `${API_BASE_URL}/api/connect/appactivity`,
   TRACKACTIVITY: `${API_BASE_URL}/api/activity/trackactivity`,
   GETREVIEWS: `${API_BASE_URL}/api/activity/reviews`,
+  GETCOUNTS: `${API_BASE_URL}/api/activity/counts`,
 };
 
 export const ACCOUNT_ENDPOINTS = {

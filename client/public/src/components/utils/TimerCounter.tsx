@@ -24,5 +24,5 @@ export default function TimerCounter({ min, max, delay }: Props) {
     return () => clearInterval(intervalId);
   }, [max, delay]);
 
-  return <span className="color-accent">{count}</span>;
+  return <span>{count}</span>;
 }

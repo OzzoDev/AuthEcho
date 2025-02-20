@@ -1,6 +1,7 @@
 const ActivityLogModel = require("../models/ActivityLog");
 const ReviewModel = require("../models/Review");
 const UserModel = require("../models/User");
+const AppModel = require("../models/App");
 
 const trackActivity = async (req, res) => {
   const username = req.user.name;
@@ -35,7 +36,7 @@ const trackActivity = async (req, res) => {
   }
 };
 
-const getTopReviews = async (req, res) => {
+const getTopReviews = async (_, res) => {
   try {
     const reviews = await ReviewModel.find({ rating: { $gte: 3 } })
       .sort({ rating: -1 })
@@ -48,7 +49,25 @@ const getTopReviews = async (req, res) => {
   }
 };
 
+const getDataCounts = async (_, res) => {
+  try {
+    const userCount = await UserModel.countDocuments();
+    const appCount = await AppModel.countDocuments();
+
+    res.status(200).json({
+      message: "Counts retrieved successfully",
+      success: true,
+      userCount,
+      appCount,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   trackActivity,
   getTopReviews,
+  getDataCounts,
 };

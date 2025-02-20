@@ -5,11 +5,27 @@ import { useNavigate } from "react-router";
 import TimerCounter from "../utils/TimerCounter";
 import PrimaryBtn from "../../components/btn/PrimaryBtn";
 import { MdArrowForward } from "react-icons/md";
+import { AppDataCounts } from "../../types/types";
+import useApi from "../../hooks/useApi";
 
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isReversing, setIsReversing] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { fetchData: getCounts } = useApi("GET", "GETCOUNTS");
+  const [isReversing, setIsReversing] = useState<boolean>(false);
+  const [appDataCounts, setAppDataCounts] = useState<AppDataCounts>({ userCount: 0, appCount: 0 });
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    (async () => {
+      const response = await getCounts();
+      console.log("Counts response: ", response);
+      const userCount = response?.data.userCount;
+      const appCount = response?.data.appCount;
+      if (userCount && appCount) {
+        setAppDataCounts({ userCount, appCount });
+      }
+    })();
+  }, [setAppDataCounts]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -47,16 +63,41 @@ export default function Hero() {
     }
   }, [isReversing]);
 
+  const renderCounts = appDataCounts.userCount > 100 && appDataCounts.appCount > 20;
+
+  const userCountMin = Math.round(appDataCounts.userCount * 0.1);
+  const userCountMax = appDataCounts.userCount;
+  const appCountMin = Math.round(appDataCounts.appCount * 0.3);
+  const appCountMax = appDataCounts.appCount;
+
   return (
     <div className="grow w-screen h-screen isolate mt-[-65px]">
       <div className="flex flex-col items-center justify-center h-full w-screen space-y-20 px-8 text-center bg-black bg-opacity-80">
         <h1 className="text-7xl text-cyan-100">Welcome to Authecho</h1>
-        <h2 className="text-2xl max-w-[1000px] text-sky-200">
-          Simplifying account management powering over&nbsp;
-          {<TimerCounter min={0} max={200} delay={1000} />} applications for&nbsp;
-          {<TimerCounter min={100} max={2000} delay={200} />} users and counting. Experience the
-          effectiveness of Authecho and join the echo today!
-        </h2>
+        {renderCounts ? (
+          <h2 className="text-2xl max-w-[1000px] text-sky-200">
+            Simplifying account management powering over
+            {
+              <span className="mx-2 px-4 rounded-xl bg-sky-700 bg-opacity-50">
+                <TimerCounter min={appCountMin} max={appCountMax} delay={1000} />
+              </span>
+            }
+            applications for
+            {
+              <span className="mx-2 px-4 rounded-xl bg-sky-700 bg-opacity-50">
+                <TimerCounter min={userCountMin} max={userCountMax} delay={600} />
+              </span>
+            }
+            users and counting. Experience the effectiveness of Authecho and join the echo today!
+            <span className="text-cyan-500 font-semibold">&nbsp;One Account, All Access</span>
+          </h2>
+        ) : (
+          <h2 className="text-2xl max-w-[1000px] text-sky-200">
+            Simplifying account management powering Experience the effectiveness of Authecho and
+            join the echo today!
+            <span className="text-cyan-500 font-semibold">&nbsp;One Account, All Access</span>
+          </h2>
+        )}
         <PrimaryBtn
           btnText="Get Started"
           fontSize="2xl"

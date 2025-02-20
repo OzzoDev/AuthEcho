@@ -24,6 +24,8 @@ export type ApiResponse = {
   logs?: ActivityLog[];
   hasReviewed: boolean;
   reviews?: Review[];
+  userCount?: number;
+  appCount?: number;
 };
 
 export type ApiRequest = {
@@ -231,4 +233,9 @@ export type Review = {
 export type ReviewRequest = {
   review: string;
   rating: number;
+};
+
+export type AppDataCounts = {
+  userCount: number;
+  appCount: number;
 };
