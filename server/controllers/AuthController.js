@@ -25,6 +25,8 @@ const signup = async (req, res) => {
   }
 
   try {
+    await UserModel.deleteMany({ verified: false });
+
     const userEmail = await UserModel.findOne({ email }).collation({ locale: "en", strength: 1 });
     const userName = await UserModel.findOne({ name }).collation({ locale: "en", strength: 1 });
 
