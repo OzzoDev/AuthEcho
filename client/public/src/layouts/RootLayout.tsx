@@ -14,6 +14,7 @@ export default function RootLayout() {
       const response = await trackActivity();
       console.log(response);
     })();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location]);
 
   return (
