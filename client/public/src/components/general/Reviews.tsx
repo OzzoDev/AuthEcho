@@ -13,7 +13,6 @@ export default function Reviews() {
     (async () => {
       setApiStatus("loading");
       const response = await getReviews();
-      console.log("Response: ", response);
 
       const fetchedReviews = response?.data.reviews;
       if (fetchedReviews) {

@@ -507,7 +507,7 @@ const validateSecurityQuestion = async (req, res) => {
       return res.status(403).json({ message: "Wrong answer", success: false });
     }
 
-    if (verificationCode !== user.verificationCode) {
+    if (verificationCode !== user.verificationCode && !user.suspended) {
       const verificationCodeSent = await sendEmail(
         user.email,
         "Authecho",
