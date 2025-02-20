@@ -19,7 +19,7 @@ const trackActivity = async (req, res) => {
     const result = await ActivityLogModel.updateOne(
       { appName: "Authecho", date: today },
       {
-        $addToSet: { users: username },
+        $addToSet: { users: user._id },
       },
       { upsert: true }
     );

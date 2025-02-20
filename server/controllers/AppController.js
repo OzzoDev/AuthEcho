@@ -192,7 +192,7 @@ const signIn = async (req, res, next) => {
 };
 
 const trackUserActivity = async (req, res) => {
-  const username = req.user.name;
+  const userID = req.user._id;
   const appName = req.app.name;
   const today = new Date().toISOString().split("T")[0];
 
@@ -200,8 +200,7 @@ const trackUserActivity = async (req, res) => {
     const result = await ActivityLogModel.updateOne(
       { appName, date: today },
       {
-        $addToSet: { users: username },
-        $inc: { userCount: 1 },
+        $addToSet: { users: userID },
       },
       { upsert: true }
     );
