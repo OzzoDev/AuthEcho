@@ -13,6 +13,7 @@ const {
   deleteInvoice,
   reportIssue,
   signOut,
+  review,
 } = require("../controllers/AccountController");
 const { emailValidation } = require("../middlewares/AuthValidation");
 const { setCookies, removeCookies } = require("../middlewares/Cookies");
@@ -23,6 +24,7 @@ router.get("/invoices", getInvoices);
 
 router.post("/requestemailcode", emailValidation, requestEmailCode);
 router.post("/reportissue", reportIssue);
+router.post("/review", review);
 
 router.put("/updatename", updateName, setCookies);
 router.put("/updateemail", emailValidation, updateEmail, setCookies);

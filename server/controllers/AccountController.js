@@ -13,6 +13,7 @@ const InvoiceModel = require("../models/Invocie");
 const IssueModel = require("../models/Issue");
 const AppModel = require("../models/App");
 const { getDate } = require("../utils/date");
+const ReviewModel = require("../models/Review");
 
 const REMEMBER_USER_KEY = "rememberUser";
 
@@ -111,9 +112,11 @@ const updateName = async (req, res, next) => {
     session.startTransaction();
 
     try {
-      await IssueModel.findOneAndUpdate({ user: user.name }, { user: name }, { session });
+      await IssueModel.updateOne({ user: user.name }, { user: name }, { session });
       await InvoiceModel.updateMany({ to: user.name }, { to: name }, { session });
       await AppModel.updateMany({ creator: user.name }, { creator: name }, { session });
+      await ReviewModel.updateMany({ user: user.name }, { user: name }, { session });
+
       const appEntries = await AppModel.find({ admins: user.name }, { admins: 1 }).session(session);
       const currentAdmins = appEntries.flatMap((entry) => entry.admins);
       await AppModel.updateMany(
@@ -450,6 +453,53 @@ const signOut = async (req, res, next) => {
   }
 };
 
+const review = async (req, res) => {
+  const user = req.user.name;
+  const { review, rating } = req.body;
+
+  if (review.length < 50) {
+    return res
+      .status(400)
+      .json({ message: "Review must be atleast 50 characters", success: false });
+  }
+
+  if (review.length > 500) {
+    return res
+      .status(400)
+      .json({ message: "Review must be not longer than 500 characters", success: false });
+  }
+
+  if (rating < 0 || rating > 4) {
+    return res.status(400).json({ message: "Selected a vaild rating", success: false });
+  }
+
+  try {
+    const exsistingReview = await ReviewModel.findOne({ user });
+
+    const userData = await UserModel.findOne({ username: user, adminKey: { $ne: null } });
+
+    const isAdmin = !!userData;
+
+    if (isAdmin) {
+      return res.status(400).json({ message: "Admin cannot leave a review", success: false });
+    }
+
+    if (exsistingReview) {
+      return res
+        .status(400)
+        .json({ message: "Only one review allowed per account", success: false });
+    }
+
+    const newReview = new ReviewModel({ user, review, rating: rating + 1 });
+    await newReview.save();
+
+    res.status(201).json({ message: "Review added successfully", success: false });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   accountOverview,
   requestEmailCode,
@@ -464,4 +514,5 @@ module.exports = {
   deleteInvoice,
   reportIssue,
   signOut,
+  review,
 };

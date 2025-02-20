@@ -1,4 +1,5 @@
 const ActivityLogModel = require("../models/ActivityLog");
+const ReviewModel = require("../models/Review");
 const UserModel = require("../models/User");
 
 const trackActivity = async (req, res) => {
@@ -34,6 +35,20 @@ const trackActivity = async (req, res) => {
   }
 };
 
+const getTopReviews = async (req, res) => {
+  try {
+    const reviews = await ReviewModel.find({ rating: { $gte: 3 } })
+      .sort({ rating: -1 })
+      .limit(6);
+
+    res.status(200).json({ message: "Reviews retrieved successfully", success: true, reviews });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   trackActivity,
+  getTopReviews,
 };

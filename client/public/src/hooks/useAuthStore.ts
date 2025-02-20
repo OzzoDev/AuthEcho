@@ -6,6 +6,7 @@ import {
   setUsername,
   setEmail,
   clearAuthState,
+  setHasReviewed,
 } from "../store/authSlice";
 import { RootState } from "../store/store";
 
@@ -42,6 +43,13 @@ const useAuthStore = () => {
     [dispatch]
   );
 
+  const updateHasReviewed = useCallback(
+    (hasReviewed: boolean) => {
+      dispatch(setHasReviewed(hasReviewed));
+    },
+    [dispatch]
+  );
+
   const clearAuth = useCallback(() => {
     dispatch(clearAuthState());
   }, [dispatch]);
@@ -52,6 +60,7 @@ const useAuthStore = () => {
     updateIsAdmin,
     updateUsername,
     updateEmail,
+    updateHasReviewed,
     clearAuth,
   };
 };

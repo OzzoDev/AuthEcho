@@ -48,8 +48,8 @@ export default function Hero() {
   }, [isReversing]);
 
   return (
-    <div className="grow w-screen h-screen isolate">
-      <div className="flex flex-col items-center justify-center h-screen w-screen space-y-20 px-8 text-center bg-black bg-opacity-80">
+    <div className="grow w-screen h-screen isolate mt-[-65px]">
+      <div className="flex flex-col items-center justify-center h-full w-screen space-y-20 px-8 text-center bg-black bg-opacity-80">
         <h1 className="text-7xl text-cyan-100">Welcome to Authecho</h1>
         <h2 className="text-2xl max-w-[1000px] text-sky-200">
           Simplifying account management powering over&nbsp;

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { fullYear } = require("../utils/date");
+const ReviewModel = require("../models/Review");
 
 const JWT_TOKEN_KEY = "jwtToken";
 const JWT_APP_TOKEN_KEY = "jwtAppToken";
@@ -251,9 +252,18 @@ const verifyAuthentication = async (req, res) => {
       const email = decoded.email;
       const isAdmin = !!decoded.adminKey;
 
+      const hasReviewed = await ReviewModel.findOne({ user: name });
+
       return res
         .status(200)
-        .json({ message: "Authenticated", success: true, name, email, isAdmin });
+        .json({
+          message: "Authenticated",
+          success: true,
+          name,
+          email,
+          isAdmin,
+          hasReviewed: !!hasReviewed,
+        });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         return res.status(403).json({

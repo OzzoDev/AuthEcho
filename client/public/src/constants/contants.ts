@@ -8,6 +8,7 @@ export const USER_APPS_KEY = "AUTHECHO_USER_APPS";
 export const USER_INVOICES_KEY = "AUTHECHO_USER_INVOCIES";
 export const ACCOUNT_OVERVIEW_KEY = "AUTHECHO_ACCOUNTOVERVIEW";
 export const ADMIN_OVERVIEW_KEY = "AUTHECHO_ADMIN_OVERVIEW_KEY";
+export const HASREVIEWED_KEY = "AUTHECHO_HASREVIEWED_KEY";
 
 type Link = {
   linkText: string;
@@ -99,3 +100,12 @@ export const TIME_OPTIONS: TimeOption[] = [
   { time: "1d", days: 1 },
   { time: "Today", days: 0 },
 ];
+
+export const EMOJI_MAP: Record<string, string> = {
+  "-1": "🙂",
+  "0": "😏",
+  "1": "😉",
+  "2": "😄",
+  "3": "😆",
+  "4": "🤩",
+};

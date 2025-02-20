@@ -1,7 +1,14 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ACCOUNT_ENDPOINTS } from "../constants/ApiEndpoints";
 import { handleError } from "../utils/utils";
-import { AccountResponse, ApiMethod, ApiResponse, InvoiceRequest, Issue } from "../types/types";
+import {
+  AccountResponse,
+  ApiMethod,
+  ApiResponse,
+  InvoiceRequest,
+  Issue,
+  ReviewRequest,
+} from "../types/types";
 import useAccountStore from "./useAccountStore";
 import useAuthStore from "./useAuthStore";
 
@@ -13,7 +20,7 @@ const useAccountApi = (method: ApiMethod, useCase: keyof typeof ACCOUNT_ENDPOINT
 
   const callApi = async (
     trackState?: boolean,
-    data?: Issue | InvoiceRequest
+    data?: Issue | InvoiceRequest | ReviewRequest
   ): Promise<AxiosResponse<AccountResponse> | null> => {
     try {
       if (trackState) {

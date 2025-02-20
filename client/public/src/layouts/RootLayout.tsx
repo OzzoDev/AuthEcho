@@ -11,8 +11,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     (async () => {
-      const response = await trackActivity();
-      console.log(response);
+      await trackActivity();
     })();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location]);

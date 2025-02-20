@@ -11,6 +11,7 @@ const useAuth = (fallback?: () => void, toAccount?: () => void, toAdmin?: () => 
     updateIsAdmin,
     updateUsername,
     updateEmail,
+    updateHasReviewed,
     clearAuth,
   } = useAuthStore();
 
@@ -22,6 +23,7 @@ const useAuth = (fallback?: () => void, toAccount?: () => void, toAdmin?: () => 
         const name = response.data.name;
         const email = response.data.email;
         const isAdmin = response.data.isAdmin;
+        const hasReviewed = response.data.hasReviewed;
 
         if (name) {
           updateUsername(name);
@@ -33,6 +35,10 @@ const useAuth = (fallback?: () => void, toAccount?: () => void, toAdmin?: () => 
 
         if (isAdmin) {
           updateIsAdmin(true);
+        }
+
+        if (hasReviewed) {
+          updateHasReviewed(true);
         }
 
         updateIsAuthenticated(true);

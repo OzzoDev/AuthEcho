@@ -26,6 +26,7 @@ export const ENDPOINTS = {
   DELETEAPP: `${API_BASE_URL}/api/connect/deleteapp`,
   APPACTIVITY: `${API_BASE_URL}/api/connect/appactivity`,
   TRACKACTIVITY: `${API_BASE_URL}/api/activity/trackactivity`,
+  GETREVIEWS: `${API_BASE_URL}/api/activity/reviews`,
 };
 
 export const ACCOUNT_ENDPOINTS = {
@@ -43,6 +44,7 @@ export const ACCOUNT_ENDPOINTS = {
   READINVOICE: `${API_BASE_URL}/api/account/readinvoice`,
   DELETEINVOCIE: `${API_BASE_URL}/api/account/deleteinvoice`,
   REPORTISSUE: `${API_BASE_URL}/api/account/reportissue`,
+  REVIEW: `${API_BASE_URL}/api/account/review`,
 };
 
 export const ADMIN_ENDPOINTS = {

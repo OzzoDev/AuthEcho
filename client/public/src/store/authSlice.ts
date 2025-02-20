@@ -5,6 +5,7 @@ import {
   EMAIL_KEY,
   ADMIN_KEY,
   ACCOUNT_OVERVIEW_KEY,
+  HASREVIEWED_KEY,
 } from "../constants/contants";
 
 interface AuthState {
@@ -12,6 +13,7 @@ interface AuthState {
   isAdmin: boolean;
   username: string;
   email: string;
+  hasReviewed: boolean;
 }
 
 const initialState: AuthState = {
@@ -19,6 +21,7 @@ const initialState: AuthState = {
   isAdmin: JSON.parse(sessionStorage.getItem(ADMIN_KEY) || "false"),
   username: sessionStorage.getItem(USERNAME_KEY) || "",
   email: sessionStorage.getItem(EMAIL_KEY) || "",
+  hasReviewed: JSON.parse(sessionStorage.getItem(HASREVIEWED_KEY) || "false"),
 };
 
 const authSlice = createSlice({
@@ -41,6 +44,10 @@ const authSlice = createSlice({
       state.email = action.payload;
       sessionStorage.setItem(EMAIL_KEY, action.payload);
     },
+    setHasReviewed: (state, action: PayloadAction<boolean>) => {
+      state.hasReviewed = action.payload;
+      sessionStorage.setItem(HASREVIEWED_KEY, JSON.stringify(action.payload));
+    },
     clearAuthState: (state) => {
       state.isAuthenticated = false;
       state.isAdmin = false;
@@ -55,7 +62,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { setIsAuthenticated, setIsAdmin, setUsername, setEmail, clearAuthState } =
-  authSlice.actions;
+export const {
+  setIsAuthenticated,
+  setIsAdmin,
+  setUsername,
+  setEmail,
+  setHasReviewed,
+  clearAuthState,
+} = authSlice.actions;
 
 export default authSlice.reducer;

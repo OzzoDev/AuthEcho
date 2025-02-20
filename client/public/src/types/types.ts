@@ -22,6 +22,8 @@ export type ApiResponse = {
   isBlocked?: boolean;
   userAlias?: UserAlias[];
   logs?: ActivityLog[];
+  hasReviewed: boolean;
+  reviews?: Review[];
 };
 
 export type ApiRequest = {
@@ -122,6 +124,8 @@ export type AccountRequest = {
   confirmPassword?: string;
   verificationCode?: string;
   deleteCommand?: string;
+  rating?: number;
+  review?: string;
 };
 
 export type AdminRequest = {
@@ -156,7 +160,7 @@ export type AdminResponse = {
   issue?: ReportedIssue;
   unResolvedIssues?: number;
   userCountToday?: number;
-  logs: ActivityLog[];
+  logs?: ActivityLog[];
 };
 
 export type AuthechoApp = {
@@ -216,4 +220,15 @@ export type ReportedIssue = {
   isResolved: boolean;
   sentAt: string;
   isVisible: boolean;
+};
+
+export type Review = {
+  user: string;
+  review: string;
+  rating: number;
+};
+
+export type ReviewRequest = {
+  review: string;
+  rating: number;
 };

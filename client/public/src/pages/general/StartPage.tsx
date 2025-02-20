@@ -4,12 +4,14 @@ import { MdLock, MdOutlineAccountTree, MdOutlineArrowUpward, MdOutlineSync } fro
 import InformationCard from "../../components/general/InformationCard";
 import ServiceOverview from "../../components/general/ServiceOverview";
 import Hero from "../../components/general/Hero";
+import Reviews from "../../components/general/Reviews";
 
 export default function StartPage() {
   return (
     <div className="mb-[100px]">
       <Hero />
       <ServiceOverview />
+      <Reviews />
       <ul className="flex flex-col px-4 gap-y-[100px]">
         <li>
           <InformationCard
