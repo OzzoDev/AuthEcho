@@ -13,8 +13,9 @@ const {
   verifyAppSession,
 } = require("../middlewares/Cookies");
 const { ensureUser } = require("../middlewares/Auth");
+const { signOut } = require("../controllers/AccountController");
 
-router.get("/signout", removeAppCookies);
+router.get("/signout", signOut, removeAppCookies);
 router.get("/authenticate", authenticateApp);
 router.get("/verifysession", verifyAppSession);
 router.get("/activity", ensureUser, trackUserActivity);

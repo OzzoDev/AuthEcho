@@ -137,6 +137,8 @@ const authenticateApp = async (req, res) => {
         expires: new Date(0),
         path: "/",
       });
+
+      return res.status(401).json({ message: "Unauthenticated", success: false });
     }
 
     try {
@@ -231,6 +233,8 @@ const verifyAuthentication = async (req, res) => {
         expires: new Date(0),
         path: "/",
       });
+
+      return res.status(401).json({ message: "Unauthenticated", success: false });
     }
 
     try {

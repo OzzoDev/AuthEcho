@@ -4,7 +4,6 @@ const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { validateNewPassword } = require("../middlewares/AuthValidation");
 const { hex8BitKey } = require("../utils/crypto");
-const { getDate } = require("../utils/date");
 const { getEmailText } = require("../utils/email");
 const { securityQuestions } = require("../utils/security");
 const { getUsers } = require("../services/userService");
@@ -170,7 +169,6 @@ const signin = async (req, res, next) => {
       return res.status(403).json({ message: "Wrong password", success: false });
     }
 
-    user.lastLogin = getDate();
     user.failedLoginAttempts = 0;
     await user.save();
 

@@ -42,12 +42,14 @@ export default function OverviewPage() {
       </DataCard>
       <DataCard
         data={accountOverview?.lastLogin || ""}
-        label="Most Recent Login"
+        label="Latest Login"
         icon={<FaRegClock size={24} />}>
         <p className="text-gray-300">
-          Your most recent login will be recorded each time you access your account dashboard. This
-          serves as a verification mechanism, allowing you to confirm that your latest sign-in
-          session is authenticated and secure.
+          Each time you log out of your account, your most recent login will be recorded. This
+          functionality serves as a valuable record, providing you with clear visibility regarding
+          the timing of your last session. By tracking this information, you can easily ascertain
+          the duration that has elapsed since your previous login, enabling you to manage your time
+          more effectively and stay informed about your usage patterns.
         </p>
       </DataCard>
       <DataCard

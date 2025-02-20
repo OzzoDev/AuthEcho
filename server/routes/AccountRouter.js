@@ -12,12 +12,13 @@ const {
   markInvoiceAsRead,
   deleteInvoice,
   reportIssue,
+  signOut,
 } = require("../controllers/AccountController");
 const { emailValidation } = require("../middlewares/AuthValidation");
 const { setCookies, removeCookies } = require("../middlewares/Cookies");
 
 router.get("/accountoverview", accountOverview);
-router.get("/signout", removeCookies);
+router.get("/signout", signOut, removeCookies);
 router.get("/invoices", getInvoices);
 
 router.post("/requestemailcode", emailValidation, requestEmailCode);

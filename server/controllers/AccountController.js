@@ -12,6 +12,7 @@ const {
 const InvoiceModel = require("../models/Invocie");
 const IssueModel = require("../models/Issue");
 const AppModel = require("../models/App");
+const { getDate } = require("../utils/date");
 
 const REMEMBER_USER_KEY = "rememberUser";
 
@@ -32,7 +33,7 @@ const accountOverview = async (req, res) => {
     const lastLogin = user.lastLogin;
     const createdAt = user.createdAt;
     const securityQuestion = user.securityQuestion;
-    const isRemembered = rememberUser ? true : false;
+    const isRemembered = !rememberUser || rememberUser === "false" ? false : true;
     const createdApps = await getAppsByNames(user.createdApps, user.name);
     const adminApps = await getAppsByNames(user.adminApps, user.name);
     const appConnections = await getAppsByNames(user.appConnections, user.name);
@@ -429,6 +430,26 @@ const reportIssue = async (req, res) => {
   }
 };
 
+const signOut = async (req, res, next) => {
+  const name = req.user.name;
+
+  try {
+    const user = await UserModel.findOne({ name });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    user.lastLogin = getDate();
+    await user.save();
+
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
 module.exports = {
   accountOverview,
   requestEmailCode,
@@ -442,4 +463,5 @@ module.exports = {
   markInvoiceAsRead,
   deleteInvoice,
   reportIssue,
+  signOut,
 };

@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const UserModel = require("../models/User");
 const { sendEmail } = require("../middlewares/Auth");
 const { hex8BitKey } = require("../utils/crypto");
-const { getDate } = require("../utils/date");
 const { addAppConnection } = require("../services/userService");
 const ActivityLogModel = require("../models/ActivityLog");
 
@@ -168,7 +167,6 @@ const signIn = async (req, res, next) => {
       return res.status(403).json({ message: "Wrong password", success: false });
     }
 
-    user.lastLogin = getDate();
     user.failedLoginAttempts = 0;
     await user.save();
 
