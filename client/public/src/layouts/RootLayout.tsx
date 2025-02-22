@@ -1,9 +1,20 @@
+import { useEffect } from "react";
+import useAuthechoApi from "../hooks/authecho/useAuthechoApi";
 import PageTransition from "./PageTransition";
 import Footer from "./footer/Footer";
 import Header from "./header/Header";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 
 export default function RootLayout() {
+  const location = useLocation();
+  const { callApi: trackActivity } = useAuthechoApi("PUT", "TRACKACTIVITY");
+
+  useEffect(() => {
+    (async () => {
+      await trackActivity();
+    })();
+  }, [location]);
+
   return (
     <>
       <Header />

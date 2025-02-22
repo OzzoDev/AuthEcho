@@ -30,15 +30,6 @@ export type User = {
   email?: string;
 };
 
-export type AuthechoApiUseCase =
-  | "REQUESTCODE"
-  | "VERIFYCODE"
-  | "VALIDATEQUESTION"
-  | "SIGNIN"
-  | "AUTHENTICATE"
-  | "SIGNOUT"
-  | "VERIFYSESSION";
-
 export type ApiUseCase = "GETUSERS" | "ADDUSER";
 
 export type SignInState = "user" | "code" | "question" | "password";

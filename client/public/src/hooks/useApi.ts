@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { API_ENDPOINTS } from "../constants/api-config";
 import { ApiMethod, ApiResponse, ApiUseCase } from "../types/types";
 
-const useAuthechoApi = (method: ApiMethod, useCase: ApiUseCase) => {
+const useApi = (method: ApiMethod, useCase: ApiUseCase) => {
   const url: string = API_ENDPOINTS[useCase];
 
   const callApi = async (requestData?: any): Promise<AxiosResponse<ApiResponse> | null> => {
@@ -35,4 +35,4 @@ const useAuthechoApi = (method: ApiMethod, useCase: ApiUseCase) => {
   return { callApi };
 };
 
-export default useAuthechoApi;
+export default useApi;

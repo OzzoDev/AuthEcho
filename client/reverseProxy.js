@@ -8,10 +8,10 @@ const app = express();
 const APPNAME = process.env.APP_NAME;
 const AUTHECHO_API_KEY = process.env.AUTHECHO_API_KEY;
 
-const PORT = 3002;
+const PORT = process.env.PORT;
 const NODE_ENV = "development";
 const API = "http://localhost:3004";
-const AUTHECHO_SERVER = "http://localhost:3000";
+const AUTHECHO_SERVER = process.env.TARGET_SERVER || "http://localhost:3000";
 
 const REACT_DEV_SERVER = "http://localhost:5174";
 const USER_SESSION_DURATION = 168;
@@ -102,7 +102,7 @@ if (NODE_ENV === "production") {
   console.log("Running in production mode...");
   app.use(express.static(path.join(__dirname, "public", "dist")));
 
-  app.get("*", (req, res) => {
+  app.get("*", (_, res) => {
     res.sendFile(path.join(__dirname, "public", "dist", "index.html"));
   });
 }

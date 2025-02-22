@@ -1,11 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import useAuthechoApiStore from "./useAuthechoApiStore";
 import { AUTHECHO_ENDPOINTS } from "../../constants/authecho-config";
-import { ApiMethod, AuthechoApiUseCase, AuthechoResponse } from "../../types/types";
+import { ApiMethod, AuthechoResponse } from "../../types/types";
 
 const useAuthechoApi = (
   method: ApiMethod,
-  useCase: AuthechoApiUseCase,
+  useCase: keyof typeof AUTHECHO_ENDPOINTS,
   shouldNavigate?: boolean
 ) => {
   const { requestData, updateError, updateStatus } = useAuthechoApiStore();
