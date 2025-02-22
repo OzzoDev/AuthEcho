@@ -1,0 +1,1 @@
+import{j as r}from"./index-ClTJULeC.js";function s({dividerText:l,color:e="red"}){return r.jsx("fieldset",{style:{borderColor:e},className:"mb-10 w-full border-t-2",children:r.jsx("legend",{style:{borderColor:e},className:"text-xl font-semibold ml-10 py-1 px-4 rounded-full border-2",children:l})})}export{s as D};
