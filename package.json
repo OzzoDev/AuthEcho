@@ -1,0 +1,25 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "reverseProxy.js",
+  "scripts": {
+    "start": "node reverseProxy.js",
+    "proxy": "node reverseProxy.js",
+    "react": "cd public && npm run dev",
+    "build": "cd public && npm run build",
+    "start:prod": "NODE_ENV=production node reverseProxy.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
