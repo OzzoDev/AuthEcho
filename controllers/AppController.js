@@ -177,7 +177,7 @@ const signIn = async (req, res, next) => {
     req.body.statusCode = 200;
     req.body.message = "Signed in successfully";
 
-    const isAppAdmin = app.admins.includes(user.name);
+    const isAppAdmin = app.admins.includes(user.name) || app.creator === user.name;
 
     if (isAppAdmin) {
       req.body.isAppAdmin = true;
