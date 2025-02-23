@@ -11,7 +11,7 @@ const AUTHECHO_API_KEY = process.env.AUTHECHO_API_KEY;
 const PORT = process.env.PORT;
 const NODE_ENV = "development";
 const API = "http://localhost:3004";
-const AUTHECHO_SERVER = process.env.TARGET_SERVER || "http://localhost:3000";
+const AUTHECHO_SERVER = process.env.AUTHECHO_SERVER || "http://localhost:3000";
 
 const REACT_DEV_SERVER = "http://localhost:5174";
 const USER_SESSION_DURATION = 168;
