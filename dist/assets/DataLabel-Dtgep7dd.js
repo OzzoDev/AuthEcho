@@ -1,1 +1,0 @@
-import{j as s}from"./index-C22yq_nU.js";function t({label:a,data:e}){return s.jsxs("div",{className:"flex gap-x-2",children:[s.jsx("p",{className:"text-gray-400",children:a}),s.jsx("p",{children:e})]})}export{t as D};
