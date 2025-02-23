@@ -6,10 +6,11 @@ import Modal from "../../components/utils/Modal";
 import useAccountApi from "../../hooks/useAccountApi";
 import useAccountStore from "../../hooks/useAccountStore";
 import useAuthStore from "../../hooks/useAuthStore";
+import { FetchStatus } from "../../types/types";
 
 export default function SettingsPage() {
   const { username, email, updateUsername, updateEmail } = useAuthStore();
-  const { requestData, status, error, updateRequestData, updateError } = useAccountStore();
+  const { requestData, error, updateRequestData, updateError } = useAccountStore();
   const { callApi: fetchSecurityQuestions } = useAccountApi("GET", "SECURITYQUESTIONS");
   const { callApi: fetchSecurityQuestion } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const { callApi: requestEmailCode } = useAccountApi("POST", "REQUESTEMAILCODE");
@@ -26,13 +27,19 @@ export default function SettingsPage() {
   const [latestUpdatedValue, setLatestUpdatedValue] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
+  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
 
   useEffect(() => {
     const getAccountOverview = async () => {
+      setApiStatus("loading");
+
       const response = await fetchSecurityQuestion();
 
       if (response && response.data.securityQuestion) {
         setSecurityQuestion(response.data.securityQuestion);
+        setApiStatus("success");
+      } else {
+        setApiStatus("error");
       }
     };
     getAccountOverview();
@@ -123,7 +130,7 @@ export default function SettingsPage() {
     }
   };
 
-  if (status === "loading") {
+  if (apiStatus === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 

@@ -18,7 +18,7 @@ export default function Hero() {
   useEffect(() => {
     (async () => {
       const response = await getCounts();
-      console.log("Counts response: ", response);
+
       const userCount = response?.data.userCount;
       const appCount = response?.data.appCount;
       if (userCount && appCount) {
@@ -73,7 +73,7 @@ export default function Hero() {
   return (
     <div className="grow w-screen h-screen isolate mt-[-65px]">
       <div className="flex flex-col items-center justify-center h-full w-screen space-y-20 px-8 text-center bg-black bg-opacity-80">
-        <h1 className="text-7xl text-cyan-100">Welcome to Authecho</h1>
+        <h1 className="text-5xl md:text-7xl text-cyan-100">Welcome to Authecho</h1>
         {renderCounts ? (
           <h2 className="text-2xl max-w-[1000px] text-sky-200">
             Simplifying account management powering over
@@ -93,8 +93,8 @@ export default function Hero() {
           </h2>
         ) : (
           <h2 className="text-2xl max-w-[1000px] text-sky-200">
-            Simplifying account management powering Experience the effectiveness of Authecho and
-            join the echo today!
+            Enhance your account management experience with Authecho. Discover its powerful
+            effectiveness and join the echo today!
             <span className="text-cyan-500 font-semibold">&nbsp;One Account, All Access</span>
           </h2>
         )}

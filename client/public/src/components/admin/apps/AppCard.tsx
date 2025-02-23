@@ -48,7 +48,7 @@ export default function AppCard({ appData }: Props) {
   const admins = joinWithAnd(appData.admins);
 
   return (
-    <div className="flex justify-between gap-x-20 w-full">
+    <div className="flex flex-col md:flex-row justify-between items-center gap-x-20 gap-y-6 w-full">
       <div className="flex flex-col gap-y-2">
         <DataLabel label="Username" data={appData.name} />
         <DataLabel label="Origin" data={appData.origin} />

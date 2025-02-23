@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
-import { ActivityLog } from "../../types/types";
+import { ActivityLog, FetchStatus } from "../../types/types";
 import AppTrafficTimePicker from "../../components/account/app/AppTrafficTimePicker";
 import { TIME_OPTIONS } from "../../constants/contants";
 import AppTrafficGraph from "../../components/account/app/AppTrafficGraph";
 import { BsArrowRight, BsArrowUp } from "react-icons/bs";
 import useAdminApi from "../../hooks/useAdminApi";
-import useAdminStore from "../../hooks/useAdminStore";
 import { HashLoader } from "react-spinners";
 
 export default function TrafficPage() {
   const { callApi: getAppActivity } = useAdminApi("POST", "APPACTIVITY");
-  const { status } = useAdminStore();
   const [appActivity, setAppActivity] = useState<ActivityLog[][]>([]);
   const [selectedAppActivity, setSelctedAppActivity] = useState<ActivityLog[]>([]);
+  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
 
   useEffect(() => {
     (async () => {
+      setApiStatus("loading");
+
       const fetchPromises = [...TIME_OPTIONS].map((timeOption) =>
         getAppActivity(true, { days: timeOption.days })
       );
@@ -24,10 +25,12 @@ export default function TrafficPage() {
       setSelctedAppActivity(logs[logs.length - 1]);
 
       setAppActivity(logs);
+
+      response ? setApiStatus("success") : setApiStatus("error");
     })();
   }, []);
 
-  if (status === "loading") {
+  if (apiStatus === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 

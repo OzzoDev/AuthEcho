@@ -44,14 +44,14 @@ export default function UserCard({ userData }: Props) {
   };
 
   return (
-    <div className="flex justify-between w-full">
+    <div className="flex flex-col md:flex-row items-center md:justify-between gap-y-4 w-full">
       <div className="flex flex-col gap-y-2">
         <DataLabel label="Username" data={userData.name} />
         <DataLabel label="Email" data={userData.email} />
         <DataLabel label="Last login" data={userData.lastLogin} />
         <DataLabel label="Account created at" data={userData.createdAt} />
       </div>
-      <div className="flex flex-col items-end gap-y-8">
+      <div className="flex flex-col items-center md:items-end gap-y-8">
         {userData.isFrozen ? (
           <SecondaryBtn
             btnText="Unfreeze account"

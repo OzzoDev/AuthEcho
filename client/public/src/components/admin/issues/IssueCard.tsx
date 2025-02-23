@@ -12,7 +12,7 @@ export default function IssueCard({ issueData }: Props) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-between w-full">
+    <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-y-4 w-full">
       <div className="flex flex-col gap-y-2">
         <DataLabel label="Issue" data={issueData.issue} />
         <DataLabel label="From" data={issueData.user} />

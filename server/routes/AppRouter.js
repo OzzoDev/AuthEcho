@@ -12,13 +12,14 @@ const {
   authenticateApp,
   verifyAppSession,
 } = require("../middlewares/Cookies");
-const { ensureUser } = require("../middlewares/Auth");
+const { ensureUser, ensureAuthenticatedByApp } = require("../middlewares/Auth");
 const { signOut } = require("../controllers/AccountController");
 
-router.get("/signout", signOut, removeAppCookies);
+router.get("/signout", ensureAuthenticatedByApp, signOut, removeAppCookies);
 router.get("/authenticate", authenticateApp);
 router.get("/verifysession", verifyAppSession);
-router.get("/activity", ensureUser, trackUserActivity);
+
+router.put("/activity", ensureAuthenticatedByApp, trackUserActivity);
 
 router.post("/requestcode", ensureUser, requestCode);
 router.post("/verifycode", ensureUser, verifyCode);

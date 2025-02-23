@@ -196,13 +196,13 @@ const deleteApp = async (req, res) => {
     const targetApp = await AppModel.findOne({ name: app });
 
     if (!targetApp) {
-      return res.status(404).json({ message: "App not found", success: false });
+      return res.status(402).json({ message: "App not found", success: false });
     }
 
-    const isAppCreator = user.name === app.creator;
+    const isAppCreator = user.name === targetApp.creator;
 
     if (!isAppCreator) {
-      return res.status(404).json({ message: "Only app creator can delete app", success: false });
+      return res.status(400).json({ message: "Only app creator can delete app", success: false });
     }
 
     const filteredCreatedApps = userData.createdApps.filter((appItem) => appItem !== app);
@@ -210,11 +210,8 @@ const deleteApp = async (req, res) => {
     userData.createdApps = filteredCreatedApps;
     await userData.save();
 
-    const deleteResult = await AppModel.deleteOne({ name: app });
-
-    if (deleteResult.deletedCount === 0) {
-      return res.status(404).json({ message: "App not found", success: false });
-    }
+    await UserModel.updateMany({ name: { $in: app.admins } }, { $pull: { adminApps: app.name } });
+    await AppModel.deleteOne({ name: app });
 
     res.status(200).json({ message: "App deleted successfully", success: true });
   } catch (error) {

@@ -8,10 +8,11 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { HiOutlineMail } from "react-icons/hi";
 import AccountHeader from "../components/account/AccountHeader";
 import AccountSidebar from "../components/account/AccountSidebar";
-import { AccountTab } from "../types/types";
-import { useEffect } from "react";
+import { AccountTab, FetchStatus } from "../types/types";
+import { useEffect, useState } from "react";
 import useAccountStore from "../hooks/useAccountStore";
 import useAccountApi from "../hooks/useAccountApi";
+import { HashLoader } from "react-spinners";
 
 const ACCOUNT_SIDEBAR_TABS: AccountTab[] = [
   { tabName: "Overview", icon: <GrOverview size={24} /> },
@@ -26,20 +27,29 @@ export default function AccountLayout() {
   const { isAuthenticated, isAdmin } = useAuthStore();
   const { callApi: fetchAccountOverview } = useAccountApi("GET", "ACCOUNTOVERVIEW");
   const { updateUnReadInvoices, updateAccountOverview } = useAccountStore();
+  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
 
   useEffect(() => {
     (async () => {
+      setApiStatus("loading");
+
       const response = await fetchAccountOverview();
       const unReadInvocies = response?.data.unReadInvoices;
       const overview = response?.data;
       overview && updateAccountOverview(overview);
       unReadInvocies && updateUnReadInvoices(unReadInvocies);
+
+      response ? setApiStatus("success") : setApiStatus("error");
     })();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   if (isAdmin) {
     return <Navigate to="/admin" />;
+  }
+
+  if (apiStatus === "loading") {
+    return <HashLoader size={50} color="white" className="m-auto" />;
   }
 
   return (

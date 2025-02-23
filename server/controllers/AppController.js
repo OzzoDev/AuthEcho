@@ -4,6 +4,7 @@ const { sendEmail } = require("../middlewares/Auth");
 const { hex8BitKey } = require("../utils/crypto");
 const { addAppConnection } = require("../services/userService");
 const ActivityLogModel = require("../models/ActivityLog");
+const AppModel = require("../models/App");
 
 const requestCode = async (req, res) => {
   const appName = req.headers["authecho-app-name"];
@@ -191,10 +192,19 @@ const signIn = async (req, res, next) => {
 
 const trackUserActivity = async (req, res) => {
   const userID = req.user._id;
+  const username = req.user.name;
   const appName = req.app.name;
   const today = new Date().toISOString().split("T")[0];
 
   try {
+    const appData = await AppModel.findOne({ name: appName });
+
+    if (appData.creator === username || appData.admins.includes(username)) {
+      return res
+        .status(400)
+        .json({ message: "Cannot track activity for app admin or app creator" });
+    }
+
     const result = await ActivityLogModel.updateOne(
       { appName, date: today },
       {

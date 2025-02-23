@@ -29,7 +29,7 @@ export default function OverviewPage() {
   );
 
   return (
-    <div className="flex flex-wrap justify-center p-20 gap-20  w-full">
+    <div className="flex flex-wrap justify-center py-10 px-6 lg:p-20 gap-20 w-full">
       <DataCard
         data={accountOverview?.createdAt || ""}
         label="Date of Account Creation"

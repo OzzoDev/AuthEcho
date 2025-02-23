@@ -22,7 +22,7 @@ export default function OverviewPage() {
   const unResolvedIssues = String(overview.unResolvedIssues || 0);
 
   return (
-    <div className="flex flex-wrap justify-center p-20 gap-20  w-full">
+    <div className="flex flex-wrap justify-center py-10 px-6 lg:p-20 gap-20 w-full">
       <DataCard data={userCount} label="Connected Users" icon={<PiUsersThreeBold size={24} />}>
         <p className="text-gray-300">
           This metric represents the total number of users who are currently connected to Authecho.

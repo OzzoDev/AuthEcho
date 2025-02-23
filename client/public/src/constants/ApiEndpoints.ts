@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:3001";
+export const API_BASE_URL = "https://authecho.com";
 
 export const ENDPOINTS = {
   SIGNUP: `${API_BASE_URL}/api/auth/signup`,

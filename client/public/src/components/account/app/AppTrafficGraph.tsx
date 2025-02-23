@@ -40,9 +40,6 @@ export default function AppTrafficGraph({ appActivity }: Props) {
     return { date: reversedDates[index], userCount: Number(activityLog.userCount.toFixed(0)) };
   });
 
-  console.log(appActivity);
-  console.log(progress);
-
   return (
     <div className="w-full h-[700px] mb-10 px-8">
       <ResponsiveContainer width="100%" height="100%">

@@ -6,7 +6,7 @@ const JWT_TOKEN_KEY = "jwtToken";
 const JWT_APP_TOKEN_KEY = "jwtAppToken";
 const REMEMBER_USER_KEY = "rememberUser";
 
-const setCookies = (req, res) => {
+const setCookies = async (req, res) => {
   const { user, rememberUser, statusCode, message } = req.body;
 
   const sessionDuration = req.headers["user-session-duration"];
@@ -16,6 +16,7 @@ const setCookies = (req, res) => {
   const name = user.name;
   const email = user.email;
   const isAdmin = !!user.adminKey;
+  const hasReviewed = await ReviewModel.findOne({ user: name });
 
   const tokenData = isAdmin
     ? { email: email, name: name, _id: user.id, adminKey: user.adminKey }
@@ -45,7 +46,9 @@ const setCookies = (req, res) => {
   res.cookie(JWT_TOKEN_KEY, jwtToken, cookieOptions);
   res.cookie(REMEMBER_USER_KEY, rememberUser, cookieOptions);
 
-  res.status(statusCode).json({ message, success: true, name, email, isAdmin });
+  res
+    .status(statusCode)
+    .json({ message, success: true, name, email, isAdmin, hasReviewed: !!hasReviewed });
 };
 
 const setAppCookies = (req, res) => {
@@ -194,7 +197,7 @@ const verifyAppSession = (req, res) => {
         const isAdmin = app.admins
           .map((admin) => admin.toLowerCase())
           .includes(decoded.name.toLowerCase());
-        isAppAdmin = isAdmin;
+        isAppAdmin = isAdmin || app.creator === decoded.name;
       }
 
       return res.status(200).json({ message: "Authenticated", success: true, isAppAdmin });
@@ -254,16 +257,14 @@ const verifyAuthentication = async (req, res) => {
 
       const hasReviewed = await ReviewModel.findOne({ user: name });
 
-      return res
-        .status(200)
-        .json({
-          message: "Authenticated",
-          success: true,
-          name,
-          email,
-          isAdmin,
-          hasReviewed: !!hasReviewed,
-        });
+      return res.status(200).json({
+        message: "Authenticated",
+        success: true,
+        name,
+        email,
+        isAdmin,
+        hasReviewed: !!hasReviewed,
+      });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         return res.status(403).json({

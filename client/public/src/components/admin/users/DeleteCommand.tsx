@@ -25,7 +25,7 @@ export default function DeleteCommand({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
-      <div className="flex gap-x-4">
+      <div className="flex flex-col items-center md:flex-row gap-4">
         <input
           name={name}
           value={value}

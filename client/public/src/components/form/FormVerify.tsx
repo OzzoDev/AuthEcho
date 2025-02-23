@@ -15,7 +15,7 @@ export default function FormVerify({ formUsage }: Props): JSX.Element {
 
   const numberOfInputs = 8;
 
-  const [inputValues, setInputValues] = useState(Array(numberOfInputs).fill(""));
+  const [inputValues, setInputValues] = useState<string[]>(Array(numberOfInputs).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(numberOfInputs).fill(null));
 
   useVerify(formUsage, code);
@@ -87,13 +87,35 @@ export default function FormVerify({ formUsage }: Props): JSX.Element {
     }
   };
 
+  const handleInputChangeOnMobile = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const updatedVerificationCode = e.target.value;
+    setCode(updatedVerificationCode);
+    setFormData({ verificationCode: updatedVerificationCode }, "verificationCode");
+  };
+
+  const isMobile = window.innerWidth <= 600;
+
+  if (isMobile) {
+    return (
+      <input
+        maxLength={8}
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
+        autoFocus
+        onChange={handleInputChangeOnMobile}
+        onPaste={handlePaste}
+        className="text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent p-2 rounded-lg bg-slate-600 shadow-[inset_0_0px_10px_rgb(255,255,255,0.5)]"
+      />
+    );
+  }
+
   return (
-    <div className="flex space-x-4 w-fit m-auto">
+    <div className="flex flex-wrap gap-4 w-fit m-auto">
       {Array.from({ length: numberOfInputs }, (_, index) => (
         <input
           key={index}
           ref={(el) => (inputRefs.current[index] = el)}
-          type="text"
           maxLength={1}
           autoFocus={index === 0 ? true : false}
           value={inputValues[index]}

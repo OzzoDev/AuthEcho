@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InvoiceCard from "../../components/account/invoice/InvoiceCard";
 import SearchBarFlat from "../../components/utils/SearchBarFlat";
-import { Invoice, PaginatedPage } from "../../types/types";
+import { FetchStatus, Invoice, PaginatedPage } from "../../types/types";
 import { calcPageCount, showOnPagination } from "../../utils/utils";
 import Paginator from "../../components/utils/Paginator";
 import { Outlet, useParams } from "react-router";
@@ -11,13 +11,15 @@ import { HashLoader } from "react-spinners";
 
 export default function InvoicesPage() {
   const { invoiceid } = useParams();
-  const { status, updateInvoices } = useAccountStore();
+  const { updateInvoices } = useAccountStore();
   const { callApi: fetchInvoices } = useAccountApi("GET", "GETINVOICES");
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [page, setPage] = useState<PaginatedPage>({ current: 1, latest: 1, pageCount: 1 });
+  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
 
   useEffect(() => {
     (async () => {
+      setApiStatus("loading");
       const response = await fetchInvoices();
       const fetchedInvocies = response?.data.invoices;
 
@@ -34,6 +36,9 @@ export default function InvoicesPage() {
         setInvoices(sortedInvoices);
         updateInvoices(sortedInvoices);
         setPage((prev) => ({ ...prev, pageCount: calcPageCount(sortedInvoices, 4) }));
+        setApiStatus("success");
+      } else {
+        setApiStatus("error");
       }
     })();
   }, []);
@@ -67,7 +72,7 @@ export default function InvoicesPage() {
   const paginate = invoices.length > 4;
   const noMatchingInvocies = ![...invoices].some((invocie) => invocie.isVisible);
 
-  if (status === "loading") {
+  if (apiStatus === "loading") {
     return <HashLoader size={50} color="white" className="m-auto" />;
   }
 

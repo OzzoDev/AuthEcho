@@ -183,6 +183,41 @@ const ensureUser = async (req, res, next) => {
   }
 };
 
+const ensureAuthenticatedByApp = async (req, res, next) => {
+  const jwtToken = req.cookies.jwtAppToken;
+
+  if (!jwtToken) {
+    return res.status(401).json({ message: "Please sign in to continue", success: false });
+  }
+
+  try {
+    const decoded = jwt.verify(jwtToken, process.env.JWT_APP_SECRET);
+
+    if (!decoded) {
+      return res.status(403).json({ message: "Unauthenticated", success: false });
+    }
+
+    const user = await UserModel.findOne({ name: decoded.name });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (user.isFrozen) {
+      return res.status(403).json({ message: "Account is frozen", success: false });
+    }
+
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(403)
+      .json({ message: "Your session has expired. Please sign in again", success: false });
+  }
+};
+
 module.exports = {
   ensureAuthenticated,
   ensureAdmin,
@@ -190,4 +225,5 @@ module.exports = {
   ensureApiKey,
   verifyAppCredentials,
   ensureUser,
+  ensureAuthenticatedByApp,
 };

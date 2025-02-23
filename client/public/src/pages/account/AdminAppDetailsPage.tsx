@@ -2,17 +2,14 @@ import { useState, useEffect } from "react";
 import { IoArrowBackOutline, IoBarChartOutline, IoKeyOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router";
 import AppDetailsCard from "../../components/account/app/AppDetailsCard";
-import UpdateDataForm from "../../components/account/settings/UpdateDataForm";
 import OutlineBtn from "../../components/btn/OutlineBtn";
 import PrimaryBtn from "../../components/btn/PrimaryBtn";
-import AdminManager from "../../components/connect/AdminManager";
 import ResourceManager from "../../components/connect/ResourceManager";
 import DescriptiveInput from "../../components/utils/DescriptiveInput";
 import Dropdown from "../../components/utils/Dropdown";
 import SecretText from "../../components/utils/SecretText";
 import { APP_STATUS_MAP } from "../../constants/contants";
 import useApi from "../../hooks/useApi";
-import useAuthStore from "../../hooks/useAuthStore";
 import useClipboard from "../../hooks/useClipboard";
 import useMangeAppStore from "../../hooks/useManageAppStore";
 import { AuthechoApp, ConnectResource, ConnectRequest, AppStatus } from "../../types/types";
@@ -120,7 +117,7 @@ export default function AdminAppDetailsPage() {
 
   return (
     <div>
-      <div className="flex justify-between p-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-y-2 p-4">
         <OutlineBtn
           btnText="Go back"
           onClick={redirectToAdminAppsPage}

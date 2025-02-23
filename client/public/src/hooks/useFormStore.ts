@@ -9,7 +9,8 @@ import {
   setState,
   setCurrentStep,
 } from "../store/formSlice";
-import { ApiRequest, ApiUseCase, FetchStatus, FormState, VerifyAction } from "../types/types";
+import { ApiRequest, FetchStatus, FormState, VerifyAction } from "../types/types";
+import { ENDPOINTS } from "../constants/ApiEndpoints";
 
 const useFormStore = (shouldReset?: boolean) => {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const useFormStore = (shouldReset?: boolean) => {
     formData: ApiRequest | ((prevData: ApiRequest) => ApiRequest),
     key?: keyof ApiRequest,
     action?: VerifyAction,
-    useCase?: ApiUseCase
+    useCase?: keyof typeof ENDPOINTS
   ) => {
     if (typeof formData === "function") {
       const updatedData: ApiRequest = {

@@ -85,7 +85,7 @@ export default function UsersPage() {
           No matching user
         </h2>
       ) : (
-        <ul className="flex flex-col gap-y-16 p-6 my-12">
+        <ul className="flex flex-col gap-y-24 p-6 my-12">
           {filteredUsers.map((user) => {
             return (
               <li key={user.name}>

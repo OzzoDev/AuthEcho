@@ -144,7 +144,7 @@ export default function CreatedAppDetailsPage() {
 
   return (
     <div>
-      <div className="flex justify-between p-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-y-2 p-4">
         <OutlineBtn
           btnText="Go back"
           onClick={redirectToCreatedAppsPage}

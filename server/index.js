@@ -9,10 +9,10 @@ const AppRouter = require("./routes/AppRouter");
 const ActivityRouter = require("./routes/ActivityRouter");
 const cookieParser = require("cookie-parser");
 const {
-  ensureAuthenticated,
   ensureApiKey,
   verifyAppCredentials,
   ensureAdmin,
+  ensureAuthenticated,
 } = require("./middlewares/Auth");
 
 require("dotenv").config();
@@ -42,7 +42,11 @@ app.use("/account", restrictedCors, ensureAuthenticated, ensureApiKey, AccountRo
 app.use("/admin", restrictedCors, ensureAuthenticated, ensureAdmin, ensureApiKey, AdminRouter);
 app.use("/connect", restrictedCors, ensureApiKey, ensureAuthenticated, ConnectRouter);
 app.use("/app", openCors, verifyAppCredentials, AppRouter);
-app.use("/activity", restrictedCors, ensureAuthenticated, ActivityRouter);
+app.use("/activity", restrictedCors, ActivityRouter);
+
+app.get("/health", (_, req) => {
+  req.send("Server is health");
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

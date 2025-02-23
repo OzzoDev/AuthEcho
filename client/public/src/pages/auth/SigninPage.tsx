@@ -13,7 +13,8 @@ export default function SigninPage() {
   const { fetchData: requestVerificationCode } = useApi("POST", "SENDVERIFICATIONCODE");
   const { fetchData: signIn } = useApi("POST", "SIGNIN", true);
   const { fetchData: validateQuestion } = useApi("POST", "VALIDATESECURITYQUESTION");
-  const { updateIsAuthenticated, updateIsAdmin, updateUsername, updateEmail } = useAuthStore();
+  const { updateIsAuthenticated, updateIsAdmin, updateHasReviewed, updateUsername, updateEmail } =
+    useAuthStore();
 
   useAuth(
     undefined,
@@ -44,6 +45,7 @@ export default function SigninPage() {
       const name = response.data.name;
       const email = response.data.email;
       const isAdmin = response.data.isAdmin;
+      const hasReviewed = response.data.hasReviewed;
 
       if (name) {
         updateUsername(name);
@@ -55,6 +57,10 @@ export default function SigninPage() {
 
       if (isAdmin) {
         updateIsAdmin(true);
+      }
+
+      if (hasReviewed) {
+        updateHasReviewed(true);
       }
 
       updateIsAuthenticated(true);

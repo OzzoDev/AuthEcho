@@ -53,6 +53,7 @@ const authSlice = createSlice({
       state.isAdmin = false;
       state.username = "";
       state.email = "";
+      sessionStorage.removeItem(HASREVIEWED_KEY);
       sessionStorage.removeItem(AUTH_KEY);
       sessionStorage.removeItem(USERNAME_KEY);
       sessionStorage.removeItem(EMAIL_KEY);

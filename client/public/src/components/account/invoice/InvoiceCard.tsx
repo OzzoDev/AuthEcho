@@ -30,7 +30,7 @@ export default function InvoiceCard({ invoice }: Props) {
   };
 
   return (
-    <div className="flex items-center justify-between w-full p-4">
+    <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-y-4 w-full p-4">
       <div className="flex flex-col gap-y-1 w-full">
         <AppCardData desciption="Subject" data={invoice.subject} />
         <AppCardData desciption="From" data={invoice.from} />

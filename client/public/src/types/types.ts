@@ -135,7 +135,7 @@ export type AdminRequest = {
   app?: string;
   deleteCommand?: string;
   issueID?: string;
-  days: number;
+  days?: number;
 };
 
 export type AccountResponse = {
@@ -174,7 +174,7 @@ export type AuthechoApp = {
   description: string;
   status: AppStatus;
   users: number;
-  isFrozen: boolean;
+  isFrozen?: boolean;
   isVisible?: boolean;
 };
 

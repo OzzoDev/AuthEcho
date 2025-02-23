@@ -10,6 +10,7 @@ const useVerify = (formUsage: FormUsage, code: string) => {
 
   useEffect(() => {
     const shouldVerify = code.length === 8;
+
     const verifyCode = async () => {
       if (shouldVerify) {
         let ensureAuth;

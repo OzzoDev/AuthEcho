@@ -3,12 +3,13 @@ import OutlineBtn from "../../components/btn/OutlineBtn";
 import { useNavigate, useParams } from "react-router";
 import useMangeAppStore from "../../hooks/useManageAppStore";
 import { useEffect, useState } from "react";
-import { ActivityLog, AuthechoApp } from "../../types/types";
+import { ActivityLog, AuthechoApp, FetchStatus } from "../../types/types";
 import useApi from "../../hooks/useApi";
 import AppTrafficTimePicker from "../../components/account/app/AppTrafficTimePicker";
 import { TIME_OPTIONS } from "../../constants/contants";
 import AppTrafficGraph from "../../components/account/app/AppTrafficGraph";
 import { BsArrowRight, BsArrowUp } from "react-icons/bs";
+import { HashLoader } from "react-spinners";
 
 export default function ControlledAppTrafficPage() {
   const navigate = useNavigate();
@@ -17,10 +18,12 @@ export default function ControlledAppTrafficPage() {
   const { fetchData: fetchAppActivity } = useApi("POST", "APPACTIVITY");
   const [appActivity, setAppActivity] = useState<ActivityLog[][]>([]);
   const [selectedAppActivity, setSelctedAppActivity] = useState<ActivityLog[]>([]);
+  const [apiStatus, setApiStatus] = useState<FetchStatus>("idle");
   const app: AuthechoApp = getApp(appname);
 
   useEffect(() => {
     (async () => {
+      setApiStatus("loading");
       const fetchPromises = [...TIME_OPTIONS].map((timeOption) =>
         fetchAppActivity(undefined, { appName: app.name, days: timeOption.days })
       );
@@ -29,12 +32,18 @@ export default function ControlledAppTrafficPage() {
       setSelctedAppActivity(logs[logs.length - 1]);
 
       setAppActivity(logs);
+
+      response ? setApiStatus("success") : setApiStatus("error");
     })();
   }, []);
 
   const redirectToCreatedAppsDetialsPage = (): void => {
     navigate(`/account/myapps/${appname}`);
   };
+
+  if (apiStatus === "loading") {
+    return <HashLoader size={50} color="white" className="m-auto" />;
+  }
 
   return (
     <div className="w-full">
