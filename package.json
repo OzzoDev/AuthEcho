@@ -1,0 +1,45 @@
+{
+    "name": "authecho-sdk",
+    "version": "2.0.4",
+    "description": "AuthEcho is a powerful MERN-stack SDK that offers a seamless and universal account management solution. It comes with boilerplate code to easily set up authentication in your application. This SDK simplifies user authentication across multiple platforms, ensuring a consistent and secure experience for all users.",
+    "main": "./bin/cli.js",
+    "bin": {
+        "authecho-sdk": "./bin/cli.js"
+    },
+    "type": "module",
+    "scripts": {
+        "authecho-sdk": "node ./bin/cli.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/OzzoDev/AuthEcho.git#SDK"
+    },
+    "author": "Ozzodev",
+    "license": "MIT",
+    "keywords": [
+        "auth",
+        "authentication",
+        "MERN",
+        "SDK",
+        "account management",
+        "user management",
+        "React",
+        "Redux",
+        "Tailwind CSS",
+        "boilerplate",
+        "MongoDB",
+        "API",
+        "security",
+        "web development",
+        "open source"
+    ],
+    "bugs": {
+        "url": "https://github.com/OzzoDev/AuthEcho/issues"
+    },
+    "homepage": "https://github.com/OzzoDev/AuthEcho/tree/SDK#readme",
+    "dependencies": {
+        "fs": "^0.0.1-security",
+        "inquirer": "^12.3.3",
+        "path": "^0.12.7"
+    }
+}
