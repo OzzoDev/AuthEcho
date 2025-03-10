@@ -191,6 +191,8 @@ const verifyAppSession = (req, res) => {
         });
       }
 
+      const name = decoded.name;
+      const email = decoded.email;
       let isAppAdmin = false;
 
       if (app && decoded.name) {
@@ -200,7 +202,9 @@ const verifyAppSession = (req, res) => {
         isAppAdmin = isAdmin || app.creator === decoded.name;
       }
 
-      return res.status(200).json({ message: "Authenticated", success: true, isAppAdmin });
+      return res
+        .status(200)
+        .json({ message: "Authenticated", success: true, isAppAdmin, name, email });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         return res.status(403).json({
