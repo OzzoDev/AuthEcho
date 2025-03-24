@@ -189,12 +189,13 @@ const verifyAppSession = (req, res) => {
         return res.status(401).json({
           message: "Unauthenticated",
           success: false,
+          decoded,
         });
       }
 
       const name = decoded.name;
       const email = decoded.email;
-      const userID = user._id;
+      const userID = decoded._id;
 
       let isAppAdmin = false;
 
