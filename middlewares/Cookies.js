@@ -60,6 +60,7 @@ const setAppCookies = (req, res) => {
 
   const name = user.name;
   const email = user.email;
+  const userID = user._id;
 
   const jwtToken = jwt.sign(
     { email: email, name: name, _id: user.id, isAdmin: isAppAdmin },
@@ -89,7 +90,7 @@ const setAppCookies = (req, res) => {
   res.cookie(JWT_APP_TOKEN_KEY, jwtToken, cookieOptions);
   res.cookie(REMEMBER_USER_KEY, rememberUser, cookieOptions);
 
-  res.status(statusCode).json({ message, success: true, name, email, isAppAdmin });
+  res.status(statusCode).json({ message, success: true, name, email, isAppAdmin, userID });
 };
 
 const removeCookies = (_, res) => {
