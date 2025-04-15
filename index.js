@@ -36,7 +36,6 @@ const openCors = cors({
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.set("trust proxy", 1);
 
 app.use("/auth", restrictedCors, ensureApiKey, AuthRouter);
 app.use("/account", restrictedCors, ensureAuthenticated, ensureApiKey, AccountRouter);
