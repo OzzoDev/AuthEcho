@@ -70,7 +70,7 @@ const setAppCookies = (req, res) => {
     }
   );
 
-  const isSecure = req.secure || req.protocol === "https";
+  const isSecure = (req.headers.origin || "").includes("https://");
 
   const cookieOptions = {
     httpOnly: true,
