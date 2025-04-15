@@ -70,10 +70,12 @@ const setAppCookies = (req, res) => {
     }
   );
 
+  const isSecure = req.secure || req.headers["x-forwarded-proto"] === "https";
+
   const cookieOptions = {
     httpOnly: true,
-    secure: false,
-    sameSite: "Strict",
+    secure: isSecure,
+    sameSite: isSecure ? "None" : "Strict",
     path: "/",
   };
 
